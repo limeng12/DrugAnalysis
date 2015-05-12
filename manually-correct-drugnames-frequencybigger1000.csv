@@ -1,0 +1,571 @@
+code meaning: 1(5 in database) A new drug.2(6 in database) drug's another name.3(7 in database) mixture drug 4. ambiguity.5 I don't known. For some of the durgs, the name is only the main ingrediant$$$$$
+$$$$$
+FAERS NAME$code$REALNAME$$$
+METFORMIN HCL$2$METFORMIN$$$
+DIANEAL$1$DIANEAL$$$
+ADVAIR DISKUS 100/50$3$Fluticasone Propionate$salmeterol$$
+PREDNISONE TAB$2$Prednisone$$$
+VITAMIN D$1$VITAMIN D$$$
+REBIF$2$Interferon beta-1a$$$
+AMBIEN$2$Zolpidem$$$
+METOPROLOL TARTRATE$2$Metoprolol$$$
+INSULIN$4$$$$
+TRAMADOL HCL$2$Tramadol$$$
+MULTI-VITAMIN$4$$$$
+VICODIN$3$Acetaminophen$Hydrocodone$$
+HEPARIN SODIUM INJECTION$2$Heparin$$$
+DOXORUBICIN HCL$2$DOXORUBICIN$$$
+CITALOPRAM HYDROBROMIDE$2$Citalopram$$$
+MULTI-VITAMINS$4$$$$
+SYMBICORT$3$Formoterol$Budesonide$$
+ALEVE (CAPLET)$2$Naproxen$$$
+PERCOCET$3$Oxycodone$Acetaminophen$$
+FISH OIL$1$FISH OIL$$$
+VITAMIN B-12$2$Hydroxocobalamin$$$
+ORTHO EVRA$3$Ethinyl Estradiol$Norelgestromin$$
+ACETYLSALICYLIC ACID SRT$2$Acetylsalicylic acid$$$
+ATORVASTATIN CALCIUM$2$Atorvastatin$$$
+AMITRIPTYLINE HCL$2$Amitriptyline$$$
+LETAIRIS$1$ambrisentan$$$
+TYLENOL (CAPLET)$2$Acetaminophen$$$
+BACTRIM$3$Sulfamethoxazole$Trimethoprim$$
+XOLAIR$2$Omalizumab$$$
+MORPHINE SULFATE$2$Morphine$$$
+LORTAB$3$Acetaminophen$Hydrocodone$$
+VYTORIN$3$Simvastatin$Ezetimibe$$
+PEG-INTRON$2$Peginterferon alfa-2b$$$
+FERROUS SULFATE TAB$2$Iron$$$
+KALETRA$3$Lopinavir$Ritonavir$$
+SOLU-MEDROL$2$Methylprednisolone$$$
+PAROXETINE HCL$2$Paroxetine$$$
+COMBIVENT$3$Salbutamol$Ipratropium bromide$$
+PLAN B ONE-STEP$2$Levonorgestrel$$$
+VALPROATE SODIUM$2$Valproic Acid$$$
+FENTANYL-100$2$Fentanyl$$$
+LITHIUM CARBONATE$2$Lithium$$$
+TRUVADA$3$Emtricitabine$Tenofovir$$
+ALL OTHER THERAPEUTIC PRODUCTS$4$$$$
+DROSPIRENONE AND ETHINYL ESTRADIOL$3$Ethinyl Estradiol$Drospirenone$$
+BOTOX COSMETIC$2$Botulinum Toxin Type A$$$
+DIOVAN HCT$3$Hydrochlorothiazide$Valsartan$$
+VITAMINS$4$$$$
+LOSARTAN POTASSIUM$3$losartan$potassium$$
+MEDROXYPROGESTERONE ACETATE$2$Medroxyprogesterone Acetate$$$
+AUGMENTIN '125'$3$Clavulanate$Amoxicillin$potassium$
+COLACE$5$$$$
+OXYGEN$1$OXYGEN$$$
+AVANDAMET$3$Rosiglitazone$Metformin$$
+LOVAZA$4$$$$
+LOXONIN$1$Loxoprofen$$$
+[THERAPY UNSPECIFIED]$4$$$$
+ZOLEDRONOC ACID$2$Zoledronate$$$
+NO CONCURRENT MEDICATION$4$$$$
+ZOLPIDEM TARTRATE$2$Zolpidem$$$
+NUVARING$3$Etonogestrel$Ethinyl Estradiol$$
+PLACEBO$5$PLACEBO$$$
+NEULASTA$2$Pegfilgrastim$$$
+HYDROCODONE BITARTRATE$2$Hydrocodone$$$
+MULTIVITAMIN$4$$$$
+MUCOSTA$1$Rebamipide$$$
+ENOXAPARIN SODIUM$2$Enoxaparin$$$
+IRINOTECAN HCL$2$Irinotecan$$$
+VITAMIN TAB$4$$$$
+METFORMIN HYDROCHLORIDE$2$Metformin$$$
+MIRALAX$4$$$$
+ANTIBIOTICS$4$$$$
+SUBOXONE$3$Naloxone$Buprenorphine$$
+CORTICOSTEROIDS$4$$$$
+ROCEPHIN$2$Ceftriaxone$$$
+DEXAMETHASONE TAB$2$Dexamethasone$$$
+COMBIVIR$3$Lamivudine$Zidovudine$$
+SUNITINIB MALATE$2$Sunitinib$$$
+DIPHENHYDRAMINE HCL$2$Diphenhydramine$$$
+TAMSULOSIN HCL$2$Tamsulosin$$$
+ADVAIR HFA$3$Salmeterol$Fluticasone Propionate$$
+SOLOSTAR$5$$$$
+SERETIDE$2$SALMETEROL$$$
+VITAMIN B COMPLEX CAP$1$VITAMIN B$$$
+VENLAFAXINE HCL$2$Venlafaxine$$$
+CALCIUM GLUCONATE$1$CALCIUM GLUCONATE$$$
+SINEMET$3$Carbidopa$L-DOPA$$
+UNKNOWN MEDICATION$4$$$$
+ACETAMINOPHEN AND HYDROCODONE BITARTRATE$3$Acetaminophen$Hydrocodone$$
+SODIUM CHLORIDE$1$SODIUM CHLORIDE$$$
+TAMOXIFEN CITRATE$2$FENTANYL$$$
+FENTANYL TRANSDERMAL SYSTEM$2$Fentanyl$$$
+DEPO-PROVERA$2$Medroxyprogesterone Acetate$$$
+STELARA$2$CNTO 1275$$$
+LUPRON DEPOT$2$Leuprolide$$$
+RADIATION THERAPY$4$$$$
+CLOPIDOGREL BISULFATE$2$Clopidogrel$$$
+ANTIHYPERTENSIVES$4$$$$
+DILTIAZEM HCL$2$Diltiazem$$$
+METHOTREXATE SODIUM$2$Methotrexate$$$
+M.V.I.$4$$$$
+SELBEX$1$Teprenone$$$
+PREVISCAN$2$Pentoxifylline$$$
+ERLOTINIB HYDROCHLORIDE$2$Erlotinib$$$
+SULFAMETHOXAZOLE AND TRIMETHOPRIM$3$Sulfamethoxazole$Trimethoprim$$
+GAMMAGARD LIQUID$2$Intravenous Immunoglobulin$$$
+TYLENOL-500$2$Acetaminophen$$$
+SENNA$1$SENNA$$$
+DEPAS$3$Diclofenac$Dicyclomine$Etizolam$
+NORCO$3$Acetaminophen$Hydrocodone$$
+HUMULIN 70/30$4$$$$
+RED BLOOD CELLS$4$$$$
+ESOMEPRAZOLE MAGNESIUM$3$Magnesium$Esomeprazole$$
+PRAVASTATIN SODIUM$2$Pravastatin$$$
+THYROID TAB$4$$$$
+DYAZIDE$3$Triamterene$hydrochlorothiazide$$
+PHENOBARBITAL TAB$2$Phenobarbital$$$
+HYDROXYCHLOROQUINE SULFATE$2$Hydroxychloroquine$$$
+CYCRIN$2$Medroxyprogesterone Acetate$$$
+INFLIXIMAB, RECOMBINANT$2$Infliximab$$$
+HYDROCODONE BITARTRATE AND ACETAMINOPHEN$3$Hydrocodone$Acetaminophen$$
+SENOKOT$3$docusate$SENNA$$
+EXFORGE$3$Amlodipine$Valsartan$$
+KARDEGIC$2$Acetylsalicylic acid$$$
+CALCIUM WITH VITAMIN D$3$CALCIUM$VITAMIN D$$
+INVEGA SUSTENNA$2$Paliperidone$$$
+FACTOR IX COMPLEX$2$Coagulation Factor IX$$$
+EXCEDRIN (MIGRAINE)$2$Caffeine$$$
+BACTRIM DS$3$Sulfamethoxazole$Trimethoprim$$
+DARVOCET-N 100$3$Acetaminophen$Dextropropoxyphene$$
+IBUPROFEN (ADVIL)$2$Ibuprofen$$$
+ISENTRESS$2$Raltegravir$$$
+SERTRALINE HCL$2$Sertraline$$$
+EXTRA STRENGTH TYLENOL$2$Acetaminophen$$$
+MELPHALAN HYDROCHLORIDE$2$Melphalan$$$
+GLUCOVANCE$3$Metformin$Glyburide$$
+HUMALOG MIX 75/25$2$Insulin Lispro$$$
+OCELLA$3$Ethinyl Estradiol$Drospirenone$$
+DOXORUBICIN HYDROCHLORIDE$2$Doxorubicin$$$
+TRAMADOL HYDROCHLORIDE$2$Tramadol$$$
+LATISSE$2$Bimatoprost$$$
+LENDORMIN$1$Brotizolam$$$
+MAGMITT$2$Magnesium oxide$$$
+LEUPROLIDE ACETATE$2$Leuprolide$$$
+VITAMINS (UNSPECIFIED)$4$$$$
+DOCUSATE SODIUM$5$DOCUSATE$$$
+CENTRUM SILVER$5$$$$
+HYDRALAZINE HCL$2$Hydralazine$$$
+LISINOPRIL AND HYDROCHLOROTHIAZIDE$3$Hydrochlorothiazide$Lisinopril$$
+NUVIGIL$1$armodafinil$$$
+ZOSYN$3$Tazobactam$Piperacillin$$
+DOCUSATE$1$DOCUSATE$$$
+AVALIDE$3$Irbesartan$Hydrochlorothiazide$$
+AMITRIPTYLINE HYDROCHLORIDE$2$Amitriptyline$$$
+GENOTROPIN$2$Somatropin recombinant$$$
+ACETAMINOPHEN W/ CODEINE$3$Codeine$Acetaminophen$$
+PLATELETS$4$$$$
+CALCIUM (UNSPECIFIED)$2$Calcium$$$
+PURSENNID$5$$$$
+PHENERGAN HCL$2$Promethazine$$$
+ALBUTEROL SULFATE AUTOHALER$2$Salbutamol$$$
+TRILIPIX$2$Fenofibrate$$$
+TAHOR$2$Atorvastatin$$$
+MYSLEE$2$Zolpidem$$$
+MAXZIDE$3$Triamterene$Hydrochlorothiazide$$
+RADIOTHERAPY$4$$$$
+CENTRUM$4$$$$
+MUCODYNE$2$Carboxymethylenecysteine$$$
+TRIAMTERENE AND HYDROCHLOROTHIAZIDE$3$Hydrochlorothiazide$Triamterene$$
+CETIRIZINE HCL$2$Cetirizine$$$
+UNKNOWN DRUG$4$$$$
+STALEVO 100$3$Carbidopa$L-DOPA$Entacapone$
+UNSPECIFIED MEDICATION$4$$$$
+PRILOSEC OTC$2$Omeprazole$$$
+AUGMENTIN$3$Clavulanate$Amoxicillin$potassium$
+ADDERALL 10$3$Amphetamine$Dextroamphetamine$$
+DILTIAZEM HYDROCHLORIDE$2$Diltiazem$$$
+0$4$$$$
+SORAFENIB (RAF KINASE INHIBITOR)$2$Sorafenib$$$
+SIMPONI$2$golimumab$$$
+UNKNOWN$4$$$$
+DEPAKOTE ER$2$Valproic Acid$$$
+FLUOXETINE HCL$2$Fluoxetine$$$
+GASMOTIN$5$Mosapride$$$
+PRIMPERAN TAB$2$Metoclopramide$$$
+ANTIHEMOPHILIC FACTOR (HUMAN)$2$Antihemophilic Factor$$$
+TYLENOL W/ CODEINE NO. 3$3$Acetaminophen$Codeine$$
+BUPROPION HYDROCHLORIDE$2$Bupropion$$$
+DIURETICS$5$$$$
+CADUET$3$Amlodipine$Atorvastatin$$
+AMOXICILLIN AND CLAVULANATE POTASSIUM$3$Amoxicillin$Clavulanate$$
+ACETAMINOPHEN AND CODEINE PHOSPHATE$3$Acetaminophen$Codeine$$
+TELAVIC (TELAPREVIR)$2$Telaprevir$$$
+PAROXETINE HYDROCHLORIDE$2$Paroxetine$$$
+IMMUNE GLOBULIN INTRAVENOUS (HUMAN)$2$Intravenous Immunoglobulin$$$
+PRENATAL VITAMINS$4$$$$
+NOVOSEVEN$2$Coagulation factor VIIa$$$
+ISOSORBIDE$4$$$$
+ULTRACET$3$Tramadol$Acetaminophen$$
+MIACALCIN$2$Salmon Calcitonin$$$
+FEIBA$1$anti-inhibitor coagulant complex$$$
+ROSIGLITAZONE MALEATE$2$Rosiglitazone$$$
+ALL OTHER THERAPEUTIC PRODUCTS (ALL OTHER THERAPEUTIC PRODUCTS)$4$$$$
+ALBUMIN (HUMAN)$2$Human Serum Albumin$$$
+DULCOLAX$4$$$$
+VITAMIN CAP$4$$$$
+CHEMOTHERAPEUTICS NOS$4$$$$
+STEROIDS NOS$4$$$$
+JANUMET$3$Metformin$Sitagliptin$$
+PRIMAXIN$3$Cilastatin$Imipenem$$
+GASTER D$2$Famotidine$$$
+IMMUCYST$5$$$$
+FLECAINIDE ACETATE$2$Flecainide$$$
+CALCIUM CHANNEL BLOCKERS$4$$$$
+TREANDA$1$bendamustine$$$
+MONTELUKAST SODIUM$2$Montelukast$$$
+DOXEPIN HCL$2$Doxepin$$$
+GEMCITABINE HCL$2$Gemcitabine$$$
+CALCIUM (CALCIUM)$2$Calcium$$$
+SU-011,248$2$Sunitinib$$$
+INTRON A$2$Interferon Alfa-2b, Recombinant$$$
+ESTRATEST$3$Methyltestosterone$Conjugated Estrogens$$
+BLOOD PRESSURE MEDICATION$4$$$$
+SOLU-CORTEF$2$Hydrocortisone$$$
+FOSRENOL$1$lanthanum carbonate$$$
+PEG-INTERFERON ALFA 2A (RO 25-8310)$2$Peginterferon alfa-2a$$$
+CHILDREN'S MOTRIN$2$Ibuprofen$$$
+EXTAVIA$2$Interferon beta-1a$$$
+CLINDAMYCIN HCL$2$Clindamycin$$$
+ESTRADERM$2$Estradiol$$$
+ALFAROL$2$Alfacalcidol$$$
+STEROIDS$4$$$$
+PIPERACILLIN AND TAZOBACTAM$3$Piperacillin$Tazobactam$$
+TYVASO$2$Treprostinil$$$
+ARTIST$2$Carvedilol$$$
+ADCIRCA$2$Tadalafil$$$
+DIANEAL LOW CALCIUM W/ DEXTROSE 1.5%$5$$$$
+SIMULECT$2$Basiliximab$$$
+FLECTOR$2$Diclofenac$$$
+IMATINIB MESYLATE$2$Imatinib$$$
+OXYCODONE HCL AND ACETAMINOPHEN$3$Acetaminophen$Oxycodone$$
+HYDROCODONE BITARTRATE + ACETAMINOPHEN$3$Acetaminophen$Hydrocodone$$
+PROTAMINE SULFATE$5$$$$
+DUONEB$3$Salbutamol$Ipratropium bromide$$
+NSAID'S$4$$$$
+DIANEAL PD-2 W/ DEXTROSE 1.5%$4$$$$
+ULTRAVIST 300$1$iopromide$$$
+MESNA$1$mesna$$$
+K-DUR 10$2$Potassium Chloride$$$
+COSOPT$3$Dorzolamide$Timolol$$
+ORTHO TRI-CYCLEN$3$Ethinyl Estradiol$Norgestimate$$
+PRAMIPEXOLE DIHYDROCHLORIDE$2$Pramipexole$$$
+CALTRATE$2$Calcium carbonate$$$
+BETAFERON$2$Interferon beta-1a$$$
+TENOFOVIR DISOPROXIL FUMARATE$2$Tenofovir$$$
+INNOHEP$2$Tinzaparin$$$
+GAVISCON$2$Aluminum hydroxide$$$
+QVAR 40$2$Beclomethasone$$$
+TUMS$2$Calcium carbonate$$$
+SIGMART$1$Nicorandil$$$
+BAKTAR$3$Sulfamethoxazole$Trimethoprim$$
+MEDICINALPRODUCT NOT SPECIFIED BY SENDER$4$$$$
+CALONAL$2$Acetaminophen$$$
+STILNOX$2$Zolpidem$$$
+BISACODYL$1$bisacodyl$$$
+BOSENTAN TABLET UNKNOWN US MG$2$Bosentan$$$
+VENOFER$2$iron$$$
+ANALGESICS$4$$$$
+XYZAL$1$levocetirizine$$$
+HUMATROPE$2$Somatropin recombinant$$$
+ACTIVASE$2$Alteplase$$$
+MYCOPHENOLATE MOFETIL (CELLCEPT)$2$Mycophenolate mofetil$$$
+NAPROXEN (ALEVE)$2$Naproxen$$$
+METHYLPREDNISOLONE SODIUM SUCCINATE$2$Methylprednisolone$$$
+REBAMIPIDE$1$Rebamipide$$$
+SENNOSIDE$5$$$$
+SUDAFED 12 HOUR$3$Acetaminophen$dextromethorphan$guaifenesin$phenylephrine
+FERROUS SULFATE$2$iron$$$
+CHLORHEXIDINE GLUCONATE$2$Chlorhexidine$$$
+INTERFERON$4$$$$
+NOVOLOG MIX 70/30$2$Insulin Aspart$$$
+IBUPROFEN TABLETS$2$Ibuprofen$$$
+PULMICORT FLEXHALER$2$Budesonide$$$
+CORTISONE$2$Cortisone acetate$$$
+DEROXAT$2$Paroxetine$$$
+CATAPRES-TTS-1$2$Clonidine$$$
+AMLOR$2$Amlodipine$$$
+AMLODIN$2$Amlodipine$$$
+ANTIDEPRESSANTS$4$$$$
+NICORETTE (MINT)$2$Nicotine$$$
+GEMCITABINE HYDROCHLORIDE$2$Gemcitabine$$$
+DONEPEZIL HCL$2$Donepezil$$$
+VITAMIN D (UNSPECIFIED)$2$VITAMIN D$$$
+VENLAFAXINE HYDROCHLORIDE$2$Venlafaxine$$$
+ATACAND HCT$3$Candesartan$hydrochlorothiazide$$
+ANTIHISTAMINES$4$$$$
+DIVALPROEX SODIUM$2$Valproic Acid$$$
+CARBIDOPA AND LEVODOPA$3$Carbidopa$L-DOPA$$
+HIZENTRA$4$Intravenous Immunoglobulin$$$
+METHYCOBAL$1$Mecobalamin$$$
+UNASYN$2$Ampicillin$$$
+NICORANDIL$4$$$$
+MICARDIS HCT$3$Telmisartan$Hydrochlorothiazide$$
+LOXOPROFEN SODIUM$1$LOXOPROFEN$$$
+VECURONIUM BROMIDE$2$Vecuronium$$$
+CONIEL$1$Benidipine$$$
+HEPARIN SODIUM 5,000 UNITS IN DEXTROSE 5%$2$Heparin$$$
+VANCOMYCIN HYDROCHLORIDE$2$Vancomycin$$$
+MYOZYME$2$Alglucosidase alfa$$$
+MADOPAR$2$L-DOPA$$$
+FLUTICASONE PROPIONATE/SALMETEROL$3$Fluticasone Propionate$Salmeterol$$
+LORCET-HD$3$Acetaminophen$hydrocodone$$
+VITAMINS NOS$4$$$$
+NEBIVOLOL HCL$2$Nebivolol$$$
+PEG-INTERFERON A-2A (RO 25-8310)$2$Peginterferon alfa-2a$$$
+RITONAVIR SOFT GELATIN CAPSULES$2$Ritonavir$$$
+STOOL SOFTENER$1$DOCUSATE$$$
+CODEINE SULFATE$2$Codeine$$$
+FLUOXETINE HYDROCHLORIDE$2$Fluoxetine$$$
+CORTICOSTEROID NOS$5$$$$
+MIRCERA$4$epoetin beta-methoxy polyethylene glyco$$$
+RALTEGRAVIR$1$Raltegravir$$$
+CODEINE PHOSPHATE$2$Codeine$$$
+TICLOPIDINE HCL$2$Ticlopidine$$$
+GALANTAMINE HYDROBROMIDE$2$Galantamine$$$
+BETA BLOCKING AGENTS$5$$$$
+POLYETHYLENE GLYCOL$4$$$$
+ONDANSETRON HCL$2$Ondansetron$$$
+MUCOSOLVAN$3$Ambroxol$Bromhexine$$
+MAGLAX$2$Magnesium oxide$$$
+FORASEQ$2$Formoterol$$$
+FORLAX$2$Polidocanol$$$
+DRUG, UNSPECIFIED$4$$$$
+TAMSULOSIN HYDROCHLORIDE$2$Tamsulosin$$$
+EPZICOM$3$Abacavir$Lamivudine$$
+COENZYME Q10$4$$$$
+MILK OF MAGNESIA TAB$2$Magnesium$$$
+ZEVALIN$2$Ibritumomab$$$
+CONCENTRATED TYLENOL INFANT DROPS$2$Acetaminophen$$$
+TERCIAN$2$Cyamemazine$$$
+REGULAR INSULIN$4$$$$
+INIPOMP$2$Pantoprazole$$$
+BLINDED THERAPY$4$$$$
+USTEKINUMAB$2$CNTO 1275$$$
+GAMUNEX$2$Intravenous Immunoglobulin$$$
+OXYGEN (OXYGEN)$4$$$$
+AVANDARYL$3$Glimepiride$Rosiglitazone$$
+NEORECORMON$1$epoetin beta$$$
+EPIRUBICIN HYDROCHLORIDE$2$Epirubicin$$$
+ALOSENN$5$ALOSENN$$$
+BLINDED *PLACEBO$4$$$$
+MALARONE$3$Atovaquone$Proguanil$$
+DEXAMETHASONE 0.5MG TAB$2$Dexamethasone$$$
+BROTIZOLAM$2$Brotizolam$$$
+COQ10$4$$$$
+TYLENOL W/ CODEINE$3$Acetaminophen$Codeine$$
+VASTAREL$1$Trimetazidine$$$
+BIOFERMIN$5$$$$
+BUPRENORPHINE HCL$2$Buprenorphine$$$
+ELPLAT$2$Oxaliplatin$$$
+NOVOLIN 70/30$3$Insulin Regular$Insulin, isophane$$
+INTERFERON ALFA$4$$$$
+ADVAIR$4$$$$
+DIFFU K$2$Potassium Chloride$$$
+PULMICORT RESPULES$2$Budesonide$$$
+ZIAC$3$Hydrochlorothiazide$Bisoprolol$$
+MAGNESIUM OXIDE (MAGNESIUM OXIDE)$2$Magnesium oxide$$$
+DUROTEP$2$Fentanyl$$$
+SOLUPRED$3$Methylprednisolone$Prednisolone$$
+CALCIUM LEVOFOLINATE$5$$$$
+SPECIAFOLDINE$2$Folic Acid$$$
+ROACCUTANE$2$sotretinoin$$$
+METAMUCIL-2$5$$$$
+MEROPEN$2$Meropenem$$$
+CODEINE SUL TAB$2$Codeine$$$
+TPN$4$$$$
+MOVICOL$1$SODIUM CHLORIDE$$$
+LAXOBERON$1$Sodium Picosulfate$$$
+DALTEPARIN SODIUM$2$Dalteparin$$$
+APROVEL$2$Irbesartan$$$
+IPILIMUMAB$1$Ipilimumab$$$
+BLINDED PLACEBO$4$$$$
+ULTRAVIST 150$1$Iopromide$$$
+IRINOTECAN HYDROCHLORIDE$2$Irinotecan$$$
+ZESTORETIC$3$Hydrochlorothiazide$Lisinopril$$
+PANALDINE$2$Ticlopidine$$$
+OMACOR$4$$$$
+CHILDREN'S TYLENOL SUSPENSION$2$Acetaminophen$$$
+FRESH FROZEN PLASMA$5$$$$
+MODURETIC 5-50$2$Amiloride$$$
+RADIATION$5$$$$
+POTASSIUM (POTASSIUM)$2$Potassium$$$
+KINERET$2$Anakinra$$$
+GARLIC$5$$$$
+INSULIN (INSULIN)$4$$$$
+NITRODERM$2$Nitroglycerin$$$
+NOVONORM$2$Repaglinide$$$
+ROSUVASTATIN CALCIUM$2$Rosuvastatin$$$
+OSCAL$3$Calcitriol$approvedCalcium carbonate$$
+ADVIL PM$3$Diphenhydramine$Ibuprofen$$
+CONTRAST MEDIA$4$$$$
+ORAL CONTRACEPTIVE NOS$4$$$$
+EPOPROSTENOL SODIUM$2$Epoprostenol$$$
+POTASSIUM ACETATE$2$POTASSIUM$$$
+ROACUTAN$2$Isotretinoin$$$
+KIVEXA$3$Abacavir$Lamivudine$$
+VALGANCICLOVIR HCL$2$Valganciclovir$$$
+MOVIPREP$4$$$$
+ACTRAPID$4$$$$
+MARIJUANA$2$Nabilone$$$
+CHEMOTHERAPY$4$$$$
+VIT D$2$Vitamin D$$$
+COLACE (DOCUSATE SODIUM)$1$DOCUSATE$$$
+UNCODEABLE ^UNCLASSIFIABLE^$4$$$$
+DEXTROSE$5$DEXTROSE$$$
+ATRIPLA$3$Efavirenz$Emtricitabine$tenofovir$
+VITAMIN B$1$VITAMIN B$$$
+FEMHRT$3$Norethindrone$Ethinyl Estradiol$$
+CALCICHEW$2$Calcium carbonate$$$
+OPTICLIK (INSULIN INJECTION PEN)$5$$$$
+KOATE$2$Antihemophilic Factor$$$
+PYDOXAL$2$Pyridoxal Phosphate$$$
+FERROMIA$3$iron$FERROUS CITRATE$$
+ELSPAR$2$Asparaginase$$$
+DUROTEP MT$2$FENTANYL$$$
+TRIZIVIR$3$Abacavir$Lamivudine$Zidovudine$
+CARDENSIEL$2$Bisoprolol$$$
+TRIMETHOPRIM + SULFAMETHOXAZOLE$3$Trimethoprim$Sulfamethoxazole$$
+DIGITEK$2$Digoxin$$$
+ABIRATERONE ACETATE$2$Abiraterone$$$
+VAGIFEM$2$Estradiol$$$
+PROPAFENONE HCL$2$Propafenone$$$
+PROPOXYPHENE HCL AND ACETAMINOPHEN$3$Dextropropoxyphene$Acetaminophen$$
+CETIRIZINE HYDROCHLORIDE$2$Cetirizine$$$
+PHOSPHOSODA FLAVOR NOT SPECIFIED$4$$$$
+TARKA$3$Verapamil$Trandolapril$$
+GLUCOSE$4$GLUCOSE$$$
+LAMIVUDINE + ZIDOVUDINE$3$Lamivudine$Zidovudine$$
+ESIDRIX$2$Hydrochlorothiazide$$$
+FERROUS CITRATE$1$FERROUS CITRATE$$$
+ORTHO TRI-CYCLEN LO$3$Ethinyl Estradiol$Norgestimate$$
+METHYLPREDNISOLONE 16MG TAB$2$Methylprednisolone$$$
+FLAXSEED OIL$1$flax$$$
+LOXOPROFEN$1$Loxoprofen$$$
+ATELEC$1$Cilnidipine$$$
+WARFARIN POTASSIUM$3$Warfarin$Potassium$$
+OPTICLICK$5$OPTICLICK$$$
+TAREG$2$Valsartan$$$
+GADOLINIUM IN UNSPECIFIED DRUG$4$GADOLINIUM$$$
+GAMMAGARD S/D$2$Intravenous Immunoglobulin$$$
+PREMPHASE 14/14$3$Conjugated Estrogens$Medroxyprogesterone Acetate$$
+FEXOFENADINE HCL$2$Fexofenadine$$$
+ACETAMINOPHEN W/ PROPOXYPHENE HCL$3$Acetaminophen$Dextropropoxyphene$$
+VERAPAMIL HYDROCHLORIDE$2$Verapamil$$$
+CALCIUM CITRATE$2$calcium citrate$$$
+RENIVACE$2$Enalapril$$$
+YERVOY$2$Ipilimumab$$$
+CITRACAL$1$calcium citrate$$$
+VITAMIN$4$$$$
+PERFALGAN$2$acetaminophen$$$
+MODOPAR$2$L-DOPA$$$
+ANTIBIOTIC$4$$$$
+BIPERIDEN HYDROCHLORIDE TAB$2$Biperiden$$$
+HYDROXYCHLOROQUINE PHOSPHATE$2$Hydroxychloroquine$$$
+CALBLOCK$2$Azelnidipine$$$
+HOKUNALIN$1$Tulobuterol$$$
+MIFEPRISTONE TABLETS, 200 MG (DANCO LABS)$2$Mifepristone$$$
+SOTALOL HYDROCHLORIDE$2$Sotalol$$$
+TEPRENONE$1$Teprenone$$$
+COMBIGAN$3$Brimonidine$Timolol$$
+INFLUENZA VACCINE$4$$$$
+OXYCODONE AND ACETAMINOPHEN$3$Oxycodone$Acetaminophen$$
+ULTRAVIST 370$1$iopromide$$$
+LIALDA$2$Mesalazine$$$
+NARDIL$2$Phenelzine$$$
+CO-CODAMOL$3$Codeine$Acetaminophen$$
+FERROUS GLUCONATE$2$Iron$$$
+SULFAMETHOXAZOLE + TRIMETHOPRIM$3$Sulfamethoxazole$Trimethoprim$$
+IMMUNE GLOBULIN (HUMAN)$2$Intravenous Immunoglobulin$$$
+DIPHENHYDRAMINE HYDROCHLORIDE$2$Diphenhydramine$$$
+PROVENTIL-HFA$2$Salbutamol$$$
+VALACYCLOVIR HCL$2$Valaciclovir$$$
+ONEALFA$2$Alfacalcidol$$$
+NU-LOTAN$5$$$$
+NULYTELY$5$$$$
+NEPHROCAPS$5$Thiamine$Vitamin C$$
+SODIUM CHLORIDE 0.9%$5$SODIUM CHLORIDE$$$
+MECOBALAMIN$1$MECOBALAMIN$$$
+ACTIVELLA$3$Estradiol$Norethindrone$$
+TAZOCIN$2$Tazobactam$$$
+ALLEGRA D 24 HOUR$2$Fexofenadine$$$
+LOPERAMIDE HYDROCHLORIDE$2$Loperamide$$$
+BLINDED; INFLIXIMAB, RECOMBINANT$2$Infliximab$$$
+KONYNE$2$factor IX complex$$$
+DIHYDROCODEINE BITARTRATE INJ$2$Dihydrocodeine$$$
+DIURETICS (DIURETICS)$4$$$$
+..$4$$$$
+PULMICORT-100$2$Budesonide$$$
+DEXTROMETHORPHAN HYDROBROMIDE$2$Dextromethorphan$$$
+DEPO-PROVERA SUSPENSION/INJ$2$Medroxyprogesterone Acetate$$$
+TOFRANIL$2$Imipramine$$$
+AMBRISENTAN$1$ambrisentan$$$
+FLOMOX$5$Moxifloxacin$$$
+OPTIRAY 350$1$ioversol$$$
+CORTICOSTEROIDS (UNSPECIFIED)$4$$$$
+FUNGUARD$2$Micafungin$$$
+FENTORA$2$Fentanyl$$$
+ADDERALL 5$3$Amphetamine$Dextroamphetamine$$
+LOSARTAN POTASSIUM AND HYDROCHLOROTHIAZIDE$3$Losartan$Potassium$Hydrochlorothiazide$
+PROVENGE$1$sipuleucel-T$$$
+PYRIDOXINE HCL$2$Pyridoxine$$$
+VIVELLE$2$Estradiol$$$
+HYPEN$3$Etodolac$Indapamide$$
+VITAMIN K TAB$2$Phylloquinone$$$
+ACUPAN$1$Nefopam$$$
+FISH OIL (FISH OIL)$1$omega-3 polyunsaturated fatty acids$$$
+ACETAMINOPHEN AND TRAMADOL HCL$3$Acetaminophen$Tramadol$$
+COAPROVEL$3$Irbesartan$Hydrochlorothiazide$$
+ETRAVIRINE$1$Etravirine$$$
+CINACALCET HYDROCHLORIDE$2$Cinacalcet$$$
+PREV MEDS$4$$$$
+LIBRAX$3$Clidinium$Chlordiazepoxide$$
+OMNIPAQUE 140$2$Iohexol$$$
+BLINDED BEVACIZUMAB$2$Bevacizumab$$$
+ETIZOLAM$1$Etizolam$$$
+BENDAMUSTINE HCL$1$Bendamustine$$$
+CEFTRIAXONE SODIUM$2$Ceftriaxone$$$
+PROPACET 100$3$Acetaminophen$Dextropropoxyphene$$
+TOCOPHEROL CONCENTRATE CAP$2$Vitamin E$$$
+BENDAMUSTINE$1$BENDAMUSTINE$$$
+BLINDED NO TREATMENT RECEIVED$4$$$$
+BONALON$2$Alendronate$$$
+ASPEGIC 1000$2$Acetylsalicylic acid$$$
+SAIZEN$2$Somatropin recombinant$$$
+LEVOPHED$2$Norepinephrine$$$
+MAGNESIUM HYDROXIDE TAB$2$Magnesium$$$
+IRON (IRON)$2$Iron$$$
+VITAMINS (VITAMINS)$4$$$$
+VITAMIN AND MINERAL PRENATAL SUPPLEMENT W/ FOLIC ACID CAP$4$$$$
+TAZOCILLINE$3$Piperacillin$Tazobactam$$
+MORPHINE HYDROCHLORIDE$2$Morphine$$$
+DURAGESIC-50$2$Fentanyl$$$
+TIENAM$2$Cilastatin$$$
+METHOXY POLYETHYLENE GLYCOL-EPOETIN BETA$5$$$$
+PROCRIT                            /00909301/$2$Epoetin alfa$$$
+DRUG USED IN DIABETES$4$$$$
+HEMOFIL$2$Antihemophilic Factor$$$
+INTELENCE$2$Etravirine$$$
+FERROUS FUMARATE$2$IRON$$$
+ONDANSETRON HYDROCHLORIDE$2$Ondansetron$$$
+BIRTH CONTROL PILLS$4$$$$
+ERLOTINIB (ERLOTINIB) (TABLET) (ERLOTINIB)$2$Erlotinib$$$
+DARVOCET-N 50$3$Acetaminophen$propoxyphene$$
+RIMATIL$2$L-Cysteine$$$
+UNSPECIFIED MEDICATIONS$4$$$$
+ACETAMINOPHEN AND OXYCODONE HCL$3$Acetaminophen$Oxycodone$$
+TYLENOL PM$3$Acetaminophen$Diphenhydramine$$
+SALBUTAMOL (SALBUTAMOL)$2$Salbutamol$$$
+STEROID$4$$$$
+SAW PALMETTO$2$Leuprolide$$$
+NEUTROGIN$2$Pegfilgrastim$$$
+CYCLOBENZAPRINE HYDROCHLORIDE$2$Cyclobenzaprine$$$
+MOXONIDINE$5$Moxonidine$$$
+TS-1$4$$$$
+IXEMPRA KIT$2$Ixabepilone$$$
+MIXTARD HUMAN 70/30$2$Insulin Regular$$$
+CALCIUM + VITAMIN D$3$Calcium$VITAMIN D$$
+VICODIN ES$3$Acetaminophen$Hydrocodone$$

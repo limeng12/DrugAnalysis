@@ -1,0 +1,67 @@
+#parameters for database
+user=root
+password=vas40ue
+host=rdc04.uits.iu.edu:3080
+database=drug
+
+#user=
+#password=
+#host=
+#database=
+
+
+#parameters for PSO
+variance=0.01
+delta=2
+numPar=30
+numIter=500
+maxVecility=0.1
+weight = 2
+weightMin=0.01
+c1 = 1
+c2 = 3
+numberOfParticlesUpdate=4
+portionOfParclesToUpdatePremature=0.2
+
+
+#parameters for linearSearch
+LinearSearchIterationNumber=100
+minStep=0.001
+alpha=20
+initVariables=0.5,0.1,0.01,0.3
+
+
+#Optimization method and PSO method mapping, just for annotation
+#"RR" -> "main.ccbb.faers.methods.RR"
+#"DoMouchel" -> "main.ccbb.faers.methods.DoMouchelMethod"
+#"Poisson" -> "main.ccbb.faers.methods.Poisson"
+#"Pengyue" -> "main.ccbb.faers.methods.PengyueMethod"
+#"LFDRPengyue" -> "main.ccbb.faers.methods.LFDRPengyue"
+#
+#"LinearSearch" -> "main.ccbb.faers.methods.LinearSearch"
+#"PSO" -> "main.ccbb.faers.methods.PSO"
+
+optimization=LinearSearch
+methods=RR,Poisson,DoMouchel,Pengyue,LFDRPengyue
+
+
+withDrawnFlag=a
+INDI=T
+
+
+#Parameters below are just for FAERS System logging
+
+drugBankPath = F:\\drug-data-ppt\\drug-data\\drug-bank\\drugbank.xml
+medDRADir = F:\\drug-data-ppt\\medDRA\\meddra_15_0_english\\MedAscii\\
+demoPath = F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO04Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO04Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO04Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO04Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO05Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO05Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO05Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO05Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO06Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO06Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO06Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO06Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO07Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO07Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO07Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO07Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO08Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO08Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO08Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO08Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO09Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO09Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO09Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO09Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO10Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO10Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO10Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO10Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO11Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO11Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO11Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO11Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO12Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO12Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DEMO\\DEMO12Q3.TXT
+drugPath = F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG04Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG04Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG04Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG04Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG05Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG05Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG05Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG05Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG06Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG06Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG06Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG06Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG07Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG07Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG07Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG07Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG08Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG08Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG08Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG08Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG09Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG09Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG09Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG09Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG10Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG10Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG10Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG10Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG11Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG11Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG11Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG11Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG12Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG12Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\DRUG\\DRUG12Q3.TXT
+reacPath = F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC04Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC04Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC04Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC04Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC05Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC05Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC05Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC05Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC06Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC06Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC06Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC06Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC07Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC07Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC07Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC07Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC08Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC08Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC08Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC08Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC09Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC09Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC09Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC09Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC10Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC10Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC10Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC10Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC11Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC11Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC11Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC11Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC12Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC12Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\REAC\\REAC12Q3.TXT
+indiPath = F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI04Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI04Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI04Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI04Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI05Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI05Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI05Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI05Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI06Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI06Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI06Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI06Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI07Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI07Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI07Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI07Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI08Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI08Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI08Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI08Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI09Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI09Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI09Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI09Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI10Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI10Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI10Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI10Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI11Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI11Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI11Q3.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI11Q4.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI12Q1.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI12Q2.TXT,F:\\drug-data-ppt\\drug-data\\data-catagory\\INDI\\INDI12Q3.TXT
+faersPath=F:\\drug-data-ppt\\drug-data\\zip\\AERS_ASCII_2004Q2.ZIP,F:\\drug-data-ppt\\drug-data\\zip\\AERS_ASCII_2004Q3.ZIP,F:\\drug-data-ppt\\drug-data\\zip\\AERS_ASCII_2004q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\AERS_ASCII_2005Q1.ZIP,F:\\drug-data-ppt\\drug-data\\zip\\aers_asci_2011q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2004q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2005q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2005q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2005q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2006q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2006q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2006q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2006q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2007q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2007q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2007q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2007q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2008q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2008q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2008q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2008q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2009_q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2009_q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2009q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2009q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2010q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2010q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2010q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2010q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2011q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2011q3.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2011q4.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2012q1.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2012q2.zip,F:\\drug-data-ppt\\drug-data\\zip\\aers_ascii_2012q3.zip
+
+#optimization parameters for each method
+DOMOUCHEL=0.92,0.137,1.236,0.026,0.8873
+PENGYUE = 1.602,0.118,0.026,0.236
+LFDRPENGYUE = 1.602,0.118,0.026,0.236
+NEWEBGM2=0.01,0.66,0.022,0.232,1.0429
+NEWEBGM1=0.7575,0.001,0.0011,0.0414,0.316,0.362,1.2305
