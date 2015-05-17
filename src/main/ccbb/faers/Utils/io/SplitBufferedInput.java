@@ -25,13 +25,13 @@ public class SplitBufferedInput {
   }
 
   BufferedReader bufReader = null;
-  
+
   ArrayList<String> headerNames = new ArrayList<String>();
   String spliter = "\\$";
-  
+
   ArrayList<Integer> columnIndex = new ArrayList<Integer>();
   int spliterNum = -1;
-  
+
   public String readLineSplit(int spliterNum) throws IOException {
 
     String line = "";
@@ -61,7 +61,6 @@ public class SplitBufferedInput {
 
       }
     }
-    
 
   }
 
@@ -195,8 +194,8 @@ public class SplitBufferedInput {
   }
 
   /**
-   * Read line by line from Meddra.
-   * Slow here, but not important.
+   * Read line by line from Meddra. Slow here, but not important.
+   * 
    * @return a .
    * @throws IOException
    */
@@ -204,9 +203,9 @@ public class SplitBufferedInput {
     // TODO Auto-generated method stub
     ArrayList<Object> result = new ArrayList<Object>();
 
-    //String tmp = readLineSplit(spliterNum);
-    String tmp=bufReader.readLine();
-    
+    // String tmp = readLineSplit(spliterNum);
+    String tmp = bufReader.readLine();
+
     if (tmp == null) {
       return null;
     }

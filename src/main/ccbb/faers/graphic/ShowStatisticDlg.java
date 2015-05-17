@@ -12,45 +12,25 @@
  *     You should have received a copy of the GNU General Public License
  *******************************************************************************/
 
-package main.ccbb.faers.methods;
+package main.ccbb.faers.graphic;
 
-import java.util.ArrayList;
+import java.awt.GridLayout;
 
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
-import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class RR extends MethodInterface {
-  private static final Logger logger = LogManager.getLogger(RR.class);
+public class ShowStatisticDlg extends JDialog {
+  final static Logger logger = LogManager.getLogger(ShowStatisticDlg.class);
 
-  @Override
-  public double caculateTheValue(int N, double E) {
-    // TODO Auto-generated method stub
-    if (N < 5) {
-      return 0.0;
-    }
+  private static final long serialVersionUID = 8180422056622945149L;
 
-    return N / E;
-  }
+  public ShowStatisticDlg() {
 
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return "RR";
-  }
-
-  @Override
-  public ArrayList<Double> optimization(int[] N, float[] E, OptimizationInterface opti) {
-    // TODO Auto-generated method stub
-    return new ArrayList<Double>();
-
-  }
-
-  @Override
-  public void setParameters(ArrayList<Double> pars) {
-    // TODO Auto-generated method stub
+    JPanel mainPanel = new JPanel();
+    mainPanel.setLayout(new GridLayout(10, 2, 2, 2));
 
   }
 

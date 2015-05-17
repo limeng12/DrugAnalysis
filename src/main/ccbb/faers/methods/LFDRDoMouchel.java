@@ -19,11 +19,12 @@ import java.util.ArrayList;
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class LFDRDoMouchel extends MethodInterface {
+public class LFDRDoMouchel extends ParallelMethodInterface {
   final static Logger logger = LogManager.getLogger(LFDRDoMouchel.class);
 
   double alpha1 = 1;
@@ -35,44 +36,15 @@ public class LFDRDoMouchel extends MethodInterface {
   @Override
   public double caculateTheValue(int N, double E) {
     // TODO Auto-generated method stub
-    return calculateLFDR(N, E);
-  }
-
-  @Override
-  public double calculateLFDR(int N, double E) {
-    // TODO Auto-generated method stub
+    // return calculateLFDR(N, E);
     double p1 = p;
     double p2 = 1 - p;
 
-    Comparable element = func(N, E, alpha1, beta1).multiply(p1);
-    Comparable denominator = func(N, E, alpha1, beta1).multiply(p1).add(
-        func(N, E, alpha2, beta2).multiply(p2));
+    Comparable element = funcUnparalell(N, E, alpha1, beta1).multiply(p1);
+    Comparable denominator = funcUnparalell(N, E, alpha1, beta1).multiply(p1).add(
+        funcUnparalell(N, E, alpha2, beta2).multiply(p2));
 
     return -1 * (element.divide(denominator)).toLog();
-  }
-
-  private Comparable func(int N, double exp, double alpha, double beta) {
-    Comparable bigResult = new Comparable(1.0f);
-    double result = 1;
-    double lnAlpha = 0;
-    double lnN = 0;
-
-    for (int i = 0; i < N; ++i) {
-      bigResult.multiply(1.0 / (1 + beta / exp));
-    }
-
-    result *= Math.pow(1 + exp / beta, -1 * alpha);
-
-    for (int i = 0; i < N; ++i) {
-      lnAlpha += Math.log(alpha + i);
-    }
-
-    for (int i = 1; i <= N; ++i) {
-      lnN += Math.log(i);
-    }
-    result *= Math.exp(lnAlpha - lnN);
-
-    return bigResult.multiply(result);
   }
 
   @Override
@@ -103,6 +75,12 @@ public class LFDRDoMouchel extends MethodInterface {
     beta1 = pars.get(2);
     beta2 = pars.get(3);
     p = pars.get(4);
+
+  }
+
+  @Override
+  protected void caculateObjectFuncParallel() {
+    // TODO Auto-generated method stub
 
   }
 

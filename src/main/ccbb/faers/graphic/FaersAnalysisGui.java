@@ -59,6 +59,7 @@ import javax.swing.table.DefaultTableModel;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -86,9 +87,8 @@ public class FaersAnalysisGui extends JFrame {
       } catch (SQLException e1) {
         // TODO Auto-generated catch block
         logger.error(e1.getMessage());
-        JOptionPane.showMessageDialog(null, e1.getMessage() +
-            "\n" +e1.getStackTrace() + "\n" + e);
-        
+        JOptionPane.showMessageDialog(null, e1.getMessage() + "\n" + e1.getStackTrace() + "\n" + e);
+
       }
       logger.exit();
     }
@@ -127,14 +127,13 @@ public class FaersAnalysisGui extends JFrame {
 
   public static PropertiesConfiguration config = null;
   final static Logger logger = LogManager.getLogger(FaersAnalysisGui.class);
-  
-  
+
   class ColumnChangeListener implements MouseListener {
 
     public void actionPerformed(ActionEvent e) {
       // TODO Auto-generated method stub
 
-      if (!((JCheckBoxMenuItem) (e.getSource())).isSelected() ) {
+      if (!((JCheckBoxMenuItem) (e.getSource())).isSelected()) {
 
         String name = ((JCheckBoxMenuItem) (e.getSource())).getName();
         columnNames.remove(name);
@@ -206,11 +205,11 @@ public class FaersAnalysisGui extends JFrame {
         // table.getTableOfDrugADE(myTableMode,"NEWEBGM",currentPage,drugADEs,columnNames);
 
       } else {
-        item.setSelected( !item.isSelected() );
+        item.setSelected(!item.isSelected());
         String name = item.getText();
         logger.info("add " + name);
 
-        if ( !columnNames.contains(name) ) {
+        if (!columnNames.contains(name)) {
           columnNames.add(name);
 
           // clearTable();
@@ -229,15 +228,15 @@ public class FaersAnalysisGui extends JFrame {
       // TODO Auto-generated method stub
       JCheckBoxMenuItem item = ((JCheckBoxMenuItem) (e.getSource()));
       item.setBackground(Color.GRAY);
-      
+
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
       // TODO Auto-generated method stub
-      JCheckBoxMenuItem item = ( (JCheckBoxMenuItem) (e.getSource()) );
-      
-      item.setBackground( new Color(-1 * 1118482) );
+      JCheckBoxMenuItem item = ((JCheckBoxMenuItem) (e.getSource()));
+
+      item.setBackground(new Color(-1 * 1118482));
 
     }
 
@@ -266,14 +265,14 @@ public class FaersAnalysisGui extends JFrame {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      
+
       sortByName = parentItem.getText();
       clearTable();
       String drugADEs = popDrugAdeInfo.getText();
 
       table.getTableOfDrugADE(myTableMode, sortByName, currentPage, drugADEs, columnNames);
       // table.repaint();
-      
+
     }
 
   }
@@ -295,7 +294,6 @@ public class FaersAnalysisGui extends JFrame {
 
   static JTextField currentPageView = new JTextField();
 
-
   private static ArrayList<MethodInterface> methods = new ArrayList<MethodInterface>();
 
   static OptimizationInterface optiMethod;
@@ -304,12 +302,12 @@ public class FaersAnalysisGui extends JFrame {
 
   private static final long serialVersionUID = -9185735330511290537L;
 
-  //Every long-run thread will check this field frequently.
+  // Every long-run thread will check this field frequently.
   public static AtomicBoolean stopCondition = new AtomicBoolean();
-  
+
   public static ArrayList<Future<?>> futures = new ArrayList<Future<?>>();
 
-  //The threadPoll
+  // The threadPoll
   public static ExecutorService thread;
 
   /**
@@ -334,7 +332,7 @@ public class FaersAnalysisGui extends JFrame {
     optiMethodClassName = methodNameClassNameMap.get(optiMethodClassName);
 
     optiMethod = (OptimizationInterface) Class.forName(optiMethodClassName).newInstance();
-    
+
   }
 
   /**
@@ -345,7 +343,7 @@ public class FaersAnalysisGui extends JFrame {
      * thread = Executors.newFixedThreadPool (Runtime.getRuntime()
      * .availableProcessors()>32?32:Runtime.getRuntime() .availableProcessors());
      */
-    
+
     /**
      * Not Daemon thread!!!.
      */
@@ -355,60 +353,59 @@ public class FaersAnalysisGui extends JFrame {
       public Thread newThread(Runnable runnable) {
         // TODO Auto-generated method stub
         Thread t = new Thread(runnable);
-        //t.setDaemon(true);
+        // t.setDaemon(true);
         return t;
       }
 
     }
-    
-    
+
     thread = Executors.newCachedThreadPool(new DaemonThreadFactory());
-    //thread=Executors.newFixedThreadPool(4);
+    // thread=Executors.newFixedThreadPool(4);
 
   }
 
   public static void main(String[] args) {
     FaersAnalysisGui faers = new FaersAnalysisGui();
     faers.setVisible(true);
-    
+
   }
 
   public static void shutdown() {
 
     // Thread.currentThread().interrupt();
     thread.shutdown();
-    MethodInterface.thread.shutdown();
+    ParallelMethodInterface.thread.shutdown();
 
     stopCondition.set(true);
     // shutdownAndAwaitTermination(thread);
     try {
       thread.awaitTermination(15, TimeUnit.SECONDS);
-      MethodInterface.thread.awaitTermination(15, TimeUnit.SECONDS);
+      ParallelMethodInterface.thread.awaitTermination(15, TimeUnit.SECONDS);
 
-      //Try shut down the process.
+      // Try shut down the process.
       while (!thread.isTerminated()) {
         thread.shutdownNow();
         thread.awaitTermination(15, TimeUnit.SECONDS);
 
       }
 
-      while (!MethodInterface.thread.isTerminated()) {
-        MethodInterface.thread.shutdownNow();
-        MethodInterface.thread.awaitTermination(15, TimeUnit.SECONDS);
+      while (!ParallelMethodInterface.thread.isTerminated()) {
+        ParallelMethodInterface.thread.shutdownNow();
+        ParallelMethodInterface.thread.awaitTermination(15, TimeUnit.SECONDS);
 
       }
 
       futures.clear();
       initTasks();
       stopCondition.set(false);
-      
+
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
       logger.error(e.getMessage());
-      new TimerDialog("interrupted exception");
-      
-      //Renew the thread pool.
+      new TimerDlg("interrupted exception");
+
+      // Renew the thread pool.
       futures.clear();
       initTasks();
       stopCondition.set(false);
@@ -416,9 +413,9 @@ public class FaersAnalysisGui extends JFrame {
       // e.getStackTrace() + "\n" + e);
 
     }
-    
+
   }
-  
+
   @Deprecated
   @SuppressWarnings("unused")
   private static void submit(Runnable buildTableRun) {
@@ -427,7 +424,7 @@ public class FaersAnalysisGui extends JFrame {
 
   }
 
-  //column names for display.
+  // column names for display.
   ArrayList<String> columnNames = new ArrayList<String>();
 
   JLabel currentPageLabel = new JLabel("currentPage:");
@@ -438,16 +435,15 @@ public class FaersAnalysisGui extends JFrame {
 
   JLabel searchDrugAdeLabel = new JLabel("Drug ADE names to Search In Table:");
 
-  //Init the database.
-  InitDatabaseDialog initDatabase;
+  // Init the database.
+  InitDatabaseDlg initDatabase;
 
   JButton initDatabaseButton = new JButton("init database");
-  
-  //Menu bar.
+
+  // Menu bar.
   JMenuBar mb = new JMenuBar();
 
   DefaultTableModel myTableMode;
-
 
   ArrayList<OptimizationInterface> optiMethods = new ArrayList<OptimizationInterface>();
   JMenu option = new JMenu("Options");
@@ -458,25 +454,21 @@ public class FaersAnalysisGui extends JFrame {
   JButton searchBtn = new JButton("search");
 
   JButton viewBtn = new JButton("view table");
-  
-  
-  SearchDialog searchDia;
 
- 
+  SearchDlg searchDia;
+
   JMenu showColumn = new JMenu("display select");
 
   JMenu sortby = new JMenu("sortBy...");
   //
   ButtonGroup sortGroup;
-  
-  //Which method is current be sorted.
+
+  // Which method is current be sorted.
   String sortByName = "";
-  
+
   MyJTable table;
 
   boolean useNewE = true;
-
-
 
   public FaersAnalysisGui() {
 
@@ -556,8 +548,8 @@ public class FaersAnalysisGui extends JFrame {
 
   public void initGraphic() {
 
-    initDatabase = new InitDatabaseDialog(this);
-    searchDia = new SearchDialog(this);
+    initDatabase = new InitDatabaseDlg(this);
+    searchDia = new SearchDlg(this);
 
     processingDialog = new GraphicMonitor(this, "runing...", "progress", 0, 1);
 
@@ -614,9 +606,9 @@ public class FaersAnalysisGui extends JFrame {
 
     searchDrugAdeLabel.setBorder(searchBtn.getBorder());
     mb.add(searchDrugAdeLabel);
-    
+
     mb.add(popDrugAdeInfo);
-    
+
     searchDrugAde.addActionListener(new ActionListener() {
 
       @Override
@@ -631,7 +623,7 @@ public class FaersAnalysisGui extends JFrame {
       }
 
     });
-    
+
     mb.add(new JSeparator());
 
     viewBtn.setIcon(new ImageIcon("resource/view.png"));
@@ -718,13 +710,12 @@ public class FaersAnalysisGui extends JFrame {
 
     JRadioButtonMenuItem sortByDrugName = new JRadioButtonMenuItem("DRUGNAME", true), sortByAeName = new JRadioButtonMenuItem(
         "AENAME", true);
-    
+
     JCheckBoxMenuItem
 
     drugNameShow = new JCheckBoxMenuItem("DRUGNAME", true), adeNameShow = new JCheckBoxMenuItem(
         "AENAME", true), eShow = new JCheckBoxMenuItem("E", true), liEShow = new JCheckBoxMenuItem(
         "LIE", true);
-    
 
     sortGroup = new ButtonGroup();
 
@@ -733,7 +724,7 @@ public class FaersAnalysisGui extends JFrame {
     sortGroup.add(sortByAeName);
     sortby.add(sortByDrugName);
     sortby.add(sortByAeName);
-    
+
     sortByDrugName.addActionListener(new sortByAction(sortByDrugName));
     sortByAeName.addActionListener(new sortByAction(sortByAeName));
 
@@ -744,7 +735,6 @@ public class FaersAnalysisGui extends JFrame {
     showColumn.setBorder(searchBtn.getBorder());
     showColumn.setToolTipText("display or undisplay a field");
 
-    
     showColumn.add(drugNameShow);
     showColumn.add(adeNameShow);
     showColumn.add(eShow);
@@ -758,19 +748,17 @@ public class FaersAnalysisGui extends JFrame {
     lis = adeNameShow.getListeners(MouseListener.class);
     adeNameShow.removeMouseListener(lis[0]);
 
-
     lis = eShow.getListeners(MouseListener.class);
     eShow.removeMouseListener(lis[0]);
 
     lis = liEShow.getListeners(MouseListener.class);
     liEShow.removeMouseListener(lis[0]);
-    
+
     drugNameShow.addMouseListener(new ColumnChangeListener());
     adeNameShow.addMouseListener(new ColumnChangeListener());
-    
+
     eShow.addMouseListener(new ColumnChangeListener());
     liEShow.addMouseListener(new ColumnChangeListener());
-    
 
     columnNames.add("DRUGNAME");
     columnNames.add("AENAME");
@@ -809,7 +797,7 @@ public class FaersAnalysisGui extends JFrame {
       columnNames.add("ORDERBY" + method.getName());
 
     }
-    
+
     mb.add(showColumn);
 
     mb.add(option);
@@ -896,11 +884,11 @@ public class FaersAnalysisGui extends JFrame {
           // TODO Auto-generated catch block
           logger.error(e.getMessage());
           e.printStackTrace();
-          JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getStackTrace() );
+          JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getStackTrace());
           System.exit(0);
         }
         logger.exit();
-        
+
       }
     });
 

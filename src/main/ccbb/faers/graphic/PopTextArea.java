@@ -47,7 +47,7 @@ public class PopTextArea extends JTextField {
     public void actionPerformed(ActionEvent e) {
       // TODO Auto-generated method stub
       Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-      
+
       try {
         String targetStr = (String) (cb.getContents(this).getTransferData(DataFlavor.stringFlavor));
         area.setText(targetStr);

@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Parse the string into sql comfortable statement.
+ * 
  * @author limeng
  *
  */
@@ -40,6 +41,20 @@ public class SqlParseUtil {
   }
 
   public static String seperateByCommaDecode(Iterator<Object> ite, String delim) {
+
+    String result = "";
+    while (ite.hasNext()) {
+      result += "'" + ite.next().toString().toUpperCase().replaceAll("'", "''") + "'";
+      if (ite.hasNext()) {
+        result += delim;
+      }
+    }
+
+    return result;
+
+  }
+
+  public static String seperateByCommaDecodeStr(Iterator<String> ite, String delim) {
 
     String result = "";
     while (ite.hasNext()) {
@@ -80,7 +95,7 @@ public class SqlParseUtil {
     return result;
   }
 
-  public static String seperateByCommaNotString(Iterator<String> ite) {
+  public static String seperateByCommaStr(Iterator<String> ite) {
     // TODO Auto-generated method stub
     String result = "";
     while (ite.hasNext()) {
@@ -93,7 +108,7 @@ public class SqlParseUtil {
     return result;
   }
 
-  public static String seperateByCommaNotStringPre(Iterator<String> ite) {
+  public static String seperateByCommaStrPre(Iterator<String> ite) {
     // TODO Auto-generated method stub
     String result = "";
     while (ite.hasNext()) {
@@ -107,7 +122,6 @@ public class SqlParseUtil {
 
     return result;
   }
-  
 
   public static String seperateByCommaInteger(HashSet<Integer> reportID) {
     String result = "";

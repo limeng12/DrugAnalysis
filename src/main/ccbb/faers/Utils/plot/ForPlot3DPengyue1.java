@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
-import main.ccbb.faers.methods.PengyueMethod1;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
+import main.ccbb.faers.methods.testMethods.PengyueMethod1;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -38,7 +40,7 @@ public class ForPlot3DPengyue1 {
 
     ForPlot3DPengyue1 t = new ForPlot3DPengyue1();
 
-    t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    // t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
     PropertiesConfiguration config = null;
     try {
       config = new PropertiesConfiguration("configure.txt");
@@ -55,22 +57,27 @@ public class ForPlot3DPengyue1 {
     }
 
     t.fun.caculateObjectFuncParallel();
-    t.fun.setParameter(optimizationValue);
+
+    ArrayList<Double> optArray = new ArrayList<Double>();
+    for (int i = 0; i < optimizationValue.length; ++i)
+      optArray.add(optimizationValue[i]);
+
+    t.fun.setParameters(optArray);
 
     t.changeTwoVariablesToCalculate(0, 2, "pengyue1alpha1alpha2.txt");
     t.changeTwoVariablesToCalculate(1, 3, "pengyue1beta1alpha3.txt");
     t.changeTwoVariablesToCalculate(4, 5, "pengyue1beta3p1.txt");
     t.changeTwoVariablesToCalculate(5, 6, "pengyue1p1p2.txt");
 
-    MethodInterface.thread.shutdown();
+    ParallelMethodInterface.thread.shutdown();
 
   }
 
-  private PengyueMethod1 fun;
+  private PengyueMethod1.Test fun;
 
   public ForPlot3DPengyue1() {
     super();
-    fun = new PengyueMethod1();
+    fun = new PengyueMethod1.Test();
 
   }
 

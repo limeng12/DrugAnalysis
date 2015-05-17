@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
-import main.ccbb.faers.methods.PengyueMethod2;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
+import main.ccbb.faers.methods.testMethods.PengyueMethod2;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -55,7 +57,12 @@ public class ForPlot3DPengyue2 {
     }
 
     t.fun.caculateObjectFuncParallel();
-    t.fun.setParameter(optimizationValue);
+
+    ArrayList<Double> optArray = new ArrayList<Double>();
+    for (int i = 0; i < optimizationValue.length; ++i)
+      optArray.add(optimizationValue[i]);
+
+    t.fun.setParameters(optArray);
     double v = t.fun.execute(optimizationValue);
     logger.info("optimization value:" + v);
 
@@ -63,15 +70,15 @@ public class ForPlot3DPengyue2 {
     t.changeTwoVariablesToCalculate(2, 3, "pengyue2alpha3beta3.txt");
     t.changeTwoVariablesToCalculate(3, 4, "pengyue2beta3p2.txt");
 
-    MethodInterface.thread.shutdown();
+    ParallelMethodInterface.thread.shutdown();
 
   }
 
-  private PengyueMethod2 fun;
+  private PengyueMethod2.Test fun;
 
   public ForPlot3DPengyue2() {
     super();
-    fun = new PengyueMethod2();
+    fun = new PengyueMethod2.Test();
 
   }
 

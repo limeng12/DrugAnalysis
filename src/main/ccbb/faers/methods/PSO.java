@@ -23,8 +23,8 @@ import java.util.Queue;
 import java.util.Random;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
+import main.ccbb.faers.core.CoreAPI;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
-import main.ccbb.faers.graphic.InitDatabaseDialog;
 import main.ccbb.faers.methods.interfaceToImpl.MaxObjectFunction;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 
@@ -161,12 +161,12 @@ public class PSO extends OptimizationInterface {
       }
 
       for (int i = 0; i < currentPos.length; ++i) {
-        logger.info("\t\t" + currentPos[i]);
+        logger.trace("\t\t" + currentPos[i]);
 
       }
 
-      logger.info("\t" + tmp.getValue());
-      logger.info("pso over");
+      logger.trace("\t" + tmp.getValue());
+      logger.trace("pso over");
 
       // return gbest;
 
@@ -405,29 +405,29 @@ public class PSO extends OptimizationInterface {
 
     for (int j = 0; j < dim; ++j) {
       logger.debug("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
-      logger.info("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
+      logger.trace("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
 
     }
 
-    logger.info("optimization value=" + bestValue.getValue());
+    logger.trace("optimization value=" + bestValue.getValue());
     // InitDatabaseDialog.pm.setNote("optimization");
 
     for (int i = 0; i < numIter; ++i) {
       for (int j = 0; j < swarm.size(); ++j) {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance()
             .getTime());
-        logger.info("current system:" + timeStamp);
+        logger.trace("current system:" + timeStamp);
         if (FaersAnalysisGui.stopCondition.get()) {
           throw new FAERSInterruptException("interrupted exception");
 
         }
 
-        logger.info("\tpartical =" + j);
+        logger.trace("\tpartical =" + j);
         swarm.get(j).updatePartical(j);
         // bestValue=swarm.get(j).getBestValue();
         // logger.debug(bestValue.getValue());
-        if (InitDatabaseDialog.pm != null) {
-          InitDatabaseDialog.pm.setProgress((int) ((1.0 * i / numIter) * 100));
+        if (CoreAPI.pm != null) {
+          CoreAPI.pm.setProgress((int) ((1.0 * i / numIter) * 100));
         }
 
       }
@@ -465,13 +465,13 @@ public class PSO extends OptimizationInterface {
       }
 
       for (int j = 0; j < dim; ++j) {
-        logger.info("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
+        logger.trace("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
       }
 
-      logger.info("maxVecility=" + maxVecility);
+      logger.trace("maxVecility=" + maxVecility);
 
-      logger.info("optimization value=" + bestValue.getValue());
-      logger.info("iteTimes=" + i);
+      logger.trace("optimization value=" + bestValue.getValue());
+      logger.trace("iteTimes=" + i);
 
     }
 
@@ -500,7 +500,7 @@ public class PSO extends OptimizationInterface {
       tmpPar.init(i);
       swarm.add(tmpPar);
     }
-    logger.info("init over");
+    logger.trace("init over");
   }
 
   private void readParameters() {
@@ -568,10 +568,10 @@ public class PSO extends OptimizationInterface {
       }
       result = result / swarm.size();
 
-      logger.info("var=" + result + "\t" + i);
+      logger.trace("var=" + result + "\t" + i);
       if (result < (variance)) {
         prematureDim.add(i);
-        logger.info("add" + i);
+        logger.trace("add" + i);
       }
     }
     return prematureDim;

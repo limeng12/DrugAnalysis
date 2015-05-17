@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Seperating the digit and exp part. note this is very slow, but can keep random bigger number.
+ * Separating the digit and exp part. note this is very slow, but can keep random bigger number.
  *
  */
 public class Comparable {
@@ -63,7 +63,7 @@ public class Comparable {
     value = v * Math.pow(10, -1 * exponent);
   }
 
-  Comparable add(Comparable t) {
+  public Comparable add(Comparable t) {
     if (value == 0) {
       value = t.value;
       exponent = t.exponent;
@@ -167,7 +167,7 @@ public class Comparable {
     return this;
   }
 
-  Comparable multiply(double t) {
+  public Comparable multiply(double t) {
     value *= t;
     int result = getOrderOfMagnitude(value);
     value = value * Math.pow(10, -1 * result);
@@ -214,7 +214,7 @@ public class Comparable {
     return result;
   }
 
-  double toLog() {
+  public double toLog() {
     if (value == 0) {
       logger.error("can't to log of value zero");
       System.exit(-1);

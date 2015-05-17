@@ -40,7 +40,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * popup dialog for displaying the drug and ade information.
+ * popup dialog for displaying the drug and ADE information.
+ * 
  * @author limeng
  *
  */
@@ -158,7 +159,6 @@ public class InspectDlg extends JDialog {
     this.setSize(new Dimension(400, 500));
 
     this.pack();
-
 
   }
 

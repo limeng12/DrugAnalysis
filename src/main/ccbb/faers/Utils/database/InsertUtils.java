@@ -29,9 +29,12 @@ public class InsertUtils {
   /**
    * insert hashMap into table.
    * 
-   * @param conn mysql connection.
-   * @param dis hashMap.
-   * @param tableName table name.
+   * @param conn
+   *          mysql connection.
+   * @param dis
+   *          hashMap.
+   * @param tableName
+   *          table name.
    */
   public static void fillHashMap(Connection conn, HashMap<String, Integer> dis, String tableName)
       throws SQLException {
@@ -53,9 +56,12 @@ public class InsertUtils {
   /**
    * insert list of Pairs into table.
    * 
-   * @param conn mysql connection.
-   * @param frequency paris.
-   * @param tableName table name.
+   * @param conn
+   *          mysql connection.
+   * @param frequency
+   *          paris.
+   * @param tableName
+   *          table name.
    */
   public static void fillLinkedPair(Connection conn, List<Pair<String, Integer>> frequency,
       String tableName) throws SQLException {
@@ -77,8 +83,10 @@ public class InsertUtils {
   /**
    * insert a line into a PreparedStatement.
    * 
-   * @param ps The prepared statement.
-   * @param values The values in a row to be inserted.
+   * @param ps
+   *          The prepared statement.
+   * @param values
+   *          The values in a row to be inserted.
    */
   public static int insertLine(PreparedStatement ps, ArrayList<Object> values) throws SQLException {
 

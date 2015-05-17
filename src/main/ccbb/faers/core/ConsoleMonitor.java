@@ -11,46 +11,45 @@
  *
  *     You should have received a copy of the GNU General Public License
  *******************************************************************************/
+package main.ccbb.faers.core;
 
-package main.ccbb.faers.methods;
-
-import java.util.ArrayList;
-
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
-import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ProgressMonitor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class RR extends MethodInterface {
-  private static final Logger logger = LogManager.getLogger(RR.class);
+/**
+ * There are two ProgressMonitor in this system. 1 The graphic system. 2 The console System. In this
+ * way, the console application can run lonely.
+ * 
+ * @author limeng
+ *
+ */
+public class ConsoleMonitor implements ProgressMonitor {
+  private static final Logger logger = LogManager.getLogger(ConsoleMonitor.class);
 
   @Override
-  public double caculateTheValue(int N, double E) {
+  public void close() {
     // TODO Auto-generated method stub
-    if (N < 5) {
-      return 0.0;
-    }
-
-    return N / E;
-  }
-
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return "RR";
-  }
-
-  @Override
-  public ArrayList<Double> optimization(int[] N, float[] E, OptimizationInterface opti) {
-    // TODO Auto-generated method stub
-    return new ArrayList<Double>();
 
   }
 
   @Override
-  public void setParameters(ArrayList<Double> pars) {
+  public void setNote(String tnote) {
     // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setProgress(int i) {
+    // TODO Auto-generated method stub
+    logger.info("progress:" + i);
+  }
+
+  @Override
+  public void setValue(int i) {
+    // TODO Auto-generated method stub
+    logger.info("setValue:" + i);
 
   }
 

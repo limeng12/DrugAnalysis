@@ -14,46 +14,40 @@
 
 package main.ccbb.faers.graphic;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JTextField;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+public class LoadFaersZipAction implements ActionListener {
 
-public class LoadMedDraAction implements ActionListener {
-  private static final Logger logger = LogManager.getLogger(LoadMedDraAction.class);
+  public static String zipPath = null;
+  public static String zipFilesPath[] = new String[0];
 
-  static String medDRADir = "";
-  JTextField medDRALabel;
-
-  public LoadMedDraAction(JTextField medDRALabel2) {
-    // TODO Auto-generated constructor stub
-
-    medDRALabel = medDRALabel2;
+  public LoadFaersZipAction(Frame f) {
 
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     // TODO Auto-generated method stub
-
     JFileChooser fc = new JFileChooser();
-    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+    fc.setMultiSelectionEnabled(true);
 
     int returnVal = fc.showOpenDialog(fc);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      String os = System.getProperty("os.name").toLowerCase();
-      if (os.indexOf("win") >= 0) {
-        medDRADir = fc.getSelectedFile().toString() + "\\";
-      } else {
-        medDRADir = fc.getSelectedFile().toString() + "/";
+      File[] files = fc.getSelectedFiles();
+
+      zipFilesPath = new String[files.length];
+      for (int i = 0; i < files.length; ++i) {
+        zipFilesPath[i] = files[i].getAbsolutePath();
       }
 
-      medDRALabel.setText(fc.getSelectedFile().getPath());
     }
 
   }

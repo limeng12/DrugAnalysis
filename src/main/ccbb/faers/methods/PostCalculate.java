@@ -21,6 +21,7 @@ import java.sql.Statement;
 
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -42,14 +43,14 @@ public class PostCalculate {
 
   public static double calculateEBGMn0(int N, double E) {
 
-    double p2f2 = p2 * PengyueMethod.funcUnparalell(N, E, alpha2, beta2, true);
+    double p2f2 = p2 * ParallelMethodInterface.funcUnparalell(N, E, alpha2, beta2, true);
     double p3f3 = p3 * PengyueMethod.funcUnparalell(N, E, alpha3, beta3, true);
 
     double Q2 = p2f2 / (p1 + p2f2 + p3f3);
     double Q3 = p3f3 / (p1 + p2f2 + p3f3);
 
-    double meanLog = Q2 * (PengyueMethod.digamma(alpha2 + N) - Math.log(beta2 + E)) + Q3
-        * (PengyueMethod.digamma(alpha3 + N) - Math.log(beta3 + E));
+    double meanLog = Q2 * (ParallelMethodInterface.digamma(alpha2 + N) - Math.log(beta2 + E)) + Q3
+        * (ParallelMethodInterface.digamma(alpha3 + N) - Math.log(beta3 + E));
 
     double EBGM = Math.pow(2, meanLog / (Math.log(2)));
 

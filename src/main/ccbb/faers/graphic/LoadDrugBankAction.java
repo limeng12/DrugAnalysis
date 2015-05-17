@@ -44,12 +44,13 @@ public class LoadDrugBankAction implements ActionListener {
     fc.setMultiSelectionEnabled(false);
 
     int returnVal = fc.showOpenDialog(fc);
-    
+
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       drugBankFilePath = fc.getSelectedFile().toString();
       drugbankLabel.setText(fc.getSelectedFile().getName());
     }
 
   }
-
+  
+  
 }

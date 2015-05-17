@@ -35,11 +35,12 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
-import main.ccbb.faers.core.BuildFaersDatabase;
+import main.ccbb.faers.core.LoadFaersZip;
+import main.ccbb.faers.core.CoreAPI;
 import main.ccbb.faers.core.CorrectDrugNames;
 import main.ccbb.faers.core.DatabaseConnect;
-import main.ccbb.faers.core.ReadDrugBankXML;
-import main.ccbb.faers.core.ReadMedDRA;
+import main.ccbb.faers.core.LoadDrugbank;
+import main.ccbb.faers.core.LoadMedDra;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -55,8 +56,8 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
     public void run() {
       // TODO Auto-generated method stub
       try {
-        InitDatabaseDialog.pm.setProgress(0);
-        InitDatabaseDialog.pm.setNote("load into drugbank");
+        CoreAPI.pm.setProgress(0);
+        CoreAPI.pm.setNote("load into drugbank");
 
         if (LoadDrugBankAction.drugBankFilePath.length() == 0) {
           LoadDrugBankAction.drugBankFilePath = FaersAnalysisGui.config.getString("drugBankPath");
@@ -64,51 +65,50 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
           FaersAnalysisGui.config.setProperty("drugBankPath", LoadDrugBankAction.drugBankFilePath);
         }
 
-        if (LoadMedDRAAction.medDRADir.length() == 0) {
-          LoadMedDRAAction.medDRADir = FaersAnalysisGui.config.getString("medDRADir");
+        if (LoadMedDraAction.medDRADir.length() == 0) {
+          LoadMedDraAction.medDRADir = FaersAnalysisGui.config.getString("medDRADir");
         } else {
-          FaersAnalysisGui.config.setProperty("medDRADir", LoadMedDRAAction.medDRADir);
+          FaersAnalysisGui.config.setProperty("medDRADir", LoadMedDraAction.medDRADir);
         }
-
-        if (LoadFAERSActionZIP.zipFilesPath.length == 0) {
-          LoadFAERSActionZIP.zipFilesPath = FaersAnalysisGui.config.getStringArray("faersPath");
+        
+        if (LoadFaersZipAction.zipFilesPath.length == 0) {
+          LoadFaersZipAction.zipFilesPath = FaersAnalysisGui.config.getStringArray("faersPath");
         } else {
-          FaersAnalysisGui.config.setProperty("faersPath", LoadFAERSActionZIP.zipFilesPath);
+          FaersAnalysisGui.config.setProperty("faersPath", LoadFaersZipAction.zipFilesPath);
         }
 
         FaersAnalysisGui.config.save();
 
         // pm.setMillisToPopup(1000);
-        ReadDrugBankXML drugBank = ReadDrugBankXML.getInstance(DatabaseConnect.getMysqlConnector());
+        LoadDrugbank drugBank = LoadDrugbank.getInstance(DatabaseConnect.getMysqlConnector());
         drugBank.build(LoadDrugBankAction.drugBankFilePath);
 
-        InitDatabaseDialog.pm.setProgress(50);
+        CoreAPI.pm.setProgress(50);
 
         CorrectDrugNames co = CorrectDrugNames.getInstance(DatabaseConnect.getMysqlConnector());
         co.readManuallyCorrectNames("manually-correct-drugnames-frequencybigger1000.csv");
 
-        InitDatabaseDialog.pm.setProgress(0);
-        InitDatabaseDialog.pm.setNote("load into medDra");
+        CoreAPI.pm.setProgress(0);
+        CoreAPI.pm.setNote("load into medDra");
         logger.info("load into medDRA");
 
-        ReadMedDRA med = ReadMedDRA.getInstance(DatabaseConnect.getMysqlConnector());
-        med.build(LoadMedDRAAction.medDRADir);
+        LoadMedDra med = LoadMedDra.getInstance(DatabaseConnect.getMysqlConnector());
+        med.build(LoadMedDraAction.medDRADir);
 
-        InitDatabaseDialog.pm.setProgress(100);
+        CoreAPI.pm.setProgress(100);
 
-        InitDatabaseDialog.pm.setProgress(0);
-        InitDatabaseDialog.pm.setNote("load the files into FAERS");
+        CoreAPI.pm.setProgress(0);
+        CoreAPI.pm.setNote("load the files into FAERS");
         logger.info("load the files into FAERS");
 
-        BuildFaersDatabase loadDatabase = BuildFaersDatabase.getInstance(DatabaseConnect
-            .getMysqlConnector());
-        loadDatabase.processZip(LoadFAERSActionZIP.zipFilesPath);
+        LoadFaersZip loadDatabase = LoadFaersZip.getInstance(DatabaseConnect.getMysqlConnector());
+        loadDatabase.processZip(LoadFaersZipAction.zipFilesPath);
 
         // med.creatADETable();
         // co.createTableDrugnameMap();
         // TableUtils.setDelayKeyWrite(co.conn,"DRUGNAMEMAP");
 
-        InitDatabaseDialog.pm.close();
+        CoreAPI.pm.close();
 
       } catch (SQLException | IOException e1) {
         // TODO Auto-generated catch block
@@ -122,7 +122,7 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
         JOptionPane.showMessageDialog(null, e1.getMessage() + "\t" + e1.getStackTrace().toString(),
             "bug detect", JOptionPane.ERROR_MESSAGE);
         e1.printStackTrace();
-        new TimerDialog("interrupted exception");
+        new TimerDlg("interrupted exception");
       } catch (ConfigurationException e) {
         // TODO Auto-generated catch block
         logger.error(e.getMessage() + e.toString());

@@ -153,7 +153,7 @@ public class MyJTable extends JTable {
 
       int[] rows = table.getSelectedRows();
       int[] cols = table.getSelectedColumns();
-      
+
       for (int i = 0; i < rows.length; ++i) {
         for (int j = 0; j < cols.length; ++j) {
 
@@ -218,7 +218,7 @@ public class MyJTable extends JTable {
     }
 
     void getColumnNamesAndData() {
-      
+
       if (sortBy.equals("")) {
         sortBy = "RAND()";
       }
@@ -235,7 +235,7 @@ public class MyJTable extends JTable {
         }
 
       }
-      
+
       String[] arrNames = null;
       String searchStr = "";
       String sqlStr = "";
@@ -283,7 +283,7 @@ public class MyJTable extends JTable {
         }
 
         int rowSizeIndex = 0;
-        
+
         while (rset.next()) {
           Vector<String> oneRow = new Vector<String>();
           oneRow.add("" + ((currentPage - 1) * countInPage + (rowSizeIndex + 1)));
@@ -424,8 +424,8 @@ public class MyJTable extends JTable {
     content.clear();
     this.setAutoCreateColumnsFromModel(false);
 
-    future = FaersAnalysisGui.thread.submit(new TableProcessingDrugAde(sortBy, content, currentPage,
-        drugADE, colNames, tableColNames));
+    future = FaersAnalysisGui.thread.submit(new TableProcessingDrugAde(sortBy, content,
+        currentPage, drugADE, colNames, tableColNames));
 
     final MyJTable t = this;
     // SwingUtilities.invokeLater(new Runnable(){
@@ -460,7 +460,7 @@ public class MyJTable extends JTable {
         logger.info(resultSize);
         if (MyJTable.resultSize <= 0) {
           FaersAnalysisGui.currentPageView.setText("" + --FaersAnalysisGui.currentPage);
-          new TimerDialog("there are no more pages to display");
+          new TimerDlg("there are no more pages to display");
 
         } else {
           FaersAnalysisGui.currentPageView.setText("" + FaersAnalysisGui.currentPage);
@@ -556,18 +556,16 @@ public class MyJTable extends JTable {
 
         pw.print(this.getValueAt(i, j).toString());
 
-        if (j != ncol - 1)
-         {
+        if (j != ncol - 1) {
           pw.print("\t");
-        // result+="\t";
+          // result+="\t";
         }
 
       }
 
-      if (i != nrow - 1)
-       {
+      if (i != nrow - 1) {
         pw.println();
-      // result+="\n";
+        // result+="\n";
       }
 
     }

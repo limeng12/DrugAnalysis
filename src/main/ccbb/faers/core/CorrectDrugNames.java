@@ -33,9 +33,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import main.ccbb.faers.Utils.database.RunStatement;
 import main.ccbb.faers.Utils.database.TableUtils;
-import main.ccbb.faers.graphic.InitDatabaseDialog;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,15 +57,18 @@ public class CorrectDrugNames {
   public static void main(String[] args) {
     CorrectDrugNames core = new CorrectDrugNames();
     try {
+      DatabaseConnect.setConnectionFromConfig();
       core.conn = DatabaseConnect.getMysqlConnector();
 
-      core.readManuallyCorrectNames("/media/0BD10B170BD10B17/drug-data-ppt"
-          + "/correctNames/manually-correct-drugnames-frequencybigger1000.csv");
+      core.readManuallyCorrectNames(args[0]);
 
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -107,54 +111,50 @@ public class CorrectDrugNames {
    *          wrong name
    * @param errorclass
    *          error class, can be 1,2,3,4,5
+   * @throws SQLException
    * 
    */
   private void addToDrugBank(PreparedStatement ps2, String correctName, String wrongName,
-      int errorclass) {
+      int errorclass) throws SQLException {
 
-    try {
-      int id = -1;
-      correctName = correctName.replaceAll("'", "''");// !!Check here
+    int id = -1;
+    correctName = correctName.replaceAll("'", "''");// !!Check here
 
-      String str = "select ID from DRUGBANK where DRUGNAME=" + "'" + correctName + "'";
-      stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-      rset = stmt.executeQuery(str);
+    String str = "select ID from DRUGBANK where DRUGNAME=" + "'" + correctName + "'";
+    stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    rset = stmt.executeQuery(str);
 
-      while (rset.next()) {
-        id = Integer.parseInt(rset.getString("ID"));
-      }
-      rset.close();
-      stmt.close();
-      if (id == -1) {
-        id = (int) (Math.random() * 1000000) + 2000000;
-        logger.debug(id);
-        ps2.setInt(1, id);
-        ps2.setString(2, correctName);
-        ps2.setString(3, "T");
-        ps2.setInt(4, errorclass);
-        ps2.setString(5, "F");// here 5 means it is manually correct
-        ps2.setString(6, "we manually correct, we don't provide detail information right now");
-        // ps2.addBatch();
-        // ps2.executeBatch();
-        // ps2.clearBatch();
-        ps2.execute();
-        return;
-      }
-
+    while (rset.next()) {
+      id = Integer.parseInt(rset.getString("ID"));
+    }
+    rset.close();
+    stmt.close();
+    if (id == -1) {
+      id = (int) (Math.random() * 1000000) + 2000000;
+      logger.debug(id);
       ps2.setInt(1, id);
-      ps2.setString(2, wrongName);
+      ps2.setString(2, correctName);
       ps2.setString(3, "T");
-      ps2.setInt(4, 6);
+      ps2.setInt(4, errorclass);
       ps2.setString(5, "F");// here 5 means it is manually correct
       ps2.setString(6, "we manually correct, we don't provide detail information right now");
-      ps2.execute();
       // ps2.addBatch();
       // ps2.executeBatch();
       // ps2.clearBatch();
-
-    } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      ps2.execute();
+      return;
     }
+
+    ps2.setInt(1, id);
+    ps2.setString(2, wrongName);
+    ps2.setString(3, "T");
+    ps2.setInt(4, 6);
+    ps2.setString(5, "F");// here 5 means it is manually correct
+    ps2.setString(6, "we manually correct, we don't provide detail information right now");
+    ps2.execute();
+    // ps2.addBatch();
+    // ps2.executeBatch();
+    // ps2.clearBatch();
   }
 
   @SuppressWarnings("unused")
@@ -195,13 +195,13 @@ public class CorrectDrugNames {
     final long startTime = System.currentTimeMillis(); //
     final ArrayList<String> result = new ArrayList<String>();
     HashMap<String, Integer> faersDis = buildDisOfFearsDrugName();
-    logger.debug("distribution init over");
+    logger.info("distribution init over");
 
     final ArrayList<String> faersNames = getNameDisInTableDrug();
-    logger.debug("faers durg names init over");
+    logger.info("faers durg names init over");
 
     HashSet<String> drugBankNames = getAllNamesInDrugBankNoUnique();
-    logger.debug("init over");
+    logger.info("init over");
 
     // NeedlemanWunsch alignEngine = new NeedlemanWunsch();
     int indexFearsName = 1;
@@ -226,9 +226,11 @@ public class CorrectDrugNames {
       int count = faersDis.get(faersName).intValue();
 
       String maybeRightNames = "";
-      // Iterator<String> iteDrugBankNames = drugBankNames.iterator();
-      // String drugBankName = "";
+
       /*
+       * * drug name alignment. Iterator<String> iteDrugBankNames = drugBankNames.iterator(); String
+       * drugBankName = "";
+       * 
        * while (iteDrugBankNames.hasNext()) { drugBankName = iteDrugBankNames.next(); if
        * (Math.abs(faersName.length() - drugBankName.length()) > cutoff - 1) continue;
        * 
@@ -250,7 +252,7 @@ public class CorrectDrugNames {
 
     long endTime = System.currentTimeMillis(); //
 
-    logger.debug("time consuming=" + (endTime - startTime));
+    logger.info("time consuming=" + (endTime - startTime));
 
     return result;
   }
@@ -259,19 +261,17 @@ public class CorrectDrugNames {
 
     String sqlString1 = "create table DRUGNAMEMAP( DRUGNAME VARCHAR(300),GENERICNAME VARCHAR(300)"
         + ", id int, INDEX drugnameIndex(DRUGNAME,id) ) ENGINE INNODB";
-        // +" FOREIGN KEY(DRUGNAME)REFERENCES DRUG(DRUGNAME),"
-        //+ " FOREIGN KEY(GENERICNAME) REFERENCES DRUGNAME(DRUGNAME)" + " ) ENGINE INNODB";
+    // +" FOREIGN KEY(DRUGNAME)REFERENCES DRUG(DRUGNAME),"
+    // + " FOREIGN KEY(GENERICNAME) REFERENCES DRUGNAME(DRUGNAME)" + " ) ENGINE INNODB";
 
     String sqlString2 = "insert into DRUGNAMEMAP "
         + "select distinct d1.DRUGNAME,d2.DRUGNAME AS GENERICNAME,d1.id " + " from DRUGBANK d1"
         + " INNER JOIN DRUGBANK d2 ON d1.id=d2.id" + " where d2.class=1 OR d2.class=5 ";
 
-    stmt = conn.createStatement();
-    stmt.execute(sqlString1);
-    stmt.execute(sqlString2);
+    RunStatement.executeAStatement(conn, sqlString1);
+    RunStatement.executeAStatement(conn, sqlString2);
 
-    stmt.close();
-    logger.debug("drugNameMap created");
+    logger.info("drugNameMap created");
 
   }
 
@@ -280,18 +280,14 @@ public class CorrectDrugNames {
 
     sqlString = "create table TYPO(faerdrugName VARCHAR(300),drugbankNames VARCHAR(1000)"
         + ",occuranceTime NUMERIC(20),ifindrugbank CHAR(1))";
-    stmt = conn.createStatement();
-    stmt.execute(sqlString);
-    stmt.close();
+    RunStatement.executeAStatement(conn, sqlString);
 
   }
 
   @SuppressWarnings("unused")
   private void dropTableTypo() throws SQLException {
     sqlString = "drop table IF EXISTS TYPO ";
-    stmt = conn.createStatement();
-    stmt.execute(sqlString);
-    stmt.close();
+    RunStatement.executeAStatement(conn, sqlString);
 
   }
 
@@ -355,6 +351,7 @@ public class CorrectDrugNames {
 
   }
 
+  @SuppressWarnings("unused")
   private ArrayList<String> getDisFromDatabase() throws SQLException {
     ArrayList<String> result = new ArrayList<String>();
     sqlString = "select * from typo where ifindrugbank='F' AND occurancetime>1000 "
@@ -371,9 +368,6 @@ public class CorrectDrugNames {
 
       line = drugname + "$" + occurancetime;
       result.add(line);
-
-      // count = rset.getInt(1);
-
     }
     rset.close();
     stmt.close();
@@ -400,14 +394,10 @@ public class CorrectDrugNames {
 
   private void processType1(WrongDrugType type, HashSet<String> badNames, HashSet<String> drugNames)
       throws SQLException {
-    InitDatabaseDialog.pm.setProgress(60);
+    CoreAPI.pm.setProgress(60);
 
     Iterator<Map.Entry<String, ArrayList<String>>> it = type.correctNamesMap.entrySet().iterator();
     String correctName = "";
-
-    // PreparedStatement ps1;
-    // ps1 =
-    // conn.prepareStatement("insert into DRUGNAME(DRUGNAME,MANUALLYCORRECT) values(?,?)");
 
     PreparedStatement ps2 = conn
         .prepareStatement("insert into DRUGBANK(ID,DRUGNAME,MANUALLYCORRECT"
@@ -421,26 +411,20 @@ public class CorrectDrugNames {
       logger.debug(correctName);
       correctName = correctNames.get(0);
       if (!badNames.contains(correctName)) {
-        // if (!drugNames.contains(correctName))
-        // addToDrugName(ps1, correctName, drugNames);
-
         addToDrugBank(ps2, correctName, wrongName, 5);
-        // addToDrugBank(
       }
 
       it.remove(); // avoids a ConcurrentModificationException
     }
 
-    // ps1.executeBatch();
     ps2.executeBatch();
-    // ps1.close();
     ps2.close();
 
   }
 
   private void processType2(WrongDrugType type, HashSet<String> badNames, HashSet<String> drugNames)
       throws SQLException {
-    InitDatabaseDialog.pm.setProgress(70);
+    CoreAPI.pm.setProgress(70);
 
     Iterator<Map.Entry<String, ArrayList<String>>> it = type.correctNamesMap.entrySet().iterator();
     // PreparedStatement ps1;
@@ -469,7 +453,7 @@ public class CorrectDrugNames {
 
   private void processType3(WrongDrugType type, HashSet<String> badNames, HashSet<String> drugNames)
       throws SQLException {
-    InitDatabaseDialog.pm.setProgress(80);
+    CoreAPI.pm.setProgress(80);
 
     Iterator<Map.Entry<String, ArrayList<String>>> it = type.correctNamesMap.entrySet().iterator();
     // PreparedStatement ps1;

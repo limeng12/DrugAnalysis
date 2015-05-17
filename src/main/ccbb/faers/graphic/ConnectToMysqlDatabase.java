@@ -40,6 +40,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Connect to the mysql database.
+ * 
  * @author limeng
  *
  */
@@ -132,7 +133,7 @@ public class ConnectToMysqlDatabase implements ActionListener {
       this.pack();
       this.doLayout();
 
-      //this.setAlwaysOnTop(true);
+      // this.setAlwaysOnTop(true);
 
     }
 

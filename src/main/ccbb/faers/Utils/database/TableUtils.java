@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,12 +36,14 @@ public class TableUtils {
    */
   public static void addIndex(Connection conn, String tableName, String colName)
       throws SQLException {
-    String sqlString = "create index " + tableName + colName + "index on " + tableName + "("
+    String ran=RandomStringUtils.random(10);
+    
+    String sqlString = "create index " + tableName + ran + "index on " + tableName + "("
         + colName + ")";
 
     Statement stmt = conn.createStatement();
     stmt.execute(sqlString);
-    logger.debug("Table " + tableName + " is alter!");
+    logger.info("Table " + tableName + " is alter!");
     stmt.close();
 
   }
@@ -53,7 +56,7 @@ public class TableUtils {
 
     Statement stmt = conn.createStatement();
     stmt.execute(sqlString);
-    logger.debug("Table " + tableName + " is alter!");
+    logger.info("Table " + tableName + " is alter!");
     stmt.close();
 
   }
@@ -116,7 +119,7 @@ public class TableUtils {
     stmt.execute(sqlString);
 
     stmt.close();
-    logger.debug("alter the table to memory");
+    logger.info("alter the table to memory");
 
   }
 
@@ -127,7 +130,7 @@ public class TableUtils {
     stmt.execute(sqlString);
 
     stmt.close();
-    logger.debug("alter the table to myisam");
+    logger.info("alter the table to myisam");
 
   }
 
@@ -138,7 +141,7 @@ public class TableUtils {
 
     Statement stmt = conn.createStatement();
     stmt.execute(sqlString);
-    logger.debug("Table " + tableName + " is alter!");
+    logger.info("Table " + tableName + " is alter!");
     stmt.close();
 
   }
@@ -151,7 +154,7 @@ public class TableUtils {
     Statement stmt = conn.createStatement();
     stmt.execute(ts);
     stmt.close();
-    logger.debug("insert a table");
+    logger.info("insert a table");
 
   }
 

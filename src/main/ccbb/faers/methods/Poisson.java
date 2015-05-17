@@ -16,7 +16,7 @@ package main.ccbb.faers.methods;
 
 import java.util.ArrayList;
 
-import main.ccbb.faers.graphic.CalculateEbgmLfdr;
+import main.ccbb.faers.graphic.CalculateEbgmLfdrAction;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 
@@ -24,7 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Poisson extends MethodInterface {
-  private static final Logger logger = LogManager.getLogger(CalculateEbgmLfdr.class);
+  private static final Logger logger = LogManager.getLogger(CalculateEbgmLfdrAction.class);
 
   private double caculateLog(double base, double value) {
     return Math.log(value) / Math.log(base);
@@ -46,12 +46,6 @@ public class Poisson extends MethodInterface {
 
     return result;
 
-  }
-
-  @Override
-  public double calculateLFDR(int n, double e) {
-    // TODO Auto-generated method stub
-    return 0;
   }
 
   @Override

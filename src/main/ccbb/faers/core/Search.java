@@ -20,12 +20,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import main.ccbb.faers.Utils.algorithm.AlgorithmUtil;
 import main.ccbb.faers.Utils.algorithm.Pair;
 import main.ccbb.faers.Utils.database.SearchUtil;
 import main.ccbb.faers.Utils.database.SqlParseUtil;
@@ -93,7 +95,7 @@ public class Search {
 
   ArrayList<Integer> aeNumberTable = new ArrayList<Integer>();
   private Connection conn;
-  ReadDrugBankXML drugDB;
+  LoadDrugbank drugDB;
   ArrayList<Integer> drugNumberTable = new ArrayList<Integer>();
   ArrayList<Double> expTable = new ArrayList<Double>();
 
@@ -114,7 +116,7 @@ public class Search {
   private Search(Connection tconn) {
     super();
     setConn(tconn);
-    drugDB = ReadDrugBankXML.getInstance(tconn);
+    drugDB = LoadDrugbank.getInstance(tconn);
     medSearchEngine = MedDraSearchUtils.getInstance(tconn);
     searchEn = SearchEnssential.getInstance(tconn);
 
@@ -231,8 +233,6 @@ public class Search {
     return drugNames;
   }
 
-
-
   /*
    * MedDRA related search
    */
@@ -338,12 +338,11 @@ public class Search {
 
   }
 
-  public HashSet<Integer> unionSearchIsrUsingDrugbank(List<String> drugNames)
-      throws SQLException {
+  public HashSet<Integer> unionSearchIsrUsingDrugbank(List<String> drugNames) throws SQLException {
     HashSet<Integer> allReports = new HashSet<Integer>();
-    
+
     for (String ite : drugNames) {
-      HashSet<Integer> oneDrugReports =searchEn.getIsrsFromDrugBankDrugName(ite.toUpperCase());
+      HashSet<Integer> oneDrugReports = searchEn.getIsrsFromDrugBankDrugName(ite.toUpperCase());
       allReports.addAll(oneDrugReports);
 
     }
@@ -441,6 +440,57 @@ public class Search {
     }
 
     return count;
+  }
+
+  /**
+   * get the margin count of drugs' intersection.
+   * 
+   * @param drugNames
+   *          drugNames.
+   * @throws SQLException .
+   * @return margin count.
+   */
+  public int getMarginOfDrugsIntersection(List<String> drugs,
+      List<Pair<Integer, HashSet<Integer>>> adesIsr) throws SQLException {
+    HashSet<Integer> drugIsrs = intersectionSearchDrugsSIRUsingDrugBank(drugs);
+
+    // List<Pair<Integer, HashSet<Integer>>> adesIsr = searchEn.getAdeDisFriendly();
+    Iterator<Pair<Integer, HashSet<Integer>>> iteAde = adesIsr.iterator();
+    int sum = 0;
+
+    while (iteAde.hasNext()) {
+      Pair<Integer, HashSet<Integer>> oneAdeIsrs = iteAde.next();
+      int count = AlgorithmUtil.getOvelapLap(drugIsrs, oneAdeIsrs.getValue2());
+      sum += count;
+    }
+
+    return sum;
+  }
+
+  /**
+   * 880108 get the margin count of Ades' union.
+   *
+   * @param aeNames
+   *          , ade names.
+   * @throws SQLException .
+   * @return margin count.
+   */
+  public int getMarginOfAdesUnion(List<String> ades, List<Pair<Integer, HashSet<Integer>>> drugsIsr)
+      throws SQLException {
+    HashSet<Integer> adeIsrs = unionSearchIsrUsingMeddra(ades);
+
+    // List<Pair<Integer, HashSet<Integer>> > drugIsr = searchEn.getDrugReportDis();
+    Iterator<Pair<Integer, HashSet<Integer>>> iteDrug = drugsIsr.iterator();
+    int sum = 0;
+
+    while (iteDrug.hasNext()) {
+      Pair<Integer, HashSet<Integer>> oneDrugIsrs = iteDrug.next();
+      int count = AlgorithmUtil.getOvelapLap(adeIsrs, oneDrugIsrs.getValue2());
+
+      sum += count;
+    }
+
+    return sum;
   }
 
 }

@@ -26,6 +26,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
+import main.ccbb.faers.core.CoreAPI;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 
@@ -40,7 +41,6 @@ public class OptimizationAction implements ActionListener {
     private static final long serialVersionUID = -6368650206112059468L;
 
     public OptimizationDlg() {
-
     }
 
   }
@@ -51,32 +51,33 @@ public class OptimizationAction implements ActionListener {
     public void run() {
       // TODO Auto-generated method stub
       try {
-        
-        InitDatabaseDialog.pm.setNote("reading data from database");
 
-        InitDatabaseDialog.pm.setProgress(0);
+        CoreAPI.pm.setNote("reading data from database");
+
+        CoreAPI.pm.setProgress(0);
         readObserveCountExpectCountFromDatabase();
 
-        //The optimization parameters are saved in configure.txt.
+        // The optimization parameters are saved in configure.txt.
         PropertiesConfiguration config = FaersAnalysisGui.config;
 
-        //read data from database over.
-        InitDatabaseDialog.pm.close();
-        
-        //For each method, optimize its parameters, some method like RR and Poisson, will skip this step.
+        // read data from database over.
+        CoreAPI.pm.close();
+
+        // For each method, optimize its parameters, some method like RR and Poisson, will skip this
+        // step.
         for (MethodInterface method : methods) {
-          InitDatabaseDialog.pm.setNote(method.getName());
-          InitDatabaseDialog.pm.setProgress(0);
+          CoreAPI.pm.setNote(method.getName());
+          CoreAPI.pm.setProgress(0);
 
           ArrayList<Double> pars = method.optimization(obserCount, expectCount,
               FaersAnalysisGui.optiMethod);
-          
+
           Double[] arr = pars.toArray(new Double[pars.size()]);
 
           config.setProperty(method.getName(), arr);
-          
+
         }
-        InitDatabaseDialog.pm.close();
+        CoreAPI.pm.close();
 
         config.save();
 
@@ -91,7 +92,7 @@ public class OptimizationAction implements ActionListener {
         logger.error(e);
         e.printStackTrace();
         JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getStackTrace());
-        new TimerDialog("interrupted exception");
+        new TimerDlg("interrupted exception");
       } catch (ConfigurationException e) {
         // TODO Auto-generated catch block
 
@@ -110,7 +111,7 @@ public class OptimizationAction implements ActionListener {
 
   float[] expectCount;
 
-  InitDatabaseDialog initDialog;
+  InitDatabaseDlg initDialog;
   ArrayList<MethodInterface> methods;
   int[] obserCount;
 
@@ -118,7 +119,7 @@ public class OptimizationAction implements ActionListener {
   private Statement stmt;
   private boolean useNewE = true;
 
-  public OptimizationAction(InitDatabaseDialog tInitDialog) {
+  public OptimizationAction(InitDatabaseDlg tInitDialog) {
     this.initDialog = tInitDialog;
 
   }
@@ -135,7 +136,7 @@ public class OptimizationAction implements ActionListener {
     methods = FaersAnalysisGui.getMethods();
     if (initDialog.newECheck.isSelected()) {
       useNewE = true;
-      
+
     }
 
   }
@@ -174,7 +175,7 @@ public class OptimizationAction implements ActionListener {
     int blocks = numberOfCount / part + 1;
 
     for (int iter = 0; iter < blocks; ++iter) {
-      InitDatabaseDialog.pm.setProgress((int) (iter / ((float) blocks) * 100));
+      CoreAPI.pm.setProgress((int) (iter / ((float) blocks) * 100));
 
       if (FaersAnalysisGui.stopCondition.get()) {
         return;
@@ -229,16 +230,16 @@ public class OptimizationAction implements ActionListener {
     conn.setAutoCommit(false);
 
     stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-    
-    useNewE=true;
-    
+
+    useNewE = true;
+
     if (useNewE) {
       rset = stmt.executeQuery("select count(*) from RATIO where LIE>0");
     } else {
       rset = stmt.executeQuery("select count(*) from RATIO where E>0");
     }
-    
-    //number of drug-ADE combinations.
+
+    // number of drug-ADE combinations.
     int numberOfCount = -1;
 
     while (rset.next()) {
@@ -246,7 +247,7 @@ public class OptimizationAction implements ActionListener {
     }
 
     logger.info("number of E/LiE>0=" + numberOfCount);
-    
+
     obserCount = new int[numberOfCount];
     expectCount = new float[numberOfCount];
 
@@ -263,13 +264,13 @@ public class OptimizationAction implements ActionListener {
     stmt.setFetchSize(Integer.MIN_VALUE);
 
     rset = stmt.executeQuery(sqlStr);
-    
+
     int rowIndex = 0;
 
     while (rset.next()) {
       if (rowIndex % 100000 == 0) {
-        logger.debug(rowIndex);
-        InitDatabaseDialog.pm.setProgress((int) (rowIndex / ((float) numberOfCount) * 100));
+        logger.trace(rowIndex);
+        CoreAPI.pm.setProgress((int) (rowIndex / ((float) numberOfCount) * 100));
       }
       int n = rset.getInt(1);// observe count
       float e = rset.getFloat(2);// expect count
@@ -287,5 +288,4 @@ public class OptimizationAction implements ActionListener {
 
   }
 
-  
 }

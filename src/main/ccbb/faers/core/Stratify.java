@@ -68,6 +68,9 @@ import java.util.regex.Pattern;
  * 
  */
 
+import main.ccbb.faers.Utils.database.SqlParseUtil;
+
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -92,40 +95,34 @@ public class Stratify {
   static int numberOfYear = 1;
   static ArrayList<Integer> ObsStratify = new ArrayList<Integer>();
 
-  public static ArrayList<Integer> buildObsStratification(Connection conn) {
+  public static ArrayList<Integer> buildObsStratification(Connection conn) throws SQLException {
     for (int i = 0; i < numberOfAge * numberOfGender * numberOfYear; ++i) {
       ObsStratify.add(0);
     }
 
     String sqlString1 = "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO";
     // sqlString="select  N,E,EBGM from EBGM";
-    try {
-      Statement sstmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY,
-          ResultSet.CONCUR_READ_ONLY);
-      ResultSet srset = sstmt.executeQuery(sqlString1);
-      // rset.setFetchSize(1000);
+    Statement sstmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet srset = sstmt.executeQuery(sqlString1);
+    // rset.setFetchSize(1000);
 
-      while (srset.next()) {
-        String age = srset.getString("AGE");
-        String age_cod = srset.getString("AGE_COD");
-        String gender = srset.getString("GNDR_COD");
-        String date = srset.getString("FDA_DT");
+    while (srset.next()) {
+      String age = srset.getString("AGE");
+      String age_cod = srset.getString("AGE_COD");
+      String gender = srset.getString("GNDR_COD");
+      String date = srset.getString("FDA_DT");
 
-        int index = getIndex(age, age_cod, gender, date);
+      int index = getIndex(age, age_cod, gender, date);
 
-        if (index == -1) {
-          continue;
-        }
-
-        ObsStratify.set(index, ObsStratify.get(index) + 1);
-
+      if (index == -1) {
+        continue;
       }
-      srset.close();
-      sstmt.close();
 
-    } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      ObsStratify.set(index, ObsStratify.get(index) + 1);
+
     }
+    srset.close();
+    sstmt.close();
 
     return ObsStratify;
 
@@ -191,19 +188,25 @@ public class Stratify {
   public static void main(String[] args) {
     Stratify stra;
     try {
+      DatabaseConnect.setConnectionFromConfig();
       stra = new Stratify();
       stra.searchISRSADrugUsingDrugBankStra("");
+      // stra.buildObsStratification();
+      // stra.buildDrugISRs();
+      // stra.buildAEISRs();
+      // stra.buildExpCount();
+      // stra.tellAge(tage, tage_cod)
 
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // stra.buildObsStratification();
-    // stra.buildDrugISRs();
-    // stra.buildAEISRs();
-    // stra.buildExpCount();
 
-    // stra.tellAge(tage, tage_cod)
+    catch (ConfigurationException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 
   // "YR|MON|WK|DY|HR";
@@ -241,10 +244,9 @@ public class Stratify {
       return 1;// man
     } else if (tgender.equals("F")) {
       return 2;// woman
-    }
-    else {
+    } else {
       return 3;
-    // return -1;
+      // return -1;
     }
   }
 
@@ -316,148 +318,140 @@ public class Stratify {
 
   }
 
-  void buildAEISRs() {
-    try {
+  void buildAEISRs() throws SQLException {
 
-      for (int i = 0; i < aes.size(); ++i) {
-        logger.debug("ae" + i);
-        // HashSet<Integer> aeISR;
-        // aeISR = searchDB.searchISRsAEUsingMedDRA(aes.get(i));
+    for (int i = 0; i < aes.size(); ++i) {
+      logger.debug("ae" + i);
+      // HashSet<Integer> aeISR;
+      // aeISR = searchDB.searchISRsAEUsingMedDRA(aes.get(i));
 
-        // Iterator<Integer> itr = aeISR.iterator();
-        sqlString = "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
-        // ArrayList<String> names =
-        // searchDB.medSearchEngine.search(aes.get(i));
-        ArrayList<String> names = MedDraSearchUtils.getInstance(conn).getLowerNames(aes.get(i));
-        for (int j = 0; j < names.size(); ++j) {
-          names.set(j, names.get(j).replaceAll("'", "''"));
+      // Iterator<Integer> itr = aeISR.iterator();
+      sqlString = "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
+      // ArrayList<String> names =
+      // searchDB.medSearchEngine.search(aes.get(i));
+      ArrayList<String> names = MedDraSearchUtils.getInstance(conn).getLowerNames(aes.get(i));
+      for (int j = 0; j < names.size(); ++j) {
+        names.set(j, names.get(j).replaceAll("'", "''"));
+      }
+
+      sqlString += "select distinct ISR from REAC where ";
+
+      for (int j = 0; j < names.size(); ++j) {
+        sqlString += "PT=" + "'" + names.get(j) + "'";
+        if (j != (names.size() - 1)) {
+          sqlString += " OR ";
         }
-
-        sqlString += "select distinct ISR from REAC where ";
-
-        for (int j = 0; j < names.size(); ++j) {
-          sqlString += "PT=" + "'" + names.get(j) + "'";
-          if (j != (names.size() - 1)) {
-            sqlString += " OR ";
-          }
-
-        }
-
-        sqlString += ")";
-        // if (aeISR.size() == 0)
-        // sqlString =
-        // "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR=000000";
-
-        stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-        stmt.setFetchSize(200000);
-
-        rset = stmt.executeQuery(sqlString);
-
-        ArrayList<Integer> aeISRs = new ArrayList<Integer>();
-        for (int j = 0; j < numberOfAge * numberOfGender * numberOfYear; ++j) {
-          aeISRs.add(0);
-        }
-
-        while (rset.next()) {
-
-          String age = rset.getString("AGE");
-          String age_cod = rset.getString("AGE_COD");
-          String gender = rset.getString("GNDR_COD");
-          String date = rset.getString("FDA_DT");
-
-          int index = getIndex(age, age_cod, gender, date);
-          if (index == -1) {
-            continue;
-          }
-
-          aeISRs.set(index, aeISRs.get(index) + 1);
-
-        }
-        aeStratifyISRs.add(aeISRs);
-        rset.close();
-        stmt.close();
 
       }
 
-    } catch (SQLException e) {
-      logger.debug(e.getMessage());
-    }
-  }
+      sqlString += ")";
+      // if (aeISR.size() == 0)
+      // sqlString =
+      // "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR=000000";
 
-  void buildDrugISRs() {
-    try {
-      for (int i = 0; i < drugs.size(); ++i) {
-        logger.debug("drug" + i);
+      stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-        // HashSet<Integer> drugISR =
-        // searchDB.searchISRSADrugUsingDrugBank(drugs.get(i));
-        // Iterator<Integer> itr = drugISR.iterator();
-        sqlString = "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
-        ArrayList<String> names = ReadDrugBankXML.getInstance(conn).getTheSynomFromDatabase(
-            drugs.get(i));
+      stmt.setFetchSize(200000);
 
-        // is the below necessary? yes it is necessary
-        for (int j = 0; j < names.size(); ++j) {
-          names.set(j, names.get(j).replaceAll("'", "''"));
-        }
-        // search PS must change here
-        sqlString += "select distinct ISR from DRUG where ";
-        for (int j = 0; j < names.size(); ++j) {
-          sqlString += "DRUGNAME=" + "'" + names.get(j) + "'";
-          if (j != (names.size() - 1)) {
-            sqlString += " OR ";
-          }
+      rset = stmt.executeQuery(sqlString);
 
-        }
-
-        sqlString += ")";
-
-        // sqlString += ")";
-        // if (drugISR.size() == 0)
-        // sqlString =
-        // "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR=000000";
-
-        stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        stmt.setFetchSize(200000);
-        rset = stmt.executeQuery(sqlString);
-
-        ArrayList<Integer> drugISRs = new ArrayList<Integer>();
-        for (int j = 0; j < numberOfAge * numberOfGender * numberOfYear; ++j) {
-          drugISRs.add(0);
-        }
-        // int t = 0;
-        while (rset.next()) {
-          // logger.debug("ISR="+(t++));
-
-          String age = rset.getString("AGE");
-          String age_cod = rset.getString("AGE_COD");
-          String gender = rset.getString("GNDR_COD");
-          String date = rset.getString("FDA_DT");
-
-          int index = getIndex(age, age_cod, gender, date);
-          if (index == -1) {
-            continue;
-          }
-
-          drugISRs.set(index, drugISRs.get(index) + 1);
-
-        }
-        drugStratifyISRs.add(drugISRs);
-
-        rset.close();
-        stmt.close();
-        // sqlString.substring(0)
-
+      ArrayList<Integer> aeISRs = new ArrayList<Integer>();
+      for (int j = 0; j < numberOfAge * numberOfGender * numberOfYear; ++j) {
+        aeISRs.add(0);
       }
 
-    } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      while (rset.next()) {
+
+        String age = rset.getString("AGE");
+        String age_cod = rset.getString("AGE_COD");
+        String gender = rset.getString("GNDR_COD");
+        String date = rset.getString("FDA_DT");
+
+        int index = getIndex(age, age_cod, gender, date);
+        if (index == -1) {
+          continue;
+        }
+
+        aeISRs.set(index, aeISRs.get(index) + 1);
+
+      }
+      aeStratifyISRs.add(aeISRs);
+      rset.close();
+      stmt.close();
+
     }
 
   }
 
-  void buildExpCount() {
+  void buildDrugISRs() throws SQLException {
+
+    for (int i = 0; i < drugs.size(); ++i) {
+      logger.debug("drug" + i);
+
+      // HashSet<Integer> drugISR =
+      // searchDB.searchISRSADrugUsingDrugBank(drugs.get(i));
+      // Iterator<Integer> itr = drugISR.iterator();
+      sqlString = "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
+      ArrayList<String> names = LoadDrugbank.getInstance(conn)
+          .getTheSynomFromDatabase(drugs.get(i));
+
+      // is the below necessary? yes it is necessary
+      for (int j = 0; j < names.size(); ++j) {
+        names.set(j, names.get(j).replaceAll("'", "''"));
+      }
+      // search PS must change here
+      sqlString += "select distinct ISR from DRUG where ";
+      for (int j = 0; j < names.size(); ++j) {
+        sqlString += "DRUGNAME=" + "'" + names.get(j) + "'";
+        if (j != (names.size() - 1)) {
+          sqlString += " OR ";
+        }
+
+      }
+
+      sqlString += ")";
+
+      // sqlString += ")";
+      // if (drugISR.size() == 0)
+      // sqlString =
+      // "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR=000000";
+
+      stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+      stmt.setFetchSize(200000);
+      rset = stmt.executeQuery(sqlString);
+
+      ArrayList<Integer> drugISRs = new ArrayList<Integer>();
+      for (int j = 0; j < numberOfAge * numberOfGender * numberOfYear; ++j) {
+        drugISRs.add(0);
+      }
+      // int t = 0;
+      while (rset.next()) {
+        // logger.debug("ISR="+(t++));
+
+        String age = rset.getString("AGE");
+        String age_cod = rset.getString("AGE_COD");
+        String gender = rset.getString("GNDR_COD");
+        String date = rset.getString("FDA_DT");
+
+        int index = getIndex(age, age_cod, gender, date);
+        if (index == -1) {
+          continue;
+        }
+
+        drugISRs.set(index, drugISRs.get(index) + 1);
+
+      }
+      drugStratifyISRs.add(drugISRs);
+
+      rset.close();
+      stmt.close();
+      // sqlString.substring(0)
+
+    }
+
+  }
+
+  void ourputExpectCountStra() {
     try {
       FileOutputStream s;
       s = new FileOutputStream("stratificationExp.txt");
@@ -506,49 +500,38 @@ public class Stratify {
       names.set(i, names.get(i).replaceAll("'", "''"));
     }
 
-    try {
-      sqlString = "select ISR,AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in (";
-      sqlString += "select distinct ISR from REAC where ";
+    sqlString = "select ISR,AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in (";
+    sqlString += "select distinct ISR from REAC where ";
+    sqlString += SqlParseUtil.seperateByCommaDecodeStr(names.iterator(), ",");
 
-      for (int i = 0; i < names.size(); ++i) {
-        sqlString += "PT=" + "'" + names.get(i) + "'";
-        if (i != (names.size() - 1)) {
-          sqlString += " OR ";
-        }
+    sqlString += ")";
 
+    // logger.debug(sqlString);
+
+    stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    rset = stmt.executeQuery(sqlString);
+
+    // HashSet<Integer> oneStraIsr=new HashSet<Integer>();
+    while (rset.next()) {
+      String age = rset.getString("AGE");
+      String age_cod = rset.getString("AGE_COD");
+      String gender = rset.getString("GNDR_COD");
+      String date = rset.getString("FDA_DT");
+
+      int index = getIndex(age, age_cod, gender, date);
+      if (index == -1) {
+        continue;
       }
-      sqlString += ")";
 
-      // logger.debug(sqlString);
+      ISRs.get(index).add(rset.getInt("ISR"));
 
-      stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-      rset = stmt.executeQuery(sqlString);
-
-      // HashSet<Integer> oneStraIsr=new HashSet<Integer>();
-      while (rset.next()) {
-        String age = rset.getString("AGE");
-        String age_cod = rset.getString("AGE_COD");
-        String gender = rset.getString("GNDR_COD");
-        String date = rset.getString("FDA_DT");
-
-        int index = getIndex(age, age_cod, gender, date);
-        if (index == -1) {
-          continue;
-        }
-
-        ISRs.get(index).add(rset.getInt("ISR"));
-
-        // oneStraIsr.add(rset.getInt("ISR"));
-      }
-      rset.close();
-      stmt.close();
+      // oneStraIsr.add(rset.getInt("ISR"));
     }
-
-    catch (SQLException e) {
-      logger.debug(e.getMessage());
-    }
+    rset.close();
+    stmt.close();
 
     return ISRs;
+
   }
 
   // drug 7 have problem, since all the drug come from DRUG talbe,so every
@@ -642,7 +625,7 @@ public class Stratify {
       ISRs.add(new HashSet<Integer>());
     }
 
-    ArrayList<String> names = ReadDrugBankXML.getInstance(conn).getTheSynomFromDatabase(drugName);
+    ArrayList<String> names = LoadDrugbank.getInstance(conn).getTheSynomFromDatabase(drugName);
     for (int i = 0; i < names.size(); ++i) {
       names.set(i, names.get(i).replaceAll("'", "''"));
     }
@@ -651,44 +634,38 @@ public class Stratify {
     // names.add(drugName.toUpperCase());
     // convert to upper case
 
-    try {
-      sqlString = "select ISR,AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
-      sqlString += "select distinct ISR from DRUG where ";
-      for (int i = 0; i < names.size(); ++i) {
-        sqlString += "DRUGNAME=" + "'" + names.get(i) + "'";
-        if (i != (names.size() - 1)) {
-          sqlString += " OR ";
-        }
-
+    sqlString = "select ISR,AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
+    sqlString += "select distinct ISR from DRUG where ";
+    for (int i = 0; i < names.size(); ++i) {
+      sqlString += "DRUGNAME=" + "'" + names.get(i) + "'";
+      if (i != (names.size() - 1)) {
+        sqlString += " OR ";
       }
-      sqlString += ")";
-      // logger.debug(sqlString);
 
-      stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-      rset = stmt.executeQuery(sqlString);
-      // HashSet<Integer> oneStraIsr=new HashSet<Integer>();
-      while (rset.next()) {
-        String age = rset.getString("AGE");
-        String age_cod = rset.getString("AGE_COD");
-        String gender = rset.getString("GNDR_COD");
-        String date = rset.getString("FDA_DT");
+    }
+    sqlString += ")";
+    // logger.debug(sqlString);
 
-        int index = getIndex(age, age_cod, gender, date);
-        if (index == -1) {
-          continue;
-        }
+    stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    rset = stmt.executeQuery(sqlString);
+    // HashSet<Integer> oneStraIsr=new HashSet<Integer>();
+    while (rset.next()) {
+      String age = rset.getString("AGE");
+      String age_cod = rset.getString("AGE_COD");
+      String gender = rset.getString("GNDR_COD");
+      String date = rset.getString("FDA_DT");
 
-        ISRs.get(index).add(rset.getInt("ISR"));
-
-        // oneStraIsr.add(rset.getInt("ISR"));
+      int index = getIndex(age, age_cod, gender, date);
+      if (index == -1) {
+        continue;
       }
+
+      ISRs.get(index).add(rset.getInt("ISR"));
+
+      // oneStraIsr.add(rset.getInt("ISR"));
 
       rset.close();
       stmt.close();
-    }
-
-    catch (SQLException e) {
-      logger.debug(e.getMessage());
     }
 
     return ISRs;
@@ -713,8 +690,7 @@ public class Stratify {
       return 1;// man
     } else if (tgender.equals("F")) {
       return 2;// woman
-    }
-    else {
+    } else {
       return 3;// unknown
     }
 

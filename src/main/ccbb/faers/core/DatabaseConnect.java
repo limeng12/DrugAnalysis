@@ -20,7 +20,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import main.ccbb.faers.Utils.database.TableUtils;
+import main.ccbb.faers.graphic.FaersAnalysisGui;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,6 +82,26 @@ public class DatabaseConnect {
   public static void close() throws SQLException {
 
     conn.close();
+  }
+
+  /**
+   * set connection from configure.txt.
+   * 
+   * @throws ConfigurationException
+   * @throws SQLException
+   * 
+   */
+  public static void setConnectionFromConfig() throws ConfigurationException, SQLException {
+    PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+
+    FaersAnalysisGui.config = config;
+    String userName = config.getString("user");
+    String password = config.getString("password");
+    String host = config.getString("host");
+    String database = config.getString("database");
+
+    DatabaseConnect.setMysqlConnector(host, userName, password, database);
+
   }
 
 }

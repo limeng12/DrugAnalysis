@@ -12,13 +12,11 @@ public class AlgorithmUtil {
     while (ite1.hasNext()) {
       if (set2.contains(ite1.next())) {
         count++;
-      
+
       }
     }
-    
+
     return count;
   }
-  
-  
 
 }

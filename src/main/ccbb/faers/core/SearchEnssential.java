@@ -12,7 +12,6 @@
  *     You should have received a copy of the GNU General Public License
  *******************************************************************************/
 
-
 package main.ccbb.faers.core;
 
 import java.sql.Connection;
@@ -29,8 +28,6 @@ import main.ccbb.faers.Utils.algorithm.AlgorithmUtil;
 import main.ccbb.faers.Utils.algorithm.Pair;
 import main.ccbb.faers.Utils.database.SqlParseUtil;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
-import main.ccbb.faers.graphic.InitDatabaseDialog;
-import main.ccbb.faers.methods.interfaceToImpl.ConsoleMonitor;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -43,30 +40,19 @@ public class SearchEnssential {
   private static SearchEnssential instance;
   private Connection conn;
 
-  
-  public static void main(String[] args){
-    InitDatabaseDialog.pm = new ConsoleMonitor();
+  public static void main(String[] args) {
+    CoreAPI.pm = new ConsoleMonitor();
 
-    PropertiesConfiguration config;
     try {
-      config = new PropertiesConfiguration("configure.txt");
 
-      FaersAnalysisGui.config = config;
-      String userName = config.getString("user");
-      String password = config.getString("password");
-      String host = config.getString("host");
-      String database = config.getString("database");
+      DatabaseConnect.setConnectionFromConfig();
+      SearchEnssential e = SearchEnssential.getInstance(DatabaseConnect.getMysqlConnector());
+      HashSet<Integer> drugIsrs = e.getIsrsFromDrugBankDrugName("DASATINIB".toUpperCase());
+      HashSet<Integer> adeIsrs = e.getIsrsUsingMeddra("EXTRASYSTOLES".toUpperCase());
 
-      DatabaseConnect.setMysqlConnector(host, userName, password, database);
-      SearchEnssential e=SearchEnssential.getInstance(DatabaseConnect.getMysqlConnector());
-      HashSet<Integer> drugIsrs=e.getIsrsFromDrugBankDrugName("DASATINIB".toUpperCase());
-      HashSet<Integer> adeIsrs=e.getIsrsUsingMeddra("EXTRASYSTOLES".toUpperCase());
-      
-      
-      int count=AlgorithmUtil.getOvelapLap(drugIsrs, adeIsrs);
+      int count = AlgorithmUtil.getOvelapLap(drugIsrs, adeIsrs);
       System.out.println(count);
-      
-      
+
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -74,18 +60,16 @@ public class SearchEnssential {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-      
-    
+
   }
-  
-  
+
   private SearchEnssential() {
 
   }
 
   /**
    * singleton class, the factory method.
-   * 
+   *
    */
   public static SearchEnssential getInstance(Connection conn) {
     if (instance == null) {
@@ -99,7 +83,7 @@ public class SearchEnssential {
 
   /**
    * group each ISR into its ADE
-   * 
+   *
    * @return a map of ADE name and ISRs.
    */
   public List<Pair<Integer, HashSet<Integer>>> getADEReportDisNotConsiderIndi() throws SQLException {
@@ -148,22 +132,22 @@ public class SearchEnssential {
 
     return adeDis;
   }
-  
+
   /**
    * get the ISR number which have this drugname(use brand name and synomys name)
    */
   public HashSet<Integer> getIsrsFromDrugBankDrugNameMiddle(String drugName) throws SQLException {
     // int count = 0;
     HashSet<Integer> ISRs = new HashSet<Integer>();
-    ArrayList<String> names = ReadDrugBankXML.getInstance(conn).getTheSynomFromDatabase(drugName);
+    ArrayList<String> names = LoadDrugbank.getInstance(conn).getTheSynomFromDatabase(drugName);
     String[] namesArr = names.toArray(new String[names.size()]);
 
     String sqlString = "select distinct ISR from DRUG where DRUGNAME in(";
     sqlString += SqlParseUtil.seperateByCommaDecode(namesArr) + ")";
 
-    Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, 
+    Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
         ResultSet.CONCUR_READ_ONLY);
-    
+
     ResultSet rset = stmt.executeQuery(sqlString);
     while (rset.next()) {
       ISRs.add(rset.getInt("ISR"));
@@ -177,7 +161,7 @@ public class SearchEnssential {
 
   /**
    * get ISRs from a drug name.
-   * 
+   *
    * @param drugName
    *          drug name.
    */
@@ -205,26 +189,26 @@ public class SearchEnssential {
     return isrs;
 
   }
-  
+
   /**
    * group each ISR into its ADE(using a middle table).
-   *      
-   * Left Join version, don't use it unless you are using mysql5.6 or bigger,
-   * Because Mysql5.6 use derived table index.
-    
-        EXPLAIN select DISTINCT RESULT1.ISR,RESULT1.pt_code FROM 
-         (SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM REAC
-         INNER JOIN ADE ON REAC.PT = ADE.name ORDER BY ISR,pt_code  ) AS RESULT1 
-
-         LEFT JOIN 
-
-         (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI
-         INNER JOIN ADE ON INDI.INDI_PT=ADE.name ORDER BY ISR,pt_code  ) AS RESULT2 
-         ON RESULT1.ISR=RESULT2.ISR AND RESULT1.pt_code=RESULT2.pt_code
-
-         where RESULT2.ISR IS NULL ORDER BY RESULT1.pt_code;
-         
+   *
+   * Left Join version, don't use it unless you are using mysql5.6 or bigger, Because Mysql5.6 use
+   * derived table index.
    * 
+   * EXPLAIN select DISTINCT RESULT1.ISR,RESULT1.pt_code FROM (SELECT DISTINCT REAC.ISR
+   * ISR,ADE.pt_code pt_code FROM REAC INNER JOIN ADE ON REAC.PT = ADE.name ORDER BY ISR,pt_code )
+   * AS RESULT1
+   * 
+   * LEFT JOIN
+   * 
+   * (SELECT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name
+   * ORDER BY ISR,pt_code ) AS RESULT2 ON RESULT1.ISR=RESULT2.ISR AND
+   * RESULT1.pt_code=RESULT2.pt_code
+   * 
+   * where RESULT2.ISR IS NULL ORDER BY RESULT1.pt_code;
+   * 
+   *
    * @return a map of ADE name and ISRs.
    */
   public List<Pair<Integer, HashSet<Integer>>> getAdeDisLeftJoin() throws SQLException {
@@ -237,7 +221,7 @@ public class SearchEnssential {
 
         + " LEFT JOIN "
 
-        + " (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code" + " FROM INDI"
+        + " (SELECT  INDI.ISR ISR,ADE.pt_code pt_code" + " FROM INDI"
         + " INNER JOIN ADE ON INDI.INDIPT=ADE.name" + " ORDER BY ISR,pt_code  ) AS RESULT2 "
 
         + " ON RESULT1.ISR=RESULT2.ISR AND RESULT1.pt_code=RESULT2.pt_code"
@@ -276,56 +260,55 @@ public class SearchEnssential {
   }
 
   /**
-   * group each ISR into its ADE(used in mysql before 5.6)
-   * not in version.
-   *      
-     EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM REAC
-     INNER JOIN ADE ON REAC.PT = ADE.name where NOT EXISTS
-     (SELECT NULL FROM (SELECT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI
-     INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) AS RESULT1
-     WHERE RESULT1.ISR=REAC.ISR AND RESULT1.pt_code=ADE.pt_code )
-     ORDER BY  pt_code;
-        
+   * group each ISR into its ADE(used in mysql before 5.6) not in version.
+   *
+   * EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM REAC INNER JOIN ADE ON REAC.PT =
+   * ADE.name where NOT EXISTS (SELECT NULL FROM (SELECT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI
+   * INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) AS RESULT1 WHERE RESULT1.ISR=REAC.ISR AND
+   * RESULT1.pt_code=ADE.pt_code ) ORDER BY pt_code;
+   * 
    * not in version:
-     
-     EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM ADE FORCE INDEX (ptNameCodeIndex)
-     STRAIGHT_JOIN REAC FORCE INDEX (REACPTindex) ON REAC.PT = ADE.name where (ISR,pt_code) NOT IN
-     (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI
-     INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) ORDER BY  pt_code;
-        
-   *  This select is very un-stable. because mysql doesn't optimize it corretly sometimes.
-   *  so I use straight_join and force index here. 
-   *  If you have a mysql version >=5.6, the above version(Left Join) maybe also a good candidate.
-   *  
+   * 
+   * EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM ADE FORCE INDEX (ptNameCodeIndex)
+   * STRAIGHT_JOIN REAC FORCE INDEX (REACPTindex) ON REAC.PT = ADE.name where (ISR,pt_code) NOT IN
+   * (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON
+   * INDI.INDI_PT=ADE.name ) ORDER BY pt_code;
+   * 
+   * not in with not TMP table: EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM ADE
+   * INNER JOIN REAC ON REAC.PT = ADE.name where (ISR,pt_code) NOT IN (SELECT INDI.ISR
+   * ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) ORDER BY pt_code
+   * \G;
+   * 
+   * This select is very un-stable. because mysql doesn't optimize it corretly sometimes. so I use
+   * straight_join and force index here. If you have a mysql version >=5.6, the above version(Left
+   * Join) maybe also a good candidate.
+   *
    * one report,one kind of ADE is assumed.
    *
    * @return a map of ADE name and ISRs.
    */
   public List<Pair<Integer, HashSet<Integer>>> getAdeDisFriendly() throws SQLException {
     List<Pair<Integer, HashSet<Integer>>> adeDis = new LinkedList<Pair<Integer, HashSet<Integer>>>();
-    
-    
-    String sqlString = "SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code"
-        + " FROM ADE FORCE INDEX (ptNameCodeIndex) "
-        
-        + "STRAIGHT_JOIN REAC "
-        + "FORCE INDEX (REACPTindex) ON REAC.PT = ADE.name "
-        
-        + "where (ISR,pt_code) NOT IN "
-        
-        + "(SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code"
-        + " FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name )"
-        
-        + " ORDER BY  pt_code";
-    
-    
+
+
+   String sqlString = "SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code" + " FROM ADE  "
+    + "INNER JOIN REAC " + " ON REAC.PT = ADE.name "
+    + "where (ISR,pt_code) NOT IN "
+
+    + "(SELECT INDI.ISR ISR,ADE.pt_code pt_code"
+    + " FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name )"
+    + " ORDER BY  pt_code";
+
     // ORDER BY ISR,pt_code
+    conn.setAutoCommit(false);
     Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     // stmt.se
     stmt.setFetchSize(Integer.MIN_VALUE);
     ResultSet rset = stmt.executeQuery(sqlString);
     // rset.setFetchSize(100000);
     logger.info("fetching ADEs and ISRs from database finished!");
+    System.out.println("fetching ADEs and ISRs from database finished!");
+
     int currentCode = -1;
     HashSet<Integer> tmpIsrList = null;
     while (rset.next()) {
@@ -346,15 +329,15 @@ public class SearchEnssential {
 
     rset.close();
     stmt.close();
+    conn.setAutoCommit(true);
 
     return adeDis;
   }
 
   /**
-   * group each ISR into its ADE(used in mysql before 5.6).
-   * This is not a good version.
-   * 
-   * 
+   * group each ISR into its ADE(used in mysql before 5.6). This is not a good version.
+   *
+   *
    * @return a map of ADE name and ISRs.
    */
   @Deprecated
@@ -362,7 +345,6 @@ public class SearchEnssential {
       throws SQLException {
     List<Pair<Integer, HashSet<Integer>>> adeDis = new LinkedList<Pair<Integer, HashSet<Integer>>>();
 
-    
     String sqlString = "SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM REAC"
         + " INNER JOIN ADE ON REAC.PT = ADE.name order by ADE.pt_code";
 
@@ -420,7 +402,7 @@ public class SearchEnssential {
 
   /**
    * group each ISR into its ADE(used in mysql before 5.6). don't filter by INDI
-   * 
+   *
    * @return a map of ADE name and ISRs.
    */
   @Deprecated
@@ -526,10 +508,10 @@ public class SearchEnssential {
   }
 
   /**
-   * group each ISR int its DRUG name.
-   * 
+   * group each ISR int its DRUG name. Explain select distinct DRUG.ISR,DRUGBANK.ID from DRUGBANK
+   * INNER JOIN DRUG ON DRUGBANK.DRUGNAME=DRUG.DRUGNAME ORDER BY DRUGBANK.ID \G;
    */
-  List<Pair<Integer, HashSet<Integer>>> getDrugReportDis() throws SQLException {
+  public List<Pair<Integer, HashSet<Integer>>> getDrugReportDis() throws SQLException {
 
     List<Pair<Integer, HashSet<Integer>>> drugDis = new LinkedList<Pair<Integer, HashSet<Integer>>>();
 
@@ -570,7 +552,7 @@ public class SearchEnssential {
 
   /**
    * group each ISR int its DRUG name(stratification ).
-   * 
+   *
    */
   List<Pair<Integer, ArrayList<HashSet<Integer>>>> getDrugReportDisStra() throws SQLException {
     List<Pair<Integer, ArrayList<HashSet<Integer>>>> drugDis = new LinkedList<Pair<Integer, ArrayList<HashSet<Integer>>>>();
@@ -628,7 +610,7 @@ public class SearchEnssential {
 
   /**
    * group each ISR int its DRUG name(stratification ).
-   * 
+   *
    */
   List<Pair<Integer, ArrayList<HashSet<Integer>>>> getAdeDisStra() throws SQLException {
     List<Pair<Integer, ArrayList<HashSet<Integer>>>> adeDis = new LinkedList<Pair<Integer, ArrayList<HashSet<Integer>>>>();
@@ -740,20 +722,18 @@ public class SearchEnssential {
    * get all the drugNames in the drugBank
    */
   public ArrayList<String> getAllDrugGenericNames() throws SQLException {
-    return ReadDrugBankXML.getInstance(conn).getAllDrugGenericNamesDB();
+    return LoadDrugbank.getInstance(conn).getAllDrugGenericNamesDB();
   }
 
-  
   /**
    * get ISRs from ad ade name.
-   * 
+   *
    * @param aeName
    */
   public HashSet<String> getAdeNamesFromReac(String aeName) throws SQLException {
     aeName = aeName.replaceAll("'", "''");
 
-    if (aeName.length() > -1)
-     {
+    if (aeName.length() > -1) {
       throw new SQLException("wrong method here!");// this is a wrong method
     }
 
@@ -784,10 +764,9 @@ public class SearchEnssential {
     return isrs;
   }
 
- 
   /**
    * get ISRs from ad ade name, uusing middle table.
-   * 
+   *
    * @param aeName
    */
   public HashSet<Integer> getISRUsingMeddra(String aeName) throws SQLException {
@@ -848,7 +827,6 @@ public class SearchEnssential {
     return result;
   }
 
-
   public int getIsrCountUsingMeddra(String aeName) throws SQLException {
     int count = 0;
     aeName = aeName.toUpperCase();
@@ -876,7 +854,7 @@ public class SearchEnssential {
   }
 
   /**
-   * get the ISR number using the MedDRA hierachical terms given a adverse name.
+   * get the ISR number using the MedDRA hierachical terms given a adverse names.
    */
   public HashSet<Integer> getIsrsUsingMeddraNotConsiderIndi(String aeName) throws SQLException {
 
@@ -903,8 +881,8 @@ public class SearchEnssential {
   }
 
   /**
-   * get ISRs from ad ade name.
-   * 
+   * get ISRs from a ADE names.
+   *
    * @param aeName
    */
   public HashSet<Integer> getIsrsUsingMeddra(String aeName) throws SQLException {
@@ -914,20 +892,17 @@ public class SearchEnssential {
 
     String sqlString = "select DISTINCT RESULT1.ISR,RESULT1.pt_code FROM "
         + " (SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code" + " FROM REAC"
-        + " INNER JOIN ADE ON REAC.PT = ADE.name" 
-        + " WHERE ADE.name='" + aeName + "'"
+        + " INNER JOIN ADE ON REAC.PT = ADE.name" + " WHERE ADE.name='" + aeName + "'"
         + " ORDER BY ISR,pt_code  ) AS RESULT1 "
 
         + " LEFT JOIN "
 
         + " (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code" + " FROM INDI"
-        + " INNER JOIN ADE ON INDI.INDI_PT=ADE.name" 
-        + " WHERE ADE.name='" + aeName + "'"
+        + " INNER JOIN ADE ON INDI.INDI_PT=ADE.name" + " WHERE ADE.name='" + aeName + "'"
         + " ORDER BY ISR,pt_code  ) AS RESULT2 "
 
         + " ON RESULT1.ISR=RESULT2.ISR AND RESULT1.pt_code=RESULT2.pt_code"
         + " where RESULT2.ISR IS NULL ORDER BY RESULT1.pt_code";
-        
 
     Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
         ResultSet.CONCUR_READ_ONLY);
@@ -940,5 +915,5 @@ public class SearchEnssential {
 
     return isrs;
   }
-  
+
 }

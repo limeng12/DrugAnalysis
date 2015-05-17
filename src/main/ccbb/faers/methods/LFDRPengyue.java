@@ -15,29 +15,40 @@
 package main.ccbb.faers.methods;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class LFDRPengyue extends MethodInterface {
+public class LFDRPengyue extends ParallelMethodInterface {
   private static final Logger logger = LogManager.getLogger(LFDRPengyue.class);
 
   public static void main(String[] args) {
     LFDRPengyue a = new LFDRPengyue();
-
+    // 1.602,0.118,0.026,0.236
     ArrayList<Double> parsNew = new ArrayList<Double>();
     parsNew.add(1.602);
-    parsNew.add(0.143);
-    parsNew.add(0.0255);
-    parsNew.add(0.2233);
+    parsNew.add(0.118);
+    parsNew.add(0.026);
+    parsNew.add(0.236);
 
     a.setParameters(parsNew);
-    System.out.println(a.calculateLFDR(176, 0.019));
+    // System.out.println(a.calculateLFDR(1237, 300718.0 / 71582270 * 299359));
 
+  }
+
+  public LFDRPengyue() {
+
+  }
+
+  public LFDRPengyue(ArrayList<Double> pars) {
+
+    setParameters(pars);
   }
 
   double alpha2 = -1;
@@ -53,44 +64,13 @@ public class LFDRPengyue extends MethodInterface {
   @Override
   public double caculateTheValue(int N, double E) {
     // TODO Auto-generated method stub
-    return calculateLFDR(N, E);
-
-  }
-
-  @Override
-  public double calculateLFDR(int N, double E) {
-    // TODO Auto-generated method stub
+    // return calculateLFDR(N, E);
     Comparable element = funcUnparalell(N, E, alpha2, beta2);
     Comparable denominator = funcUnparalell(N, E, alpha2, beta2).add(
         funcUnparalell(N, E, alpha3, beta3).multiply(p3p2ratio));
 
     return -1 * (element.divide(denominator)).toLog();
 
-  }
-
-  private Comparable funcUnparalell(int n, double exp, double alpha, double beta) {
-    Comparable bigResult = new Comparable(1.0f);
-    double result = 1;
-    // double tmpResult = 1;
-    double lnAlpha = 0;
-    double lnN = 0;
-
-    for (int i = 0; i < n; ++i) {
-      bigResult.multiply(1.0 / (1 + beta / exp));
-    }
-
-    result *= Math.pow(1 + exp / beta, -1 * alpha);
-
-    for (int i = 0; i < n; ++i) {
-      lnAlpha += Math.log(alpha + i);
-    }
-
-    for (int i = 1; i <= n; ++i) {
-      lnN += Math.log(i);
-    }
-    result *= Math.exp(lnAlpha - lnN);
-
-    return bigResult.multiply(result);
   }
 
   @Override
@@ -119,6 +99,12 @@ public class LFDRPengyue extends MethodInterface {
     alpha3 = pars.get(1);
     beta3 = pars.get(2);
     p3p2ratio = pars.get(3);
+
+  }
+
+  @Override
+  protected void caculateObjectFuncParallel() {
+    // TODO Auto-generated method stub
 
   }
 

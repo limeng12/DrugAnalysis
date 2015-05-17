@@ -73,17 +73,17 @@ public class LinearSearch extends OptimizationInterface {
       vars[i] = initVars[i];
 
     }
-    
+
     Comparable globalOldValue = new Comparable(-1 * Double.MAX_VALUE);
     Comparable globalNewValue = new Comparable(0.0);
 
     for (int k = 0; k < iterationNum; ++k) {
       for (int j = 0; j < dim; ++j) {
-        logger.info("var[" + j + "]=" + vars[j]);
+        logger.trace("var[" + j + "]=" + vars[j]);
       }
 
-      logger.info("global old value:" + globalOldValue.getValue());
-      logger.info("global new value:" + globalNewValue.getValue());
+      logger.trace("global old value:" + globalOldValue.getValue());
+      logger.trace("global new value:" + globalNewValue.getValue());
       if (globalNewValue.equal(globalOldValue)) {
 
         return vars;
@@ -96,17 +96,17 @@ public class LinearSearch extends OptimizationInterface {
 
         double[] tmpVars2 = vars.clone();
         Comparable currentValue = maxFunc.getFitness(tmpVars2);
-        logger.info("current value:" + currentValue.getValue());
+        logger.trace("current value:" + currentValue.getValue());
 
         tmpVars2[i] = vars[i] + minStep;
         maxFunc.fitByConstraints(tmpVars2);
         Comparable leftDirection = maxFunc.getFitness(tmpVars2);
-        logger.info("left value:" + leftDirection.getValue());
+        logger.trace("left value:" + leftDirection.getValue());
 
         tmpVars2[i] = vars[i] - minStep;
         maxFunc.fitByConstraints(tmpVars2);
         Comparable rightDirection = maxFunc.getFitness(tmpVars2);
-        logger.info("right value:" + rightDirection.getValue());
+        logger.trace("right value:" + rightDirection.getValue());
 
         if (leftDirection.less(currentValue) && rightDirection.less(currentValue)) {
           continue;
@@ -121,17 +121,17 @@ public class LinearSearch extends OptimizationInterface {
             tmpVars2[i] = tmpVars[i] - minStep * talpha;
             maxFunc.fitByConstraints(tmpVars2);
 
-            logger.info("right current dim:" + i + " current var:" + tmpVars2[i]);
+            logger.trace("right current dim:" + i + " current var:" + tmpVars2[i]);
 
             Comparable value = maxFunc.getFitness(tmpVars2);
-            logger.info("value:" + value.getValue());
-            logger.info("old value:" + oldValue.getValue());
+            logger.trace("value:" + value.getValue());
+            logger.trace("old value:" + oldValue.getValue());
             if (oldValue.less(value)) {
               tmpVars = tmpVars2.clone();
               vars = tmpVars.clone();
               oldValue = value;
               currentValue = value;
-              logger.info("current value:" + value.getValue());
+              logger.trace("current value:" + value.getValue());
             } else {
               talpha = talpha / speed;
 
@@ -151,11 +151,11 @@ public class LinearSearch extends OptimizationInterface {
             tmpVars2[i] = tmpVars[i] + minStep * talpha;
             maxFunc.fitByConstraints(tmpVars2);
 
-            logger.info("left current dim:" + i + " current var:" + tmpVars2[i]);
+            logger.trace("left current dim:" + i + " current var:" + tmpVars2[i]);
 
             Comparable value = maxFunc.getFitness(tmpVars2);
-            logger.info("value:" + value.getValue());
-            logger.info("old value:" + oldValue.getValue());
+            logger.trace("value:" + value.getValue());
+            logger.trace("old value:" + oldValue.getValue());
 
             if (oldValue.less(value)) {
               tmpVars = tmpVars2.clone();
@@ -163,7 +163,7 @@ public class LinearSearch extends OptimizationInterface {
               vars = tmpVars.clone();
               oldValue = value;
               currentValue = value;
-              logger.info("current value:" + value.getValue());
+              logger.trace("current value:" + value.getValue());
 
             } else {
               talpha = talpha / speed;
@@ -177,7 +177,7 @@ public class LinearSearch extends OptimizationInterface {
 
         }
 
-        logger.info("current value:" + currentValue.getValue());
+        logger.trace("current value:" + currentValue.getValue());
         globalNewValue = currentValue;
       }
 

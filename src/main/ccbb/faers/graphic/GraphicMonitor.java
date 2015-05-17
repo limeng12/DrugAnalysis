@@ -70,9 +70,8 @@ public class GraphicMonitor extends JDialog implements ProgressMonitor {
     cancleBtn.setAlignmentX(CENTER_ALIGNMENT);
     monitorPanel.add(cancleBtn);
 
-    /*If a subclass want to reference a outer class.
-     * Must rename the object.
-     * 
+    /*
+     * If a subclass want to reference a outer class. Must rename the object.
      */
     final GraphicMonitor lgraphicMonitor = this;
     cancleBtn.addActionListener(new ActionListener() {
@@ -136,7 +135,7 @@ public class GraphicMonitor extends JDialog implements ProgressMonitor {
     if (i == max) {
       // this.setVisible(false);
       // object.enableComponents(object, true);
-      //this.close();
+      // this.close();
     }
 
     if (i == min) {

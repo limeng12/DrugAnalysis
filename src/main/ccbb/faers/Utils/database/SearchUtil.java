@@ -41,10 +41,13 @@ public class SearchUtil {
   final static Logger logger = LogManager.getLogger(SearchUtil.class);
 
   /**
-   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and expect count.
+   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and
+   * expect count.
    * 
-   * @param conn mysql connection.
-   * @param drugNames drug names.
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          drug names.
    * @return a arraylist of each rows.
    * @throws SQLException
    */
@@ -100,9 +103,13 @@ public class SearchUtil {
   }
 
   /**
-   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and expect count.
-   * @param conn mysql connection.
-   * @param drugNames a array of drugnames.
+   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and
+   * expect count.
+   * 
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          a array of drugnames.
    * @return a arraylist, each row represent a ade.
    * @throws SQLException
    */
@@ -161,12 +168,14 @@ public class SearchUtil {
   }
 
   /**
-   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and expect count.
-   * Only keep the ades in the soc term.
+   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and
+   * expect count. Only keep the ades in the soc term.
    * 
-   * @param conn mysql connection.
-   * @param drugNames a array of drug names.
-   * @param socCode 
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          a array of drug names.
+   * @param socCode
    * @return a arraylist, each rows represent a Ade.
    * @throws SQLException
    */
@@ -226,8 +235,11 @@ public class SearchUtil {
 
   /**
    * get a ade distribution.
-   * @param conn mysql connection.
-   * @param drugNames a array of drug names.
+   * 
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          a array of drug names.
    * @return a hashMap<AdeName,count>.
    * @throws SQLException
    */
@@ -279,8 +291,11 @@ public class SearchUtil {
 
   /**
    * get a ade distribution.
-   * @param conn mysql connection.
-   * @param drugNames a array of drug names.
+   * 
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          a array of drug names.
    * @return a hashMap<AdeName,count>.
    * @throws SQLException
    */
@@ -320,9 +335,11 @@ public class SearchUtil {
   /**
    * Get ades from a drug name.
    * 
-   * @param conn mysql connection.
-   * @param drugName drug name.
-   * @return 
+   * @param conn
+   *          mysql connection.
+   * @param drugName
+   *          drug name.
+   * @return
    * @throws SQLException
    */
   public static HashMap<String, String> getADEs(Connection conn, String drugName)
@@ -354,14 +371,16 @@ public class SearchUtil {
   }
 
   /**
-  * Get a table of rows are ades, columns are drugs.
-  * 
-  * 
-  * @param conn mysql connection.
-  * @param drugNames a array of drug name.
-  * @return a hashMap<drugName,HashMap<aeName,observeCountExpectCount>>.
-  * @throws SQLException
-  */
+   * Get a table of rows are ades, columns are drugs.
+   * 
+   * 
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          a array of drug name.
+   * @return a hashMap<drugName,HashMap<aeName,observeCountExpectCount>>.
+   * @throws SQLException
+   */
   public static HashMap<String, HashMap<String, String>> getDrugADETable(Connection conn,
       String[] drugNames) throws SQLException {
     HashMap<String, HashMap<String, String>> table = new HashMap<String, HashMap<String, String>>();
@@ -412,14 +431,15 @@ public class SearchUtil {
   }
 
   /**
-  * Get a table of rows are ades, columns are drugs.
-  * Only keep a ade in the soc term.
-  * 
-  * @param conn mysql connection.
-  * @param drugNames a array of drug name.
-  * @return a hashMap<drugName,HashMap<aeName,observeCountExpectCount>>.
-  * @throws SQLException
-  */
+   * Get a table of rows are ades, columns are drugs. Only keep a ade in the soc term.
+   * 
+   * @param conn
+   *          mysql connection.
+   * @param drugNames
+   *          a array of drug name.
+   * @return a hashMap<drugName,HashMap<aeName,observeCountExpectCount>>.
+   * @throws SQLException
+   */
   public static HashMap<String, HashMap<String, String>> getDrugADETableSOC(Connection conn,
       String[] drugNames, int socCode) throws SQLException {
     HashMap<String, HashMap<String, String>> table = new HashMap<String, HashMap<String, String>>();
@@ -535,7 +555,8 @@ public class SearchUtil {
     return result;
   }
 
-  public static String[] getAdeNamesFromDrugnames(Connection conn, String[] drugNames) throws SQLException {
+  public static String[] getAdeNamesFromDrugnames(Connection conn, String[] drugNames)
+      throws SQLException {
     TreeSet<String> allAdeNames = new TreeSet<String>();
     String sqlString = "select DISTINCT AENAME from RATIO where DRUGNAME in(";
     sqlString += SqlParseUtil.seperateByCommaDecode(drugNames, ",") + ") AND  LFDRPENGYUE>=1.30103";
@@ -582,7 +603,6 @@ public class SearchUtil {
       e.printStackTrace();
     }
   }
-
 
   public static boolean testIfInSider(Connection conn, String aeName) throws SQLException {
     boolean inSider = false;

@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 
 import main.ccbb.faers.methods.PengyueMethod;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
+import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -38,7 +39,7 @@ public class ForPlot3DPengyue {
 
     ForPlot3DPengyue t = new ForPlot3DPengyue();
 
-    t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    // t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
     PropertiesConfiguration config = null;
     try {
       config = new PropertiesConfiguration("configure.txt");
@@ -55,12 +56,12 @@ public class ForPlot3DPengyue {
     }
 
     t.fun.caculateObjectFuncParallel();
-    t.fun.setParameter(optimizationValue);
+    // t.fun.setParameter(optimizationValue);
     t.changeTwoVariablesToCalculate(1, 2, "pengyuealpha2beta2.txt");
 
     t.changeTwoVariablesToCalculate(0, 3, "pengyuealpha1p3p2.txt");
 
-    MethodInterface.thread.shutdown();
+    ParallelMethodInterface.thread.shutdown();
 
   }
 

@@ -41,8 +41,11 @@ public class Output {
 
   /**
    * Output the arraylist to a file.
-   * @param names a list of string.
-   * @param fileName the filename to be output.
+   * 
+   * @param names
+   *          a list of string.
+   * @param fileName
+   *          the filename to be output.
    */
   public static void outputArrayList(List<String> names, String fileName) {
     try {
