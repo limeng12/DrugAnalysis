@@ -59,6 +59,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 
 import org.apache.logging.log4j.LogManager;
@@ -265,7 +266,7 @@ public class MyJTable extends JTable {
 
       }
 
-      logger.debug(sqlStr);
+      logger.info(sqlStr);
 
       try {
         conn = DatabaseConnect.getMysqlConnector();
@@ -424,12 +425,12 @@ public class MyJTable extends JTable {
     content.clear();
     this.setAutoCreateColumnsFromModel(false);
 
-    future = FaersAnalysisGui.thread.submit(new TableProcessingDrugAde(sortBy, content,
-        currentPage, drugADE, colNames, tableColNames));
+    future = ApiToGui.thread.submit(new TableProcessingDrugAde(sortBy, content, currentPage,
+        drugADE, colNames, tableColNames));
 
     final MyJTable t = this;
     // SwingUtilities.invokeLater(new Runnable(){
-    FaersAnalysisGui.thread.submit(new Runnable() {
+    ApiToGui.thread.submit(new Runnable() {
 
       @Override
       public void run() {

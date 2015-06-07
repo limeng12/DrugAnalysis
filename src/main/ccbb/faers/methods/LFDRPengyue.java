@@ -38,7 +38,7 @@ public class LFDRPengyue extends ParallelMethodInterface {
     parsNew.add(0.236);
 
     a.setParameters(parsNew);
-    // System.out.println(a.calculateLFDR(1237, 300718.0 / 71582270 * 299359));
+    System.out.println(a.caculateTheValue(18, 5.119));
 
   }
 
@@ -65,6 +65,9 @@ public class LFDRPengyue extends ParallelMethodInterface {
   public double caculateTheValue(int N, double E) {
     // TODO Auto-generated method stub
     // return calculateLFDR(N, E);
+    if (N == 0)
+      return 0;
+
     Comparable element = funcUnparalell(N, E, alpha2, beta2);
     Comparable denominator = funcUnparalell(N, E, alpha2, beta2).add(
         funcUnparalell(N, E, alpha3, beta3).multiply(p3p2ratio));
@@ -85,9 +88,9 @@ public class LFDRPengyue extends ParallelMethodInterface {
     // TODO Auto-generated method stub
     ArrayList<Double> parsNew = new ArrayList<Double>();
     parsNew.add(1.602);
-    parsNew.add(0.143);
-    parsNew.add(0.0255);
-    parsNew.add(0.2233);
+    parsNew.add(0.118);
+    parsNew.add(0.026);
+    parsNew.add(0.236);
 
     return parsNew;
   }

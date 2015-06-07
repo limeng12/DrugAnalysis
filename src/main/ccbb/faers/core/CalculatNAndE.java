@@ -40,6 +40,7 @@ import java.util.Map;
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.Utils.algorithm.Pair;
 import main.ccbb.faers.Utils.database.InsertUtils;
+import main.ccbb.faers.Utils.database.RunStatement;
 import main.ccbb.faers.Utils.database.TableUtils;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
@@ -50,7 +51,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * the core class for calculating the E and N.
+ * the core class for calculating the E(expect count) and N(observe count).
  * 
  */
 
@@ -66,16 +67,17 @@ public class CalculatNAndE {
     CalculatNAndE eb;
 
     try {
-      CoreAPI.pm = new ConsoleMonitor();
+      ApiToGui.pm = new ConsoleMonitor();
 
       DatabaseConnect.setConnectionFromConfig();
-      PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+      PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
       eb = new CalculatNAndE(DatabaseConnect.getMysqlConnector());
 
       ArrayList<MethodInterface> methods = new ArrayList<MethodInterface>();
 
       String[] methodClassNames = config.getStringArray("methods");
+
       for (int i = 0; i < methodClassNames.length; ++i) {
         String className = methodClassNames[i];
         className = FaersAnalysisGui.methodNameClassNameMap.get(className);
@@ -133,7 +135,7 @@ public class CalculatNAndE {
 
   private Statement stmt;
 
-  private CalculatNAndE(Connection conn) throws SQLException {
+  private CalculatNAndE(Connection conn) {
     super();
     this.conn = conn;
   }
@@ -178,11 +180,11 @@ public class CalculatNAndE {
     this.initTableRatioNewEFast();
     // this.updateWrapper();
     TableUtils.setTablePrimaryKey(conn, "RATIO", "DRUGNAME,AENAME");
-    CoreAPI.pm.setProgress(0);
-    CoreAPI.pm.setNote("optimization the table");
+    ApiToGui.pm.setProgress(0);
+    ApiToGui.pm.setNote("optimization the table");
 
     // optimize("RATIO");
-    CoreAPI.pm.close();
+    ApiToGui.pm.close();
 
   }
 
@@ -214,13 +216,12 @@ public class CalculatNAndE {
    * 
    */
   private void createTableMargin() throws SQLException {
-    stmt = conn.createStatement();
-    stmt.addBatch("create table DRUGEXP(ID varchar(300),N11SUM NUMERIC(20)) Engine MYISAM");
-    stmt.addBatch("create table ADEEXP(pt_code VARCHAR(100),N11SUM NUMERIC(20)) Engine MYISAM");
+    RunStatement.executeAStatement(conn,
+        "create table DRUGEXP(ID varchar(300),N11SUM NUMERIC(20)) Engine MYISAM");
+    RunStatement.executeAStatement(conn,
+        "create table ADEEXP(pt_code VARCHAR(100),N11SUM NUMERIC(20)) Engine MYISAM");
 
-    stmt.executeBatch();
-    stmt.close();
-    logger.debug("drop all the table");
+    logger.info("drop all the table");
 
   }
 
@@ -420,7 +421,7 @@ public class CalculatNAndE {
    * calculate the expection and insert the expection and observe count into RATIO.
    */
   private void initTableRatioNewEFast() throws SQLException {
-    CoreAPI.pm.setNote("fetching the necessary data");
+    ApiToGui.pm.setNote("fetching the necessary data");
     searchEn = SearchEnssential.getInstance(conn);
 
     List<Pair<Integer, HashSet<Integer>>> adeFrequency = null;
@@ -455,8 +456,8 @@ public class CalculatNAndE {
 
     for (int j = 0; j < adeFrequency.size(); j++) {
       if (j % 100 == 0) {
-        CoreAPI.pm.setNote("calculating");
-        CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
+        ApiToGui.pm.setNote("calculating");
+        ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
         logger.debug("ADE index=" + (j + 1));
 
       }
@@ -533,8 +534,8 @@ public class CalculatNAndE {
 
     for (int j = 0; j < adeFrequency.size(); j++) {
       if (j % 100 == 0) {
-        CoreAPI.pm.setNote("inserting to the table");
-        CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
+        ApiToGui.pm.setNote("inserting to the table");
+        ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
         logger.trace("ADE index=" + (j + 1));
 
       }
@@ -643,8 +644,8 @@ public class CalculatNAndE {
   /**
    * Fast fill the table STRA
    */
-  public void initTableStra() throws SQLException {
-    CoreAPI.pm.setNote("fetching the necessary data");
+  private void initTableStra() throws SQLException {
+    ApiToGui.pm.setNote("fetching the necessary data");
 
     List<Pair<Integer, ArrayList<HashSet<Integer>>>> adeFrequency = searchEn.getAdeDisStra();
 
@@ -675,8 +676,8 @@ public class CalculatNAndE {
 
     for (int j = 0; j < adeFrequency.size(); j++) {
       if (j % 100 == 0) {
-        CoreAPI.pm.setNote("inserting to the table");
-        CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
+        ApiToGui.pm.setNote("inserting to the table");
+        ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
         logger.trace("ADE index=" + (j + 1));
 
       }
@@ -772,7 +773,7 @@ public class CalculatNAndE {
    * deprecated methods for building the RATIO.
    */
   @Deprecated
-  public void initTableRatioNewE() throws SQLException, FAERSInterruptException {
+  private void initTableRatioNewE() throws SQLException, FAERSInterruptException {
     ArrayList<String> aeNames = new ArrayList<String>();
     ArrayList<String> drugNames = new ArrayList<String>();
 
@@ -815,12 +816,12 @@ public class CalculatNAndE {
     List<HashSet<Integer>> fastAdes = new LinkedList<HashSet<Integer>>();
 
     // adverse event
-    CoreAPI.pm.setNote("build N and old E");
+    ApiToGui.pm.setNote("build N and old E");
     for (int j = 0; j < numberOfAeNames; j++) {
       System.out.println(j);
       if (j != 0 && j % 100 == 0) {
-        CoreAPI.pm.setNote("store ADE's ISRs");
-        CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
+        ApiToGui.pm.setNote("store ADE's ISRs");
+        ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
 
         logger.trace("adverse index=" + j);
 
@@ -838,13 +839,13 @@ public class CalculatNAndE {
 
     for (int i = 0; i < numberOfDrugNames; i++) {
       if (i % 100 == 0) {
-        CoreAPI.pm.setNote("store drug's ISRs");
-        CoreAPI.pm.setProgress((int) ((i + 1) / (1.0 * numberOfDrugNames) * 100));
+        ApiToGui.pm.setNote("store drug's ISRs");
+        ApiToGui.pm.setProgress((int) ((i + 1) / (1.0 * numberOfDrugNames) * 100));
         logger.trace("drug index=" + (i + 1));
 
       }
 
-      if (FaersAnalysisGui.stopCondition.get()) {
+      if (ApiToGui.stopCondition.get()) {
         ps.close();
         // return;
         throw new FAERSInterruptException("interrupted");
@@ -862,8 +863,8 @@ public class CalculatNAndE {
 
     for (int j = 0; j < numberOfAeNames; j++) {
       if (j % 100 == 0) {
-        CoreAPI.pm.setNote("calculating");
-        CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
+        ApiToGui.pm.setNote("calculating");
+        ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
         logger.trace("ADE index=" + (j + 1));
 
       }
@@ -921,8 +922,8 @@ public class CalculatNAndE {
 
     for (int j = 0; j < numberOfAeNames; j++) {
       if (j % 100 == 0) {
-        CoreAPI.pm.setNote("inserting to the table");
-        CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
+        ApiToGui.pm.setNote("inserting to the table");
+        ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
         logger.trace("ADE index=" + (j + 1));
 
       }
@@ -1054,26 +1055,26 @@ public class CalculatNAndE {
       HashMap<String, ArrayList<HashSet<Integer>>> fastAEStra = new HashMap<String, ArrayList<HashSet<Integer>>>(
           6000);
 
-      CoreAPI.pm.setNote("build N and old E");
+      ApiToGui.pm.setNote("build N and old E");
 
       int numberOfEvents = 0;
       for (int j = 0; j < numberOfAeNames; j++) {
         if (j != 0) {
-          CoreAPI.pm.setNote("store ADE's ISRs");
-          CoreAPI.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
+          ApiToGui.pm.setNote("store ADE's ISRs");
+          ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * numberOfAeNames) * 100));
         }
         logger.debug("adverse index=" + j);
         aeStraISRs = stra.getAEPTNamesMedDRAStra(aeNames.get(j));
 
         for (int i = 0; i < numberOfDrugNames; i++) {
           if (j == 0) {
-            CoreAPI.pm.setNote("store drug's ISRs");
-            CoreAPI.pm.setProgress((int) ((i + 1) / (1.0 * numberOfDrugNames) * 100));
+            ApiToGui.pm.setNote("store drug's ISRs");
+            ApiToGui.pm.setProgress((int) ((i + 1) / (1.0 * numberOfDrugNames) * 100));
             logger.trace("drug index=" + (i + 1));
 
           }
 
-          if (FaersAnalysisGui.stopCondition.get()) {
+          if (ApiToGui.stopCondition.get()) {
             ps.close();
             // return;
             throw new FAERSInterruptException("interrupted");

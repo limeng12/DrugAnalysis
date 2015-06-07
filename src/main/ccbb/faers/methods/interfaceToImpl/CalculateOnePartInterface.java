@@ -1,7 +1,6 @@
 package main.ccbb.faers.methods.interfaceToImpl;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 import main.ccbb.faers.methods.Comparable;
 

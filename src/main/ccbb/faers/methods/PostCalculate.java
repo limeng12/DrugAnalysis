@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
@@ -62,7 +63,7 @@ public class PostCalculate {
 
     PostCalculate a = new PostCalculate();
     try {
-      PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+      PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
       FaersAnalysisGui.config = config;
       String userName = config.getString("user");

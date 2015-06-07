@@ -27,10 +27,8 @@ import java.util.List;
 import main.ccbb.faers.Utils.algorithm.AlgorithmUtil;
 import main.ccbb.faers.Utils.algorithm.Pair;
 import main.ccbb.faers.Utils.database.SqlParseUtil;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +39,7 @@ public class SearchEnssential {
   private Connection conn;
 
   public static void main(String[] args) {
-    CoreAPI.pm = new ConsoleMonitor();
+    ApiToGui.pm = new ConsoleMonitor();
 
     try {
 
@@ -126,6 +124,7 @@ public class SearchEnssential {
       }
 
     }
+    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, t));
 
     rset.close();
     stmt.close();
@@ -160,6 +159,31 @@ public class SearchEnssential {
   }
 
   /**
+   * get the ISR number which have this drugname(use brand name and synomys name)
+   */
+  public HashSet<Integer> getIsrsFromDrugBankDrugNameMap(String drugName) throws SQLException {
+    // int count = 0;
+    drugName=drugName.replaceAll("'", "''");
+    HashSet<Integer> ISRs = new HashSet<Integer>();
+
+    String sqlString = "select distinct ISR from DRUG INNER JOIN DRUGNAMEMAP ON DRUG.DRUGNAME=DRUGNAMEMAP.DRUGNAME"
+        + " where DRUGNAMEMAP.GENERICNAME= '"+drugName+"'";
+
+    Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+        ResultSet.CONCUR_READ_ONLY);
+
+    ResultSet rset = stmt.executeQuery(sqlString);
+    while (rset.next()) {
+      ISRs.add(rset.getInt("ISR"));
+    }
+
+    rset.close();
+    stmt.close();
+
+    return ISRs;
+  }
+  
+  /**
    * get ISRs from a drug name.
    *
    * @param drugName
@@ -173,6 +197,9 @@ public class SearchEnssential {
         + " INNER JOIN DRUG ON DRUGBANK.DRUGNAME=DRUG.DRUGNAME"
         + " where DRUGBANK.id=( select DRUGBANK.id from DRUGBANK where DRUGNAME ='" + drugName
         + "'  ) ";
+    
+    
+    
 
     Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
         ResultSet.CONCUR_READ_ONLY);
@@ -252,6 +279,7 @@ public class SearchEnssential {
       }
 
     }
+    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -290,14 +318,11 @@ public class SearchEnssential {
   public List<Pair<Integer, HashSet<Integer>>> getAdeDisFriendly() throws SQLException {
     List<Pair<Integer, HashSet<Integer>>> adeDis = new LinkedList<Pair<Integer, HashSet<Integer>>>();
 
+    String sqlString = "SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code" + " FROM ADE  "
+        + "INNER JOIN REAC " + " ON REAC.PT = ADE.name " + "where (ISR,pt_code) NOT IN "
 
-   String sqlString = "SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code" + " FROM ADE  "
-    + "INNER JOIN REAC " + " ON REAC.PT = ADE.name "
-    + "where (ISR,pt_code) NOT IN "
-
-    + "(SELECT INDI.ISR ISR,ADE.pt_code pt_code"
-    + " FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name )"
-    + " ORDER BY  pt_code";
+        + "(SELECT INDI.ISR ISR,ADE.pt_code pt_code "
+        + "FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) " + "ORDER BY  pt_code ";
 
     // ORDER BY ISR,pt_code
     conn.setAutoCommit(false);
@@ -307,7 +332,6 @@ public class SearchEnssential {
     ResultSet rset = stmt.executeQuery(sqlString);
     // rset.setFetchSize(100000);
     logger.info("fetching ADEs and ISRs from database finished!");
-    System.out.println("fetching ADEs and ISRs from database finished!");
 
     int currentCode = -1;
     HashSet<Integer> tmpIsrList = null;
@@ -326,6 +350,81 @@ public class SearchEnssential {
       }
 
     }
+    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+
+    rset.close();
+    stmt.close();
+    conn.setAutoCommit(true);
+
+    return adeDis;
+  }
+
+  /**
+   * group each ISR into its ADE(used in mysql before 5.6) not in version.
+   *
+   * EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM REAC INNER JOIN ADE ON REAC.PT =
+   * ADE.name where NOT EXISTS (SELECT NULL FROM (SELECT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI
+   * INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) AS RESULT1 WHERE RESULT1.ISR=REAC.ISR AND
+   * RESULT1.pt_code=ADE.pt_code ) ORDER BY pt_code;
+   * 
+   * not in version:
+   * 
+   * EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM ADE FORCE INDEX (ptNameCodeIndex)
+   * STRAIGHT_JOIN REAC FORCE INDEX (REACPTindex) ON REAC.PT = ADE.name where (ISR,pt_code) NOT IN
+   * (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON
+   * INDI.INDI_PT=ADE.name ) ORDER BY pt_code;
+   * 
+   * not in with not TMP table: EXPLAIN SELECT DISTINCT REAC.ISR ISR,ADE.pt_code pt_code FROM ADE
+   * INNER JOIN REAC ON REAC.PT = ADE.name where (ISR,pt_code) NOT IN (SELECT INDI.ISR
+   * ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) ORDER BY pt_code
+   * \G;
+   * 
+   * This select is very un-stable. because mysql doesn't optimize it corretly sometimes. so I use
+   * straight_join and force index here. If you have a mysql version >=5.6, the above version(Left
+   * Join) maybe also a good candidate.
+   *
+   * one report,one kind of ADE is assumed.
+   *
+   * @return a map of ADE name and ISRs.
+   */
+  public List<Pair<String, HashSet<Integer>>> getAdeDisFriendly(ArrayList<String> ptNames)
+      throws SQLException {
+    List<Pair<String, HashSet<Integer>>> adeDis = new LinkedList<Pair<String, HashSet<Integer>>>();
+
+    String sqlString = "SELECT DISTINCT REAC.ISR ISR,ADE.pt_name pt_name" + " FROM ADE  "
+        + "INNER JOIN REAC " + " ON REAC.PT = ADE.name " + "where (ISR,pt_name) NOT IN "
+
+        + "(SELECT INDI.ISR ISR,ADE.pt_name pt_name "
+        + "FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name ) " + " AND pt_name IN ("
+        + SqlParseUtil.seperateByCommaDecodeStr(ptNames.iterator(), ",") + ") ORDER BY  pt_name ";
+
+    // ORDER BY ISR,pt_code
+    conn.setAutoCommit(false);
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    // stmt.se
+    stmt.setFetchSize(Integer.MIN_VALUE);
+    ResultSet rset = stmt.executeQuery(sqlString);
+    // rset.setFetchSize(100000);
+    logger.info("fetching ADEs and ISRs from database finished!");
+
+    String currentName = "";
+    HashSet<Integer> tmpIsrList = null;
+    while (rset.next()) {
+      String ptName = rset.getString("pt_name");
+      int isr = rset.getInt("ISR");
+
+      if (!ptName.equals(currentName)) {
+        tmpIsrList = new HashSet<Integer>();
+        tmpIsrList.add(isr);
+        adeDis.add(new Pair<String, HashSet<Integer>>(ptName, tmpIsrList));
+        currentName = ptName;
+      } else {
+        tmpIsrList.add(isr);
+
+      }
+
+    }
+    adeDis.add(new Pair<String, HashSet<Integer>>(currentName, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -542,6 +641,58 @@ public class SearchEnssential {
 
       }
     }
+    drugDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+
+    rset.close();
+    stmt.close();
+
+    return drugDis;
+
+  }
+
+  /**
+   * group each ISR int its DRUG name. Explain select distinct DRUG.ISR,DRUGBANK.ID from DRUGBANK
+   * INNER JOIN DRUG ON DRUGBANK.DRUGNAME=DRUG.DRUGNAME ORDER BY DRUGBANK.ID \G;
+   * 
+   * 
+   * 
+   * 
+   * explain select distinct DRUG.ISR,DRUGNAMEMAP.GENERICNAME from DRUGNAMEMAP INNER JOIN DRUG ON
+   * DRUGNAMEMAP.DRUGNAME=DRUG.DRUGNAME ORDER BY DRUGNAMEMAP.GENERICNAME;
+   */
+  public List<Pair<String, HashSet<Integer>>> getDrugReportDisNames() throws SQLException {
+
+    List<Pair<String, HashSet<Integer>>> drugDis = new LinkedList<Pair<String, HashSet<Integer>>>();
+
+    String sqlString = "select distinct DRUG.ISR,DRUGNAMEMAP.GENERICNAME from DRUGNAMEMAP"
+        + " INNER JOIN DRUG ON DRUGNAMEMAP.DRUGNAME=DRUG.DRUGNAME ORDER BY DRUGNAMEMAP.GENERICNAME";
+
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    stmt.setFetchSize(Integer.MIN_VALUE);
+
+    ResultSet rset = stmt.executeQuery(sqlString);
+    logger.info("fetching drug generic namess and ISRs from database finished!");
+
+    String currentName = "";
+    HashSet<Integer> tmpIsrList = null;
+
+    while (rset.next()) {
+      String drugName = rset.getString("GENERICNAME");
+      int isr = rset.getInt("ISR");
+
+      if (!drugName.equals(currentName)) {
+        tmpIsrList = new HashSet<Integer>();
+        tmpIsrList.add(isr);
+        drugDis.add(new Pair<String, HashSet<Integer>>(drugName, tmpIsrList));
+        currentName = drugName;
+
+      } else {
+        tmpIsrList.add(isr);
+
+      }
+    }
+
+    drugDis.add(new Pair<String, HashSet<Integer>>(currentName, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -914,6 +1065,24 @@ public class SearchEnssential {
     stmt.close();
 
     return isrs;
+  }
+
+  public String getDrugNameFromId(Integer oneDrugId) throws SQLException {
+    // TODO Auto-generated method stub
+    String drugName = "";
+    String sqlString = "select DRUGNAME from DRUGBANK where class=1 AND ID=" + oneDrugId;
+
+    Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+        ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+
+    while (rset.next()) {
+      drugName = rset.getString("DRUGNAME");
+    }
+    rset.close();
+    stmt.close();
+
+    return drugName;
   }
 
 }

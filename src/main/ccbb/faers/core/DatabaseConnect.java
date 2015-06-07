@@ -19,7 +19,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import main.ccbb.faers.Utils.database.TableUtils;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -33,6 +32,7 @@ public class DatabaseConnect {
   static String database = "MYSQL";// ORACLE
 
   static boolean isConnect = false;
+
   private static final Logger logger = LogManager.getLogger(DatabaseConnect.class);
 
   /**
@@ -68,7 +68,7 @@ public class DatabaseConnect {
      */
     stmt.execute("set interactive_timeout = 10*60*60*60");
     stmt.execute("set wait_timeout=10*60*60*60");
-    TableUtils.setSQLBigSelect(conn);
+    // TableUtils.setSQLBigSelect(conn);
 
     stmt.close();
     logger.info("connected!");
@@ -92,7 +92,7 @@ public class DatabaseConnect {
    * 
    */
   public static void setConnectionFromConfig() throws ConfigurationException, SQLException {
-    PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+    PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
     FaersAnalysisGui.config = config;
     String userName = config.getString("user");
@@ -102,6 +102,8 @@ public class DatabaseConnect {
 
     DatabaseConnect.setMysqlConnector(host, userName, password, database);
 
+    
+    
   }
 
 }

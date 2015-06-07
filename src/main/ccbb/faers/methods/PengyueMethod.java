@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.interfaceToImpl.CalculateOnePartInterface;
 import main.ccbb.faers.methods.interfaceToImpl.MaxObjectFunction;
@@ -166,7 +167,7 @@ public class PengyueMethod extends ParallelMethodInterface {
 
   public static void main(String args[]) {
     try {
-      FaersAnalysisGui.config = new PropertiesConfiguration("configure.txt");
+      FaersAnalysisGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

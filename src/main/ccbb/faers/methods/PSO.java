@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
-import main.ccbb.faers.core.CoreAPI;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.interfaceToImpl.MaxObjectFunction;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
@@ -417,7 +417,7 @@ public class PSO extends OptimizationInterface {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance()
             .getTime());
         logger.trace("current system:" + timeStamp);
-        if (FaersAnalysisGui.stopCondition.get()) {
+        if (ApiToGui.stopCondition.get()) {
           throw new FAERSInterruptException("interrupted exception");
 
         }
@@ -426,8 +426,8 @@ public class PSO extends OptimizationInterface {
         swarm.get(j).updatePartical(j);
         // bestValue=swarm.get(j).getBestValue();
         // logger.debug(bestValue.getValue());
-        if (CoreAPI.pm != null) {
-          CoreAPI.pm.setProgress((int) ((1.0 * i / numIter) * 100));
+        if (ApiToGui.pm != null) {
+          ApiToGui.pm.setProgress((int) ((1.0 * i / numIter) * 100));
         }
 
       }
@@ -491,7 +491,7 @@ public class PSO extends OptimizationInterface {
     swarm.clear();
     for (int i = 0; i < numPar; ++i) {
 
-      if (FaersAnalysisGui.stopCondition.get()) {
+      if (ApiToGui.stopCondition.get()) {
         return;
 
       }

@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 public class MedDraSearchUtils {
   private static final Logger logger = LogManager.getLogger(MedDraSearchUtils.class);
 
-  static String rootDir = "F:\\drug-data-ppt\\medDRA\\meddra_15_0_english\\MedAscii\\";
+  static String rootDir = "";
 
   /**
    * unit test for the class.
@@ -49,7 +49,7 @@ public class MedDraSearchUtils {
   public static void main(String[] args) throws SQLException {
     MedDraSearchUtils db = new MedDraSearchUtils();
     try {
-      PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+      PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
       FaersAnalysisGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
@@ -673,6 +673,28 @@ public class MedDraSearchUtils {
 
     }
     return names;
+
+  }
+
+  public ArrayList<String> selectAdesFromSoc(int socCode) throws SQLException {
+
+    ArrayList<String> ptNames = new ArrayList<String>();
+    String sqlString = "select pt_name FROM PREF_TERM WHERE pt_soc_code=" + socCode;
+    // System.out.println(sqlString);
+
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+    // String[] ptNames=new String[rset. ]
+
+    while (rset.next()) {
+      String ptName = rset.getString("pt_name");
+      ptNames.add(ptName);
+
+    }
+    rset.close();
+    stmt.close();
+
+    return ptNames;
 
   }
 

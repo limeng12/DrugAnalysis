@@ -36,7 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.core.LoadFaersZip;
-import main.ccbb.faers.core.CoreAPI;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.CorrectDrugNames;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.core.LoadDrugbank;
@@ -56,8 +56,8 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
     public void run() {
       // TODO Auto-generated method stub
       try {
-        CoreAPI.pm.setProgress(0);
-        CoreAPI.pm.setNote("load into drugbank");
+        ApiToGui.pm.setProgress(0);
+        ApiToGui.pm.setNote("load into drugbank");
 
         if (LoadDrugBankAction.drugBankFilePath.length() == 0) {
           LoadDrugBankAction.drugBankFilePath = FaersAnalysisGui.config.getString("drugBankPath");
@@ -70,7 +70,7 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
         } else {
           FaersAnalysisGui.config.setProperty("medDRADir", LoadMedDraAction.medDRADir);
         }
-        
+
         if (LoadFaersZipAction.zipFilesPath.length == 0) {
           LoadFaersZipAction.zipFilesPath = FaersAnalysisGui.config.getStringArray("faersPath");
         } else {
@@ -83,22 +83,22 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
         LoadDrugbank drugBank = LoadDrugbank.getInstance(DatabaseConnect.getMysqlConnector());
         drugBank.build(LoadDrugBankAction.drugBankFilePath);
 
-        CoreAPI.pm.setProgress(50);
+        ApiToGui.pm.setProgress(50);
 
         CorrectDrugNames co = CorrectDrugNames.getInstance(DatabaseConnect.getMysqlConnector());
         co.readManuallyCorrectNames("manually-correct-drugnames-frequencybigger1000.csv");
 
-        CoreAPI.pm.setProgress(0);
-        CoreAPI.pm.setNote("load into medDra");
+        ApiToGui.pm.setProgress(0);
+        ApiToGui.pm.setNote("load into medDra");
         logger.info("load into medDRA");
 
         LoadMedDra med = LoadMedDra.getInstance(DatabaseConnect.getMysqlConnector());
         med.build(LoadMedDraAction.medDRADir);
 
-        CoreAPI.pm.setProgress(100);
+        ApiToGui.pm.setProgress(100);
 
-        CoreAPI.pm.setProgress(0);
-        CoreAPI.pm.setNote("load the files into FAERS");
+        ApiToGui.pm.setProgress(0);
+        ApiToGui.pm.setNote("load the files into FAERS");
         logger.info("load the files into FAERS");
 
         LoadFaersZip loadDatabase = LoadFaersZip.getInstance(DatabaseConnect.getMysqlConnector());
@@ -108,7 +108,7 @@ public class LoadDataIntoDatabaseAction implements ActionListener {
         // co.createTableDrugnameMap();
         // TableUtils.setDelayKeyWrite(co.conn,"DRUGNAMEMAP");
 
-        CoreAPI.pm.close();
+        ApiToGui.pm.close();
 
       } catch (SQLException | IOException e1) {
         // TODO Auto-generated catch block

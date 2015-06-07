@@ -122,9 +122,9 @@ public class LoadFaersZip {
 
     try {
 
-      CoreAPI.pm = new ConsoleMonitor();
+      ApiToGui.pm = new ConsoleMonitor();
 
-      PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+      PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
       FaersAnalysisGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
@@ -142,7 +142,7 @@ public class LoadFaersZip {
       build.createAllTmpTable();
       String zipPath = args[0];
       String[] zipFiles = (new File(zipPath)).list();
-      
+
       for (int i = 0; i < zipFiles.length; ++i) {
         zipFiles[i] = zipPath + zipFiles[i];
       }
@@ -172,7 +172,7 @@ public class LoadFaersZip {
 
   // ArrayList<Integer> badIsrList = new ArrayList<Integer>();
 
-  Connection conn;
+  private Connection conn;
 
   /**
    * the names of the buffer table
@@ -193,15 +193,12 @@ public class LoadFaersZip {
   private final String insertTableReac = "insert into REAC (select * from REACTMP)";
 
   private HashSet<Integer> isrTable = new HashSet<Integer>();
-  PreparedStatement ps;
-  String query;
-  ResultSet rset;
-  String sqlString;
+  private String sqlString;
 
   // a-> all counties treat it as withdrawn, o-> one countries treat it as
   // withdrawn, n don't remove.
 
-  Statement stmt;
+  private Statement stmt;
 
   private static LoadFaersZip instance;
 
@@ -266,7 +263,7 @@ public class LoadFaersZip {
     for (int i = 0; i < zipPath.length; ++i) {
       logger.info("current zip:" + zipPath[i]);
 
-      CoreAPI.pm.setProgress((int) ((i + 1) / (filesNumber + 1) * 100));
+      ApiToGui.pm.setProgress((int) ((i + 1) / (filesNumber + 1) * 100));
 
       ZipInputStream zin = new ZipInputStream(new FileInputStream(zipPath[i]));
 
@@ -295,7 +292,7 @@ public class LoadFaersZip {
           deleteATable(demoTmpTableName);
 
           // poisson pill pattern
-          if (FaersAnalysisGui.stopCondition.get()) {
+          if (ApiToGui.stopCondition.get()) {
             throw new FAERSInterruptException("interrupted");
 
           }
@@ -307,7 +304,7 @@ public class LoadFaersZip {
           deleteATable(drugTmpTableName);
 
           // poisson pill pattern
-          if (FaersAnalysisGui.stopCondition.get()) {
+          if (ApiToGui.stopCondition.get()) {
             throw new FAERSInterruptException("interrupted");
 
           }
@@ -318,7 +315,7 @@ public class LoadFaersZip {
           deleteATable(reacTmpTableName);
 
           // poisson pill pattern
-          if (FaersAnalysisGui.stopCondition.get()) {
+          if (ApiToGui.stopCondition.get()) {
             throw new FAERSInterruptException("interrupted");
 
           }
@@ -329,7 +326,7 @@ public class LoadFaersZip {
           deleteATable(indiTmpTableName);
 
           // poisson pill pattern
-          if (FaersAnalysisGui.stopCondition.get()) {
+          if (ApiToGui.stopCondition.get()) {
             throw new FAERSInterruptException("interrupted");
 
           }
@@ -346,13 +343,13 @@ public class LoadFaersZip {
     }
     isrTable.clear();
 
-    CoreAPI.pm.setNote("index the tables");
+    ApiToGui.pm.setNote("index the tables");
 
     TableUtils.addIndex(conn, "DRUG", "DRUGNAME");
     TableUtils.addIndex(conn, "REAC", "PT");
     TableUtils.addIndex(conn, "INDI", "INDI_PT");
 
-    CoreAPI.pm.close();
+    ApiToGui.pm.close();
 
   }
 
@@ -369,7 +366,7 @@ public class LoadFaersZip {
     SplitBufferedInput reader = null;
     // int line = 1;
     // logger.debug("fileName=" + fileName);
-
+    PreparedStatement ps;
     reader = new SplitBufferedInput(input);
     ArrayList<String> headerNames = reader.getHeaderAndColumnIndex(headers);
     sqlString = "insert into " + tableName + "(";
@@ -383,7 +380,7 @@ public class LoadFaersZip {
     ArrayList<Object> tmpArr = new ArrayList<Object>();
     while ((tmpArr = reader.readLineAfterSplitColumnFilter()) != null) {
 
-      InsertUtils.insertLine(ps, tmpArr);
+      InsertUtils.insertLineUppcase(ps, tmpArr);
     }
     ps.executeBatch();
     ps.close();

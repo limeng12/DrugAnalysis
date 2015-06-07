@@ -31,12 +31,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -56,6 +53,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
@@ -70,6 +68,7 @@ import org.apache.logging.log4j.Logger;
  * The main graphic interface of the software.
  */
 public class FaersAnalysisGui extends JFrame {
+
   class CloseWinListener implements WindowListener {
 
     @Override
@@ -81,7 +80,7 @@ public class FaersAnalysisGui extends JFrame {
     @Override
     public void windowClosed(WindowEvent e) {
       // TODO Auto-generated method stub
-      FaersAnalysisGui.thread.shutdownNow();
+      ApiToGui.thread.shutdownNow();
       try {
         DatabaseConnect.close();
       } catch (SQLException e1) {
@@ -125,7 +124,10 @@ public class FaersAnalysisGui extends JFrame {
 
   }
 
+  private static final long serialVersionUID = -9185735330511290537L;
+
   public static PropertiesConfiguration config = null;
+
   final static Logger logger = LogManager.getLogger(FaersAnalysisGui.class);
 
   class ColumnChangeListener implements MouseListener {
@@ -292,23 +294,9 @@ public class FaersAnalysisGui extends JFrame {
 
   static int currentPage = 1;
 
-  static JTextField currentPageView = new JTextField();
-
-  private static ArrayList<MethodInterface> methods = new ArrayList<MethodInterface>();
-
-  static OptimizationInterface optiMethod;
-
   static GraphicMonitor processingDialog;
 
-  private static final long serialVersionUID = -9185735330511290537L;
-
-  // Every long-run thread will check this field frequently.
-  public static AtomicBoolean stopCondition = new AtomicBoolean();
-
-  public static ArrayList<Future<?>> futures = new ArrayList<Future<?>>();
-
-  // The threadPoll
-  public static ExecutorService thread;
+  static JTextField currentPageView = new JTextField();
 
   /**
    * Init methods from configure.txt.
@@ -331,7 +319,7 @@ public class FaersAnalysisGui extends JFrame {
     String optiMethodClassName = config.getString("optimization");
     optiMethodClassName = methodNameClassNameMap.get(optiMethodClassName);
 
-    optiMethod = (OptimizationInterface) Class.forName(optiMethodClassName).newInstance();
+    ApiToGui.optiMethod = (OptimizationInterface) Class.forName(optiMethodClassName).newInstance();
 
   }
 
@@ -359,7 +347,7 @@ public class FaersAnalysisGui extends JFrame {
 
     }
 
-    thread = Executors.newCachedThreadPool(new DaemonThreadFactory());
+    ApiToGui.thread = Executors.newCachedThreadPool(new DaemonThreadFactory());
     // thread=Executors.newFixedThreadPool(4);
 
   }
@@ -373,19 +361,19 @@ public class FaersAnalysisGui extends JFrame {
   public static void shutdown() {
 
     // Thread.currentThread().interrupt();
-    thread.shutdown();
+    ApiToGui.thread.shutdown();
     ParallelMethodInterface.thread.shutdown();
 
-    stopCondition.set(true);
+    ApiToGui.stopCondition.set(true);
     // shutdownAndAwaitTermination(thread);
     try {
-      thread.awaitTermination(15, TimeUnit.SECONDS);
+      ApiToGui.thread.awaitTermination(15, TimeUnit.SECONDS);
       ParallelMethodInterface.thread.awaitTermination(15, TimeUnit.SECONDS);
 
       // Try shut down the process.
-      while (!thread.isTerminated()) {
-        thread.shutdownNow();
-        thread.awaitTermination(15, TimeUnit.SECONDS);
+      while (!ApiToGui.thread.isTerminated()) {
+        ApiToGui.thread.shutdownNow();
+        ApiToGui.thread.awaitTermination(15, TimeUnit.SECONDS);
 
       }
 
@@ -395,9 +383,9 @@ public class FaersAnalysisGui extends JFrame {
 
       }
 
-      futures.clear();
+      ApiToGui.futures.clear();
       initTasks();
-      stopCondition.set(false);
+      ApiToGui.stopCondition.set(false);
 
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
@@ -406,9 +394,9 @@ public class FaersAnalysisGui extends JFrame {
       new TimerDlg("interrupted exception");
 
       // Renew the thread pool.
-      futures.clear();
+      ApiToGui.futures.clear();
       initTasks();
-      stopCondition.set(false);
+      ApiToGui.stopCondition.set(false);
       // JOptionPane.showMessageDialog(null, e.getMessage() + "\n" +
       // e.getStackTrace() + "\n" + e);
 
@@ -420,7 +408,7 @@ public class FaersAnalysisGui extends JFrame {
   @SuppressWarnings("unused")
   private static void submit(Runnable buildTableRun) {
     // TODO Auto-generated method stub
-    futures.add(FaersAnalysisGui.thread.submit(buildTableRun));
+    ApiToGui.futures.add(ApiToGui.thread.submit(buildTableRun));
 
   }
 
@@ -473,15 +461,15 @@ public class FaersAnalysisGui extends JFrame {
   public FaersAnalysisGui() {
 
     super();
-    File configure = new File("configure.txt");
+    File configure = new File((ApiToGui.configurePath));
     if (!configure.exists()) {
       return;
     }
 
     try {
-      config = new PropertiesConfiguration("configure.txt");
+      config = new PropertiesConfiguration((ApiToGui.configurePath));
 
-      stopCondition.set(false);
+      ApiToGui.stopCondition.set(false);
 
       initMethods();
 
@@ -885,7 +873,7 @@ public class FaersAnalysisGui extends JFrame {
           logger.error(e.getMessage());
           e.printStackTrace();
           JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getStackTrace());
-          System.exit(0);
+          //System.exit(-1);
         }
         logger.exit();
 
@@ -914,11 +902,11 @@ public class FaersAnalysisGui extends JFrame {
   }
 
   public static ArrayList<MethodInterface> getMethods() {
-    return methods;
+    return ApiToGui.methods;
   }
 
   public static void setMethods(ArrayList<MethodInterface> methods) {
-    FaersAnalysisGui.methods = methods;
+    ApiToGui.methods = methods;
   }
 
 }

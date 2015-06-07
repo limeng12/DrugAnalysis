@@ -35,7 +35,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import main.ccbb.faers.core.CoreAPI;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 
 import org.apache.logging.log4j.LogManager;
@@ -94,9 +94,9 @@ public class InitDatabaseDlg extends JDialog {
     parentDlg = tparentDlg;
 
     if (tparentDlg != null) {
-      CoreAPI.pm = new GraphicMonitor(tparentDlg, "runing...", "progress", 0, 100);
+      ApiToGui.pm = new GraphicMonitor(tparentDlg, "runing...", "progress", 0, 100);
     } else {
-      CoreAPI.pm = new GraphicMonitor(tparentDlg, "runing...", "progress", 0, 100);
+      ApiToGui.pm = new GraphicMonitor(tparentDlg, "runing...", "progress", 0, 100);
     }
 
     JPanel loadIntoDatabasePanel = new JPanel();

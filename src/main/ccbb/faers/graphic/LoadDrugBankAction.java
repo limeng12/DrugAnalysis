@@ -51,6 +51,5 @@ public class LoadDrugBankAction implements ActionListener {
     }
 
   }
-  
-  
+
 }

@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import main.ccbb.faers.methods.Comparable;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
+import main.ccbb.faers.core.ApiToGui;
 
 public abstract class ParallelMethodInterface extends MethodInterface {
   private static final Logger logger = LogManager.getLogger(ParallelMethodInterface.class);
@@ -36,7 +36,8 @@ public abstract class ParallelMethodInterface extends MethodInterface {
   // max cpu-32
   protected ParallelMethodInterface() {
     thread = Executors.newCachedThreadPool();
-    stopCondition = FaersAnalysisGui.stopCondition;
+    stopCondition = ApiToGui.stopCondition;
+    futures = ApiToGui.futures;
 
   }
 

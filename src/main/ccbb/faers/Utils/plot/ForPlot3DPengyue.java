@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.methods.PengyueMethod;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
@@ -42,7 +43,7 @@ public class ForPlot3DPengyue {
     // t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
     PropertiesConfiguration config = null;
     try {
-      config = new PropertiesConfiguration("configure.txt");
+      config = new PropertiesConfiguration((ApiToGui.configurePath));
 
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block

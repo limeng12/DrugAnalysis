@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.core.CalculatNAndE;
-import main.ccbb.faers.core.CoreAPI;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 
@@ -54,13 +54,13 @@ public class CalculatNAndEAction implements ActionListener {
           methodNames.add(ite.getName());
         }
 
-        CoreAPI.pm.setNote("Calculating the observe count and expect count");
-        CoreAPI.pm.setProgress(0);
+        ApiToGui.pm.setNote("Calculating the observe count and expect count");
+        ApiToGui.pm.setProgress(0);
 
         CalculatNAndE build = CalculatNAndE.getInstance(DatabaseConnect.getMysqlConnector());
         build.buildRatio(methodNames);
 
-        CoreAPI.pm.close();
+        ApiToGui.pm.close();
 
       } catch (SQLException e) {
         // TODO Auto-generated catch block
@@ -84,7 +84,7 @@ public class CalculatNAndEAction implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     // TODO Auto-generated method stub
-    FaersAnalysisGui.thread.submit(new BuildTableRun());
+    ApiToGui.thread.submit(new BuildTableRun());
 
   }
 

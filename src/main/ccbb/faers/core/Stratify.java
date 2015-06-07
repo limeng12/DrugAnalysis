@@ -79,7 +79,7 @@ public class Stratify {
 
   // double[][] ageIntever = { { 0, 1 }, { 2, 4 }, { 5, 12 }, { 13, 16 }, {
   // 17, 45 }, { 46, 75 }, { 76, 85 }, { 86, 100000000 } };
-  static double[][] ageIntever = { { -1 * Double.MAX_VALUE, 55 }, { 55, Double.MAX_VALUE } };
+  private static double[][] ageIntever = { { -1 * Double.MAX_VALUE, 55 }, { 55, Double.MAX_VALUE } };
 
   // private String pa =
   // "chr\\w+:(\\d+):(\\d+)\\|(\\d+):(\\+|-)@chr(\\w+):(\\d+):(\\d+):(\\+|-)";
@@ -89,11 +89,12 @@ public class Stratify {
   // private String genderPattern = "M|F|";
 
   final static Logger logger = LogManager.getLogger(Stratify.class);
-  static int numberOfAge = 3;// <=55,>55,unknown
 
+  static int numberOfAge = 3;// <=55,>55,unknown
   static int numberOfGender = 3;// M,F,unknown
   static int numberOfYear = 1;
-  static ArrayList<Integer> ObsStratify = new ArrayList<Integer>();
+
+  private static ArrayList<Integer> ObsStratify = new ArrayList<Integer>();
 
   public static ArrayList<Integer> buildObsStratification(Connection conn) throws SQLException {
     for (int i = 0; i < numberOfAge * numberOfGender * numberOfYear; ++i) {

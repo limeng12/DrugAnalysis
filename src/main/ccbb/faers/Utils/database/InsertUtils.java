@@ -88,13 +88,14 @@ public class InsertUtils {
    * @param values
    *          The values in a row to be inserted.
    */
-  public static int insertLine(PreparedStatement ps, ArrayList<Object> values) throws SQLException {
+  public static int insertLineUppcase(PreparedStatement ps, ArrayList<Object> values)
+      throws SQLException {
 
     for (int i = 0; i < values.size(); ++i) {
       // logger.debug(values.get(i));
       // System.out.println(values.get(i));
       if (values.get(i) != null && values.get(i).toString().length() > 0) {
-        ps.setObject(i + 1, values.get(i));
+        ps.setObject(i + 1, values.get(i).toString().toUpperCase());
       } else {
 
         ps.setNull(i + 1, Integer.MIN_VALUE);

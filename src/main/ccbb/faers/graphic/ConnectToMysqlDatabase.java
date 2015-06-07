@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -56,9 +57,9 @@ public class ConnectToMysqlDatabase implements ActionListener {
     JTextField userContent = new JTextField("");
 
     public MDatabaseConnect() throws ConfigurationException {
-      File loginFile = new File("configure.txt");
+      File loginFile = new File((ApiToGui.configurePath));
       if (loginFile.exists()) {
-        PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+        PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
         // Deal with the line
         hostContent.setText(config.getString("host"));
@@ -80,7 +81,7 @@ public class ConnectToMysqlDatabase implements ActionListener {
           String database = databaseContent.getText();
 
           try {
-            PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+            PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
             DatabaseConnect.setMysqlConnector(host, userName, password, database);
 

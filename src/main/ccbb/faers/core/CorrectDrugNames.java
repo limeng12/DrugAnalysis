@@ -260,7 +260,7 @@ public class CorrectDrugNames {
   private void createTableDrugnameMap() throws SQLException {
 
     String sqlString1 = "create table DRUGNAMEMAP( DRUGNAME VARCHAR(300),GENERICNAME VARCHAR(300)"
-        + ", id int, INDEX drugnameIndex(DRUGNAME,id) ) ENGINE INNODB";
+        + ", id int, INDEX drugnameIndex(DRUGNAME,id),INDEX drugnameIndex2(DRUGNAME),PRIMARY KEY drugnameIndex3(DRUGNAME,GENERICNAME) ) ENGINE INNODB";
     // +" FOREIGN KEY(DRUGNAME)REFERENCES DRUG(DRUGNAME),"
     // + " FOREIGN KEY(GENERICNAME) REFERENCES DRUGNAME(DRUGNAME)" + " ) ENGINE INNODB";
 
@@ -333,7 +333,7 @@ public class CorrectDrugNames {
 
   }
 
-  HashSet<String> getAllNamesInDrugBankNoUnique() throws SQLException {
+  private HashSet<String> getAllNamesInDrugBankNoUnique() throws SQLException {
     HashSet<String> names = new HashSet<String>();
 
     sqlString = "select distinct drugname from DRUGBankNounique";
@@ -394,7 +394,7 @@ public class CorrectDrugNames {
 
   private void processType1(WrongDrugType type, HashSet<String> badNames, HashSet<String> drugNames)
       throws SQLException {
-    CoreAPI.pm.setProgress(60);
+    ApiToGui.pm.setProgress(60);
 
     Iterator<Map.Entry<String, ArrayList<String>>> it = type.correctNamesMap.entrySet().iterator();
     String correctName = "";
@@ -424,7 +424,7 @@ public class CorrectDrugNames {
 
   private void processType2(WrongDrugType type, HashSet<String> badNames, HashSet<String> drugNames)
       throws SQLException {
-    CoreAPI.pm.setProgress(70);
+    ApiToGui.pm.setProgress(70);
 
     Iterator<Map.Entry<String, ArrayList<String>>> it = type.correctNamesMap.entrySet().iterator();
     // PreparedStatement ps1;
@@ -453,7 +453,7 @@ public class CorrectDrugNames {
 
   private void processType3(WrongDrugType type, HashSet<String> badNames, HashSet<String> drugNames)
       throws SQLException {
-    CoreAPI.pm.setProgress(80);
+    ApiToGui.pm.setProgress(80);
 
     Iterator<Map.Entry<String, ArrayList<String>>> it = type.correctNamesMap.entrySet().iterator();
     // PreparedStatement ps1;

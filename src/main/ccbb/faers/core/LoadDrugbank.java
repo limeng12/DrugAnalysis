@@ -63,9 +63,9 @@ public class LoadDrugbank {
     LoadDrugbank db = new LoadDrugbank();
 
     try {
-      CoreAPI.pm = new ConsoleMonitor();
+      ApiToGui.pm = new ConsoleMonitor();
 
-      PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+      PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
       FaersAnalysisGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
@@ -99,17 +99,17 @@ public class LoadDrugbank {
 
   }
 
-  public Connection conn;
-  PreparedStatement ps;
-  String query;
-  NodeList rootList;
-  ResultSet rset;
-  String sqlString;
+  private Connection conn;
+  private PreparedStatement ps;
+  private String query;
+  private NodeList rootList;
+  private ResultSet rset;
+  private String sqlString;
 
-  Statement stmt;
+  private Statement stmt;
 
-  String withDrawnFlag = "a";
-  static LoadDrugbank instance;
+  private String withDrawnFlag = "a";
+  private static LoadDrugbank instance;
 
   private LoadDrugbank() {
     super();
@@ -140,7 +140,7 @@ public class LoadDrugbank {
   public void build(String trootDir) throws SQLException, ParserConfigurationException,
       SAXException, IOException, FAERSInterruptException, ConfigurationException {
     // PropertiesConfiguration config = new
-    // PropertiesConfiguration("configure.txt");
+    // PropertiesConfiguration((ApiToGui.configurePath));
     withDrawnFlag = FaersAnalysisGui.config.getString("withDrawnFlag");
 
     rootDir = trootDir;
@@ -156,20 +156,21 @@ public class LoadDrugbank {
     // db.setKeepTable("DRUGBANK");
     // addIndex("DRUGBANK", "ID", "idxBank");
     TableUtils.addIndex(conn, "DRUGBANK", "ID");
+    TableUtils.addIndex(conn, "DRUGBANK", "DRUGNAME");
 
     buildDatabase();
-    CoreAPI.pm.setProgress(30);
+    ApiToGui.pm.setProgress(30);
     insertIntoDRUGBANKNOUNIQUE();
-    CoreAPI.pm.setProgress(35);
+    ApiToGui.pm.setProgress(35);
     uniqueNames();
-    CoreAPI.pm.setProgress(40);
+    ApiToGui.pm.setProgress(40);
 
   }
 
   /**
    * building the database.
    */
-  public void buildDatabase() throws SQLException, FAERSInterruptException {
+  private void buildDatabase() throws SQLException, FAERSInterruptException {
 
     ArrayList<String> synList = new ArrayList<String>();
     ArrayList<Integer> classList = new ArrayList<Integer>(); // 1 generic
@@ -186,7 +187,7 @@ public class LoadDrugbank {
         continue;
       }
 
-      if (FaersAnalysisGui.stopCondition.get()) {
+      if (ApiToGui.stopCondition.get()) {
         throw new FAERSInterruptException("interrupted");
 
       }
@@ -669,11 +670,10 @@ public class LoadDrugbank {
     }
     rset.close();
     stmt.close();
-    
+
     outputBadDrugNames("synonom cofilict", badNames);
     logger.info("output to badname table over!");
     // conn.setAutoCommit(true);
-
 
     /*
      * doesn't need specify the class 3. I think because synomynon will not overlap with brand or

@@ -35,7 +35,7 @@ import javax.swing.JSeparator;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.Utils.database.TableUtils;
-import main.ccbb.faers.core.CoreAPI;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 
@@ -72,8 +72,8 @@ public class CalculateEbgmLfdrAction implements ActionListener {
       try {
         conn = DatabaseConnect.getMysqlConnector();
 
-        CoreAPI.pm.setNote("Calculating for each method");
-        CoreAPI.pm.setProgress(0);
+        ApiToGui.pm.setNote("Calculating for each method");
+        ApiToGui.pm.setProgress(0);
         String sqlString;
 
         sqlString = "select count(*) from RATIO where N>0";
@@ -134,7 +134,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
 
           if (obs != 0) {
             if (progressCount++ % 50000 == 0) {
-              CoreAPI.pm.setProgress((int) ((1.0 * progressCount / numberOfNBigger0) * 100));
+              ApiToGui.pm.setProgress((int) ((1.0 * progressCount / numberOfNBigger0) * 100));
               logger.trace(progressCount);
 
             }
@@ -184,7 +184,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         rset.close();
         stmt.close();
 
-        CoreAPI.pm.setNote("indexing all the field, this may be slow");
+        ApiToGui.pm.setNote("indexing all the field, this may be slow");
 
         for (MethodInterface ite : methods) {
           name = ite.getName();
@@ -194,7 +194,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
 
         TableUtils.addIndex(conn, "RATIO", "AENAME");
 
-        CoreAPI.pm.close();
+        ApiToGui.pm.close();
       } catch (SQLException e) {
         // TODO Auto-generated catch block
         JOptionPane.showMessageDialog(
@@ -214,8 +214,8 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         FAERSInterruptException {
       int numberOfNeedUpdate = 500000;
 
-      CoreAPI.pm.setNote("insert order " + methodName);
-      CoreAPI.pm.setProgress(0);
+      ApiToGui.pm.setNote("insert order " + methodName);
+      ApiToGui.pm.setProgress(0);
 
       String sqlString = "select drugname,aename,ORDERBY" + methodName
           + " from RATIO where N>0 order by " + methodName + " desc limit " + numberOfNeedUpdate;
@@ -238,7 +238,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
       PreparedStatement ps = conn.prepareStatement(updateStr);
 
       while (rset.next()) {
-        if (FaersAnalysisGui.stopCondition.get()) {
+        if (ApiToGui.stopCondition.get()) {
           rset.close();
           stmt.close();
           throw new FAERSInterruptException("interrupted");
@@ -254,7 +254,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         }
 
         if (i % 1000 == 0) {
-          CoreAPI.pm.setProgress((int) ((1.0 * i / numberOfNeedUpdate) * 100));
+          ApiToGui.pm.setProgress((int) ((1.0 * i / numberOfNeedUpdate) * 100));
         }
 
         // rset.updateInt("ORDERBY"+methodName, i++);
@@ -279,7 +279,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
       conn.setAutoCommit(true);
       rset.close();
       stmt.close();
-      CoreAPI.pm.close();
+      ApiToGui.pm.close();
 
     }
 
@@ -288,7 +288,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
       Connection conn;
       conn = DatabaseConnect.getMysqlConnector();
 
-      CoreAPI.pm.setNote("insert order ");
+      ApiToGui.pm.setNote("insert order ");
       Statement stmt = conn.createStatement();
       stmt.execute("create table TRATIO like RATIO");
       stmt.close();
@@ -316,7 +316,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         }
 
         if (i % 1000 == 0) {
-          CoreAPI.pm.setProgress((int) ((1.0 * i / numberOfNBigger0) * 100));
+          ApiToGui.pm.setProgress((int) ((1.0 * i / numberOfNBigger0) * 100));
         }
 
         rset.updateInt("ORDERBY" + methodName, i++);
@@ -333,8 +333,8 @@ public class CalculateEbgmLfdrAction implements ActionListener {
 
     @Override
     public void run() {
-      CoreAPI.pm.setNote("preparing data");
-      CoreAPI.pm.setProgress(0);
+      ApiToGui.pm.setNote("preparing data");
+      ApiToGui.pm.setProgress(0);
 
       // TODO Auto-generated method stub
       Connection conn;
@@ -357,7 +357,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         rset.close();
         stmt.close();
 
-        CoreAPI.pm.close();
+        ApiToGui.pm.close();
 
         for (MethodInterface ite : methods) {
           insertOrder(numberOfNBigger0, ite.getName());
@@ -393,7 +393,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
      */
     public SetParametersDialog() throws SQLException, ConfigurationException {
       PropertiesConfiguration config = null;
-      config = new PropertiesConfiguration("configure.txt");
+      config = new PropertiesConfiguration((ApiToGui.configurePath));
 
       JPanel mainPanel = new JPanel();
       mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -425,7 +425,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
           // TODO Auto-generated method stub
-          FaersAnalysisGui.thread.submit(new CalculateRun());
+          ApiToGui.thread.submit(new CalculateRun());
           // Thread a = new Thread(new CalculateRun());
           // a.setDaemon(true);
           // a.start();
@@ -441,7 +441,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
           // TODO Auto-generated method stub
-          FaersAnalysisGui.thread.submit(new InsertOrderRun());
+          ApiToGui.thread.submit(new InsertOrderRun());
 
         }
 

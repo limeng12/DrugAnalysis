@@ -15,12 +15,10 @@
 package main.ccbb.faers.core;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,7 +27,6 @@ import java.util.TreeSet;
 
 import main.ccbb.faers.Utils.algorithm.AlgorithmUtil;
 import main.ccbb.faers.Utils.algorithm.Pair;
-import main.ccbb.faers.Utils.database.SearchUtil;
 import main.ccbb.faers.Utils.database.SqlParseUtil;
 import main.ccbb.faers.graphic.FaersAnalysisGui;
 
@@ -48,13 +45,14 @@ public class Search {
 
   final static Logger logger = LogManager.getLogger(Search.class);
 
-  static String rootDir = "F:\\drug-data-ppt\\medDRA\\meddra_15_0_english\\MedAscii\\";
-
   public static void main(String[] args) {
 
     Search searchDB;
     try {
-      PropertiesConfiguration config = new PropertiesConfiguration("configure.txt");
+      //Integer i=null;
+      //i.i 
+      
+      PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
       FaersAnalysisGui.config = config;
       String userName = config.getString("user");
@@ -95,22 +93,16 @@ public class Search {
 
   ArrayList<Integer> aeNumberTable = new ArrayList<Integer>();
   private Connection conn;
-  LoadDrugbank drugDB;
-  ArrayList<Integer> drugNumberTable = new ArrayList<Integer>();
-  ArrayList<Double> expTable = new ArrayList<Double>();
+  private LoadDrugbank drugDB;
 
   // a hash map is build for storing the first line of the AE in reacGroupPT
   // table.
-  HashMap<String, Integer> firstLine = new HashMap<String, Integer>();
-  MedDraSearchUtils medSearchEngine;
-  PreparedStatement ps;
-  String query;
-  ResultSet rset;
-  String sqlString;
+  private MedDraSearchUtils medSearchEngine;
+  private ResultSet rset;
+  private String sqlString;
 
-  Statement stmt;
+  private Statement stmt;
 
-  int totalNumberOfReports = 0;
   public SearchEnssential searchEn;
 
   private Search(Connection tconn) {
@@ -129,11 +121,27 @@ public class Search {
       instance = new Search(conn);
 
     }
+    
     instance.conn = conn;
-
     return instance;
+    
   }
 
+  public static Search getInstance(){
+    if (instance == null) {
+      try {
+        //DatabaseConnect.setConnectionFromConfig();
+        
+        instance = new Search(DatabaseConnect.getMysqlConnector());
+      
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return instance;
+  }
+  
   public Connection getConn() {
     return conn;
   }
@@ -491,6 +499,52 @@ public class Search {
     }
 
     return sum;
+  }
+
+  /**
+   * Get drug name, ade name, observe count, expect count, EBGM,LFDR from RATIO table.
+   * 
+   * @param tdrugName
+   * @param tadeName
+   * @return
+   * @throws SQLException
+   */
+  public String getInfoFromRatio(String tdrugName, String tadeName) throws SQLException {
+    String result = "";
+    sqlString = "select DRUGNAME,AENAME,N,LIE,PENGYUE,LFDRPENGYUE FROM RATIO " + "WHERE drugName='"
+        + tdrugName + "' AND aeName='" + tadeName + "'";
+    stmt = getConn().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    rset = stmt.executeQuery(sqlString);
+    while (rset.next()) {
+      String drugName = rset.getString("DRUGNAME");
+      String aeName = rset.getString("AENAME");
+      int n = rset.getInt("N");
+      double e = rset.getDouble("LIE");
+      double ebgm = rset.getDouble("PENGYUE");
+      double lfdr = rset.getDouble("LFDRPENGYUE");
+
+      result = drugName + "," + aeName + "," + n + "," + e + "," + ebgm + "," + lfdr;
+    }
+
+    return result;
+  }
+
+  public HashMap<Integer, Integer> getDrugMargin() throws SQLException {
+    // TODO Auto-generated method stub
+    HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
+    sqlString = "select ID,N11SUM from DRUGEXP";
+
+    stmt = getConn().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    rset = stmt.executeQuery(sqlString);
+    while (rset.next()) {
+      int id = rset.getInt("ID");
+      int marginCount = rset.getInt("N11SUM");
+      result.put(id, marginCount);
+
+    }
+
+    return result;
+
   }
 
 }

@@ -6,7 +6,9 @@ package main.ccbb.faers;
  * 
  * 2 All the catch in GUI should throw a graphic info to info the user throw a exception.
  * 
- * 3
+ * 3 All drug names, ADE names in three database should be Upcase.
+ * 
+ * 4
  * 
  * @author limeng
  *

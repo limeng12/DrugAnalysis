@@ -26,7 +26,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
-import main.ccbb.faers.core.CoreAPI;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 
@@ -52,32 +52,32 @@ public class OptimizationAction implements ActionListener {
       // TODO Auto-generated method stub
       try {
 
-        CoreAPI.pm.setNote("reading data from database");
+        ApiToGui.pm.setNote("reading data from database");
 
-        CoreAPI.pm.setProgress(0);
+        ApiToGui.pm.setProgress(0);
         readObserveCountExpectCountFromDatabase();
 
         // The optimization parameters are saved in configure.txt.
         PropertiesConfiguration config = FaersAnalysisGui.config;
 
         // read data from database over.
-        CoreAPI.pm.close();
+        ApiToGui.pm.close();
 
         // For each method, optimize its parameters, some method like RR and Poisson, will skip this
         // step.
         for (MethodInterface method : methods) {
-          CoreAPI.pm.setNote(method.getName());
-          CoreAPI.pm.setProgress(0);
+          ApiToGui.pm.setNote(method.getName());
+          ApiToGui.pm.setProgress(0);
 
-          ArrayList<Double> pars = method.optimization(obserCount, expectCount,
-              FaersAnalysisGui.optiMethod);
+          ArrayList<Double> pars = method
+              .optimization(obserCount, expectCount, ApiToGui.optiMethod);
 
           Double[] arr = pars.toArray(new Double[pars.size()]);
 
           config.setProperty(method.getName(), arr);
 
         }
-        CoreAPI.pm.close();
+        ApiToGui.pm.close();
 
         config.save();
 
@@ -128,7 +128,7 @@ public class OptimizationAction implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     // TODO Auto-generated method stub
     init();
-    FaersAnalysisGui.thread.submit(new optimizationRun());
+    ApiToGui.thread.submit(new optimizationRun());
 
   }
 
@@ -175,9 +175,9 @@ public class OptimizationAction implements ActionListener {
     int blocks = numberOfCount / part + 1;
 
     for (int iter = 0; iter < blocks; ++iter) {
-      CoreAPI.pm.setProgress((int) (iter / ((float) blocks) * 100));
+      ApiToGui.pm.setProgress((int) (iter / ((float) blocks) * 100));
 
-      if (FaersAnalysisGui.stopCondition.get()) {
+      if (ApiToGui.stopCondition.get()) {
         return;
       }
 
@@ -270,7 +270,7 @@ public class OptimizationAction implements ActionListener {
     while (rset.next()) {
       if (rowIndex % 100000 == 0) {
         logger.trace(rowIndex);
-        CoreAPI.pm.setProgress((int) (rowIndex / ((float) numberOfCount) * 100));
+        ApiToGui.pm.setProgress((int) (rowIndex / ((float) numberOfCount) * 100));
       }
       int n = rset.getInt(1);// observe count
       float e = rset.getFloat(2);// expect count

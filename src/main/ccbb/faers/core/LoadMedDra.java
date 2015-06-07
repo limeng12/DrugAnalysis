@@ -19,7 +19,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -48,13 +47,13 @@ public class LoadMedDra {
 
   public static void main(String[] args) throws SQLException, IOException {
     // createAllTable();
-    CoreAPI.pm = new ConsoleMonitor();
+    ApiToGui.pm = new ConsoleMonitor();
 
     LoadMedDra db = new LoadMedDra();
 
     PropertiesConfiguration config = null;
     try {
-      config = new PropertiesConfiguration("configure.txt");
+      config = new PropertiesConfiguration((ApiToGui.configurePath));
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -64,7 +63,7 @@ public class LoadMedDra {
     String password = config.getString("password");
     String host = config.getString("host");
     String database = config.getString("database");
-    database = "drugTest";
+    // database = "drug";
 
     DatabaseConnect.setMysqlConnector(host, userName, password, database);
 
@@ -75,14 +74,12 @@ public class LoadMedDra {
 
   }
 
-  Connection conn;
+  private Connection conn;
 
-  PreparedStatement ps;
-  String query;
-  String rootDir = "";
-  ResultSet rset;
-  String sqlString;
-  Statement stmt;
+  private PreparedStatement ps;
+  private String rootDir = "";
+  private String sqlString;
+  private Statement stmt;
 
   private LoadMedDra() {
     super();
@@ -146,7 +143,7 @@ public class LoadMedDra {
     stmt.execute(sqlString1);
     stmt.execute(sqlString2);
 
-    logger.debug("Table " + "ADE" + " is created!");
+    logger.info("Table " + "ADE" + " is created!");
     stmt.close();
 
   }
@@ -179,21 +176,21 @@ public class LoadMedDra {
   private void createAllTableFromFile() throws SQLException, IOException {
     conn.setAutoCommit(false);
     createTableFromFile("PREF_TERM", rootDir + "pt.asc");
-    CoreAPI.pm.setProgress(10);
+    ApiToGui.pm.setProgress(10);
     createTableFromFile("LOW_LEVEL_TERM", rootDir + "llt.asc");
-    CoreAPI.pm.setProgress(20);
+    ApiToGui.pm.setProgress(20);
     createTableFromFile("SOC_TERM", rootDir + "soc.asc");
-    CoreAPI.pm.setProgress(30);
+    ApiToGui.pm.setProgress(30);
     createTableFromFile("HLGT_PREF_TERM", rootDir + "hlgt.asc");
-    CoreAPI.pm.setProgress(40);
+    ApiToGui.pm.setProgress(40);
     createTableFromFile("HLT_PREF_TERM", rootDir + "hlt.asc");
-    CoreAPI.pm.setProgress(50);
+    ApiToGui.pm.setProgress(50);
     createTableFromFile("HLT_PREF_COMP", rootDir + "hlt_pt.asc");
-    CoreAPI.pm.setProgress(60);
+    ApiToGui.pm.setProgress(60);
     createTableFromFile("HLGT_HLT_COMP", rootDir + "hlgt_hlt.asc");
-    CoreAPI.pm.setProgress(70);
+    ApiToGui.pm.setProgress(70);
     createTableFromFile("SOC_HLGT_COMP", rootDir + "soc_hlgt.asc");
-    CoreAPI.pm.setProgress(80);
+    ApiToGui.pm.setProgress(80);
 
     conn.commit();
     conn.setAutoCommit(true);
@@ -220,12 +217,12 @@ public class LoadMedDra {
     sqlString += ")";
     System.out.println(sqlString);
     ps = conn.prepareStatement(sqlString);
-    InsertUtils.insertLine(ps, lineArr);
+    InsertUtils.insertLineUppcase(ps, lineArr);
 
     while ((lineArr = reader.readLineAfterSplitMedDRA()) != null) {
       // tempString = tempString.toUpperCase();
       // System.out.println(lineArr.size());
-      InsertUtils.insertLine(ps, lineArr);
+      InsertUtils.insertLineUppcase(ps, lineArr);
 
     }
     ps.executeBatch();
