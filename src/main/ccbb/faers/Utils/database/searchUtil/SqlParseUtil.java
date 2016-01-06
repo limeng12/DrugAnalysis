@@ -12,13 +12,10 @@
  *     You should have received a copy of the GNU General Public License
  *******************************************************************************/
 
-package main.ccbb.faers.Utils.database;
+package main.ccbb.faers.Utils.database.searchUtil;
 
 import java.util.HashSet;
 import java.util.Iterator;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Parse the string into sql comfortable statement.
@@ -27,8 +24,6 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class SqlParseUtil {
-  private static final Logger logger = LogManager.getLogger(SqlParseUtil.class);
-
   public static String seperateByComma(String[] names) {
     String result = "";
     for (int i = 0; i < names.length; ++i) {

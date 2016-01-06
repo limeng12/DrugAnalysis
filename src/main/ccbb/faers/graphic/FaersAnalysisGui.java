@@ -126,8 +126,6 @@ public class FaersAnalysisGui extends JFrame {
 
   private static final long serialVersionUID = -9185735330511290537L;
 
-  public static PropertiesConfiguration config = null;
-
   final static Logger logger = LogManager.getLogger(FaersAnalysisGui.class);
 
   class ColumnChangeListener implements MouseListener {
@@ -307,7 +305,7 @@ public class FaersAnalysisGui extends JFrame {
    */
   static private void initMethods() throws InstantiationException, IllegalAccessException,
       ClassNotFoundException {
-    String[] methodClassNames = config.getStringArray("methods");
+    String[] methodClassNames = ApiToGui.config.getStringArray("methods");
     for (int i = 0; i < methodClassNames.length; ++i) {
       String className = methodClassNames[i];
       className = methodNameClassNameMap.get(className);
@@ -316,7 +314,7 @@ public class FaersAnalysisGui extends JFrame {
 
     }
 
-    String optiMethodClassName = config.getString("optimization");
+    String optiMethodClassName = ApiToGui.config.getString("optimization");
     optiMethodClassName = methodNameClassNameMap.get(optiMethodClassName);
 
     ApiToGui.optiMethod = (OptimizationInterface) Class.forName(optiMethodClassName).newInstance();
@@ -433,7 +431,6 @@ public class FaersAnalysisGui extends JFrame {
 
   DefaultTableModel myTableMode;
 
-  ArrayList<OptimizationInterface> optiMethods = new ArrayList<OptimizationInterface>();
   JMenu option = new JMenu("Options");
 
   JButton previousPage = new JButton("<");
@@ -456,8 +453,6 @@ public class FaersAnalysisGui extends JFrame {
 
   MyJTable table;
 
-  boolean useNewE = true;
-
   public FaersAnalysisGui() {
 
     super();
@@ -467,7 +462,7 @@ public class FaersAnalysisGui extends JFrame {
     }
 
     try {
-      config = new PropertiesConfiguration((ApiToGui.configurePath));
+      ApiToGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
 
       ApiToGui.stopCondition.set(false);
 
@@ -516,10 +511,10 @@ public class FaersAnalysisGui extends JFrame {
 
     try {
 
-      String userName = config.getString("user");
-      String password = config.getString("password");
-      String host = config.getString("host");
-      String database = config.getString("database");
+      String userName = ApiToGui.config.getString("user");
+      String password = ApiToGui.config.getString("password");
+      String host = ApiToGui.config.getString("host");
+      String database = ApiToGui.config.getString("database");
 
       DatabaseConnect.setMysqlConnector(host, userName, password, database);
 

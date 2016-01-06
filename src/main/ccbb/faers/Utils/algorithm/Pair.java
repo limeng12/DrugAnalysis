@@ -14,11 +14,7 @@
 
 package main.ccbb.faers.Utils.algorithm;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Pair<T1, T2> {
-  private static final Logger logger = LogManager.getLogger(Pair.class);
 
   public T1 value1;
 
@@ -26,6 +22,7 @@ public class Pair<T1, T2> {
 
   public Pair() {
     super();
+    
   }
 
   public Pair(T1 t1, T2 t2) {

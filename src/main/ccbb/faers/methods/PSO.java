@@ -24,7 +24,6 @@ import java.util.Random;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.core.ApiToGui;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.interfaceToImpl.MaxObjectFunction;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 
@@ -115,7 +114,8 @@ public class PSO extends OptimizationInterface {
 
     void updatePartical(int particalIndex) {
       // logger.debug(dimensions);
-
+      double mathUni=Math.random();
+      
       for (int i = 0; i < dimensions; ++i) {
         double perturb = bestPositions[i];
 
@@ -125,8 +125,8 @@ public class PSO extends OptimizationInterface {
           // ranGaussin.nextGaussian())/2;
           // perturb=bestPositions[i];
         }
-        velocitys[i] = weight * velocitys[i] + c1 * Math.random()
-            * (localBestPosition[i] - currentPos[i]) + c2 * Math.random()
+        velocitys[i] = weight * velocitys[i] + c1 * mathUni
+            * (localBestPosition[i] - currentPos[i]) + c2 * mathUni
             * (perturb - currentPos[i]);
 
         if (Math.abs(velocitys[i]) > maxVecility) {
@@ -343,6 +343,8 @@ public class PSO extends OptimizationInterface {
   double variance = 0.5;
   // double varianceMin=0.1;
 
+  private double weightMax=1;
+  
   private double weight = 1;
 
   private double weightMin = 0.1;
@@ -404,7 +406,7 @@ public class PSO extends OptimizationInterface {
     init();
 
     for (int j = 0; j < dim; ++j) {
-      logger.debug("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
+      //logger.debug("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
       logger.trace("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
 
     }
@@ -433,7 +435,9 @@ public class PSO extends OptimizationInterface {
       }
 
       // maxVecility = maxVecility * (4.8 / 5.0);
-      weight = (4.7 / 5.0) * weight;
+      //weight = (4.7 / 5.0) * weight;
+      weight=(weightMax-weightMin)*(numIter-i)/numIter+weightMin;
+      
       if (weight < weightMin) {
         weight = weightMin;
       }
@@ -465,13 +469,13 @@ public class PSO extends OptimizationInterface {
       }
 
       for (int j = 0; j < dim; ++j) {
-        logger.trace("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
+        logger.debug("var[" + j + "]'s best position=" + bestPositions[j] + "\t");
       }
 
       logger.trace("maxVecility=" + maxVecility);
 
-      logger.trace("optimization value=" + bestValue.getValue());
-      logger.trace("iteTimes=" + i);
+      logger.debug("optimization value=" + bestValue.getValue());
+      logger.debug("iteTimes=" + i);
 
     }
 
@@ -505,7 +509,7 @@ public class PSO extends OptimizationInterface {
 
   private void readParameters() {
     // TODO Auto-generated method stub
-    PropertiesConfiguration config = FaersAnalysisGui.config;
+    PropertiesConfiguration config = ApiToGui.config;
     // Configuration config=null;
 
     // config.getString("fileName");

@@ -92,7 +92,7 @@ public class InitDatabaseDlg extends JDialog {
 
     super(tparentDlg);
     parentDlg = tparentDlg;
-
+    logger.info("init the init dialogs");
     if (tparentDlg != null) {
       ApiToGui.pm = new GraphicMonitor(tparentDlg, "runing...", "progress", 0, 100);
     } else {

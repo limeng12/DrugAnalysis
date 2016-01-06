@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 
 import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.methods.PengyueMethod;
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -34,48 +33,58 @@ import org.apache.logging.log4j.Logger;
 public class ForPlot3DPengyue {
   final static Logger logger = LogManager.getLogger(ForPlot3DPengyue.class);
 
-  static double[] optimizationValue = { 0.5569314, 0.195897, 0.018717, 0.19392 };
-
+  //static double[] optimizationValue = { 0.5569314, 0.195897, 0.018717, 0.19392 };
+  static double[] optimizationValue = { 1.595,0.118,0.0258,0.234 };
+  
   public static void main(String[] args) {
-
-    ForPlot3DPengyue t = new ForPlot3DPengyue();
-
-    // t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    
     PropertiesConfiguration config = null;
     try {
       config = new PropertiesConfiguration((ApiToGui.configurePath));
-
+      ApiToGui.config=config;
+      
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
       logger.debug(e.getMessage());
     }
-
+    
+    ForPlot3DPengyue t = new ForPlot3DPengyue();
+    
+    //t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    t.fun.readEBGMFile("/Users/mengli/Documents/workspace/DrugAnalysis/NLieRand.csv",1);
+    //NEratio.csv
+    
     String[] pars = config.getStringArray(t.fun.getName());
     for (int i = 0; i < pars.length; ++i) {
       optimizationValue[i] = Double.parseDouble(pars[i]);
     }
-
+    
     t.fun.caculateObjectFuncParallel();
     // t.fun.setParameter(optimizationValue);
-    t.changeTwoVariablesToCalculate(1, 2, "pengyuealpha2beta2.txt");
-
+    // 0->alpha1   1->alpha2   2->beta2   3->p3p2
     t.changeTwoVariablesToCalculate(0, 3, "pengyuealpha1p3p2.txt");
-
+    t.changeTwoVariablesToCalculate(1, 2, "pengyuealpha2beta2.txt");
+    
+    t.changeTwoVariablesToCalculate(1, 3, "pengyuealpha2p3p2.txt");
+    t.changeTwoVariablesToCalculate(0, 2, "pengyuealpha1beta2.txt");
+    
+    t.changeTwoVariablesToCalculate(0, 1, "pengyuealpha1alpha2.txt");
+    t.changeTwoVariablesToCalculate(3, 2, "pengyuep3p2beta2.txt");
+    
     ParallelMethodInterface.thread.shutdown();
-
   }
 
-  private PengyueMethod fun;
+  private PengyueMethod.Test fun;
 
   public ForPlot3DPengyue() {
     super();
-    fun = new PengyueMethod();
+    fun = new PengyueMethod.Test();
 
   }
 
   void changeTwoVariablesToCalculate(int t1, int t2, String filename) {
-    double[] tmpOptimizationValue = new double[5];
+    double[] tmpOptimizationValue = new double[4];
     tmpOptimizationValue[0] = optimizationValue[0];
     tmpOptimizationValue[1] = optimizationValue[1];
     tmpOptimizationValue[2] = optimizationValue[2];
@@ -89,12 +98,11 @@ public class ForPlot3DPengyue {
       outputWriter = new OutputStreamWriter(outputStream, "utf-8");
 
       PrintWriter pw = new PrintWriter(outputWriter);
-      // pw.println("��abc");
-
+      
       int cutPoint = 30;
       int halfPoint = cutPoint / 2;
-      // t1=0;
-      // t2=4;
+      
+      
       double unit1 = tmpOptimizationValue[t1] / cutPoint;// alpha3
       double unit2 = tmpOptimizationValue[t2] / cutPoint;// beta3
 
@@ -115,6 +123,8 @@ public class ForPlot3DPengyue {
       pw.println();
 
       for (int i = -halfPoint; i <= halfPoint; i++) {
+        logger.info(filename+" iter: "+i);
+        
         for (int j = -halfPoint; j <= halfPoint; j++) {
 
           tmpOptimizationValue[t1] = optimizationValue[t1] + i * unit1;

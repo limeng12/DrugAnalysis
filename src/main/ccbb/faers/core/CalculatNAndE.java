@@ -52,7 +52,6 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * the core class for calculating the E(expect count) and N(observe count).
- * 
  */
 
 public class CalculatNAndE {
@@ -129,7 +128,7 @@ public class CalculatNAndE {
 
   private PreparedStatement ps;
 
-  private SearchEnssential searchEn;
+  private SearchISRByDrugADE searchEn;
 
   private String sqlString;
 
@@ -192,15 +191,15 @@ public class CalculatNAndE {
    * create table to log the drug and ADE's frequency.
    * 
    */
-  private void createTablesFrequency() throws SQLException {
+  public void createTablesFrequency() throws SQLException {
 
     String sqlString2 = "";
     String sqlString1 = "";
     sqlString1 = "create table if NOT exists  "
-        + "DRUGFREQUENCY(DRUGNAME VARCHAR(100),COUNT int) Engine MYISAM";
+        + "DRUGFREQUENCY(ID int,COUNT int) Engine MYISAM";
 
     sqlString2 = "create table if NOT exists  "
-        + "ADEFREQUENCY(ADENAME VARCHAR(100),COUNT int) Engine MYISAM";
+        + "ADEFREQUENCY(ID int,COUNT int) Engine MYISAM";
 
     stmt = conn.createStatement();
     // stmt.execute(sqlString);
@@ -217,9 +216,9 @@ public class CalculatNAndE {
    */
   private void createTableMargin() throws SQLException {
     RunStatement.executeAStatement(conn,
-        "create table DRUGEXP(ID varchar(300),N11SUM NUMERIC(20)) Engine MYISAM");
+        "create table DRUGEXP(ID varchar(300),N11SUM NUMERIC(20),PRIMARY KEY(ID,N11SUM)) ");
     RunStatement.executeAStatement(conn,
-        "create table ADEEXP(pt_code VARCHAR(100),N11SUM NUMERIC(20)) Engine MYISAM");
+        "create table ADEEXP(pt_code VARCHAR(100),N11SUM NUMERIC(20),PRIMARY KEY(pt_code,N11SUM)) ");
 
     logger.info("drop all the table");
 
@@ -338,7 +337,7 @@ public class CalculatNAndE {
   /**
    * drop table frequency.
    */
-  private void dropTableFrequency() throws SQLException {
+  public void dropTableFrequency() throws SQLException {
 
     // E maybe smaller<0.0000001, be careful here
     String sqlString1 = "drop table if exists DRUGFREQUENCY";
@@ -369,12 +368,12 @@ public class CalculatNAndE {
   }
 
   /**
-   * insert values into ADE frequency.
+   * insert values into ADE N+j.
    * 
    * @param adeExp
    *          hashMap of ADE -> margin count
    */
-  private void insertIntoAdeMargin(HashMap<Integer, Integer> adeExp) throws SQLException {
+  private void fillAdeN11(HashMap<Integer, Integer> adeExp) throws SQLException {
     // TODO Auto-generated method stub
     ps = conn.prepareStatement("insert into ADEEXP(pt_code,N11SUM) values(?,?)");
 
@@ -392,7 +391,7 @@ public class CalculatNAndE {
   }
 
   /**
-   * insert values into Drug frequency.
+   * insert values into Drug Ni+.
    * 
    * @param drugExp
    *          hashMap of drug -> margin count
@@ -413,22 +412,65 @@ public class CalculatNAndE {
     logger.info("insert drug and exp frequency into the table");
 
   }
+  
+  /*
+   * insert frequency into Drug frequency
+   */
+  public void fillDrugFre(HashMap<Integer, Long> drugFre) throws SQLException {
+    // TODO Auto-generated method stub
+    ps = conn.prepareStatement("insert into DRUGFREQUENCY(ID,COUNT) values(?,?)");
 
+    Iterator<Map.Entry<Integer, Long>> it = drugFre.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Integer, Long> pairs = it.next();
+      ps.setInt(1, pairs.getKey());
+      ps.setLong(2, pairs.getValue());
+      ps.addBatch();
+    }
+    ps.executeBatch();
+    ps.close();
+    logger.info("insert drug and exp frequency into the table");
+
+  }
+  
+  /*
+   * insert frequency into Ade frequency
+   */
+  public void fillAdeFre(HashMap<Integer, Long> drugExp) throws SQLException {
+    // TODO Auto-generated method stub
+    ps = conn.prepareStatement("insert into ADEFREQUENCY(ID,COUNT) values(?,?)");
+
+    Iterator<Map.Entry<Integer, Long>> it = drugExp.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Integer, Long> pairs = it.next();
+      ps.setInt(1, pairs.getKey());
+      ps.setLong(2, pairs.getValue());
+      ps.addBatch();
+    }
+    ps.executeBatch();
+    ps.close();
+    logger.info("insert drug and exp frequency into the table");
+
+  }
+  
+  
   /**
    * Fast fill the table RATIO. The following steps are:
    * 
    * 1 get ISRs for each ADE. 2 get ISRs for each Drug. 3 calculate the Ni+ and N+j and N++. 4
    * calculate the expection and insert the expection and observe count into RATIO.
    */
+  @SuppressWarnings("deprecation")
   private void initTableRatioNewEFast() throws SQLException {
     ApiToGui.pm.setNote("fetching the necessary data");
-    searchEn = SearchEnssential.getInstance(conn);
+    searchEn = SearchISRByDrugADE.getInstance(conn);
 
     List<Pair<Integer, HashSet<Integer>>> adeFrequency = null;
-    if (FaersAnalysisGui.config.getProperty("INDI").equals("F")) {
+    if (ApiToGui.config.getProperty("INDI").equals("F")) {
       logger.info("don't filter by INDI!!");
       adeFrequency = searchEn.getAdeDisExcludeIndi();
-
+      logger.error("please don't use without INDI");
+      System.exit(0);
     } else {
       logger.info("filter by INDI!!");
       adeFrequency = searchEn.getAdeDisFriendly();
@@ -448,6 +490,9 @@ public class CalculatNAndE {
 
     HashMap<Integer, Integer> drugExp = new HashMap<Integer, Integer>(1000);
     HashMap<Integer, Integer> adeExp = new HashMap<Integer, Integer>(1000);
+    
+    HashMap<Integer,Long> drugFreLog=new HashMap<Integer,Long>(1000);
+    HashMap<Integer,Long> adeFreLog=new HashMap<Integer,Long>(1000);
 
     int countObs = 0;
     double sumN11 = 0;
@@ -552,7 +597,10 @@ public class CalculatNAndE {
         Pair<Integer, HashSet<Integer>> drugPair = iteDrugIsr.next();
         drugIsrs = drugPair.getValue2();
         double drugCount = drugIsrs.size();
-
+        
+        drugFreLog.put(drugPair.getValue1(), (long)drugCount );
+        adeFreLog.put(adePair.getValue1(), (long)aeCount );
+        
         double expValue = (drugCount) * (aeCount);
         double oldE = expValue / totalCount;
 
@@ -632,10 +680,19 @@ public class CalculatNAndE {
 
     ps.executeBatch();
     ps.close();
-    insertIntoAdeMargin(adeExp);
+    
+    fillDrugFre(drugFreLog);
+    fillAdeFre(adeFreLog);
+    
+    drugFreLog.clear();
+    adeFreLog.clear();
+    
+    fillAdeN11(adeExp);
     fillDrugN11(drugExp);
+    
     adeExp.clear();
     drugExp.clear();
+    
     adeFrequency.clear();
     drugFrequency.clear();
 
@@ -644,6 +701,7 @@ public class CalculatNAndE {
   /**
    * Fast fill the table STRA
    */
+  @SuppressWarnings("unused")
   private void initTableStra() throws SQLException {
     ApiToGui.pm.setNote("fetching the necessary data");
 
@@ -772,6 +830,7 @@ public class CalculatNAndE {
   /**
    * deprecated methods for building the RATIO.
    */
+  @SuppressWarnings("unused")
   @Deprecated
   private void initTableRatioNewE() throws SQLException, FAERSInterruptException {
     ArrayList<String> aeNames = new ArrayList<String>();

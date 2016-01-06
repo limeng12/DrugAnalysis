@@ -46,7 +46,7 @@ import javax.swing.JSeparator;
 import javax.swing.table.DefaultTableModel;
 
 import main.ccbb.faers.core.DatabaseConnect;
-import main.ccbb.faers.core.Search;
+import main.ccbb.faers.core.SearchISRIntersectUnion;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,7 +69,7 @@ public class SearchDlg extends JDialog {
   DefaultTableModel myTableModeUnion;
 
   JLabel resultLabel;
-  Search search;
+  SearchISRIntersectUnion search;
 
   MyJTable tableIntersection;
   MyJTable tableUnion;
@@ -79,7 +79,7 @@ public class SearchDlg extends JDialog {
     final SearchDlg me = this;
 
     try {
-      search = Search.getInstance(DatabaseConnect.getMysqlConnector());
+      search = SearchISRIntersectUnion.getInstance(DatabaseConnect.getMysqlConnector());
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       JOptionPane.showMessageDialog(null, e1.getMessage() + "\t" + e1.getStackTrace());

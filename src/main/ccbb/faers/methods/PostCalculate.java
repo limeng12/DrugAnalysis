@@ -21,7 +21,6 @@ import java.sql.Statement;
 
 import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -65,7 +64,7 @@ public class PostCalculate {
     try {
       PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
-      FaersAnalysisGui.config = config;
+      ApiToGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
       String host = config.getString("host");

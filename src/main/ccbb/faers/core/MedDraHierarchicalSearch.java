@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import main.ccbb.faers.Utils.algorithm.Pair;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -37,8 +36,8 @@ import org.apache.logging.log4j.Logger;
  * search a HLT term will also search its PT terms and PTs' LLT terms.
  * note SEARCH A LLT TERM WILL ALSO SEARCH ITS PT TERMS.
  */
-public class MedDraSearchUtils {
-  private static final Logger logger = LogManager.getLogger(MedDraSearchUtils.class);
+public class MedDraHierarchicalSearch {
+  private static final Logger logger = LogManager.getLogger(MedDraHierarchicalSearch.class);
 
   static String rootDir = "";
 
@@ -47,10 +46,10 @@ public class MedDraSearchUtils {
    * 
    */
   public static void main(String[] args) throws SQLException {
-    MedDraSearchUtils db = new MedDraSearchUtils();
+    MedDraHierarchicalSearch db = new MedDraHierarchicalSearch();
     try {
       PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
-      FaersAnalysisGui.config = config;
+      ApiToGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
       String host = config.getString("host");
@@ -89,9 +88,9 @@ public class MedDraSearchUtils {
   private String sqlString;
   private Statement stmt;
 
-  private static MedDraSearchUtils instance;
+  private static MedDraHierarchicalSearch instance;
 
-  private MedDraSearchUtils() {
+  private MedDraHierarchicalSearch() {
     super();
   }
 
@@ -99,9 +98,9 @@ public class MedDraSearchUtils {
    * singleton class factory method.
    * 
    */
-  public static MedDraSearchUtils getInstance(Connection conn) {
+  public static MedDraHierarchicalSearch getInstance(Connection conn) {
     if (instance == null) {
-      instance = new MedDraSearchUtils();
+      instance = new MedDraHierarchicalSearch();
     }
     instance.conn = conn;
 
@@ -109,7 +108,7 @@ public class MedDraSearchUtils {
 
   }
 
-  private MedDraSearchUtils(Connection tconn) {
+  private MedDraHierarchicalSearch(Connection tconn) {
     conn = tconn;
   }
 
@@ -698,4 +697,103 @@ public class MedDraSearchUtils {
 
   }
 
+  public ArrayList<String> selectAdesHltFromSoc(int socCode) throws SQLException {
+
+    ArrayList<String> hltName = new ArrayList<String>();
+    String sqlString = "select DISTINCT hlt_name FROM HLT_PREF_TERM "
+        + " INNER JOIN HLGT_HLT_COMP ON HLGT_HLT_COMP.hlt_code=HLT_PREF_TERM.hlt_code"
+        + " INNER JOIN SOC_HLGT_COMP ON SOC_HLGT_COMP.hlgt_code=HLGT_HLT_COMP.hlgt_code"
+        + " INNER JOIN SOC_TERM ON SOC_TERM.soc_code=SOC_HLGT_COMP.soc_code"
+        + " WHERE SOC_TERM.soc_code=" + socCode;
+    
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+    // String[] ptNames=new String[rset. ]
+
+    while (rset.next()) {
+      String ptName = rset.getString("hlt_name");
+      hltName.add(ptName);
+
+    }
+    rset.close();
+    stmt.close();
+
+    return hltName;
+
+  }
+  
+  public ArrayList<String> selectAdesHlgtFromSoc(int socCode) throws SQLException {
+
+    ArrayList<String> hlgtName = new ArrayList<String>();
+    String sqlString = "select DISTINCT hlgt_name FROM HLGT_PREF_TERM "
+        + " INNER JOIN SOC_HLGT_COMP ON SOC_HLGT_COMP.hlgt_code=HLGT_PREF_TERM.hlgt_code"
+        + " INNER JOIN SOC_TERM ON SOC_TERM.soc_code=SOC_HLGT_COMP.soc_code"
+        + " WHERE SOC_TERM.soc_code=" + socCode;
+    
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+    // String[] ptNames=new String[rset. ]
+
+    while (rset.next()) {
+      String hltgtName = rset.getString("hlgt_name");
+      hlgtName.add(hltgtName);
+
+    }
+    rset.close();
+    stmt.close();
+
+    return hlgtName;
+
+  }
+  
+  public ArrayList<String> getPTNamesFromHLTName(String hltName) throws SQLException{
+    ArrayList<String> ptNames=new ArrayList<String>();
+    
+    String sqlString = "select pt_name FROM PREF_TERM "
+        + " INNER JOIN HLT_PREF_COMP ON PREF_TERM.pt_code=HLT_PREF_COMP.pt_code"
+        + " INNER JOIN HLT_PREF_TERM ON HLT_PREF_COMP.hlt_code=HLT_PREF_TERM.hlt_code"
+        + " WHERE HLT_PREF_TERM.hlt_name='"+ hltName +"'";
+    // System.out.println(sqlString);
+
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+
+    while (rset.next()) {
+      String ptName = rset.getString("pt_name");
+      ptNames.add(ptName);
+      
+    }
+    rset.close();
+    stmt.close();
+    
+    
+    return ptNames;
+  }
+
+  public ArrayList<String> getPTNamesFromHLGTName(String hlgtName) throws SQLException{
+    ArrayList<String> ptNames=new ArrayList<String>();
+    
+    String sqlString = "select pt_name FROM PREF_TERM "
+        + " INNER JOIN HLT_PREF_COMP ON PREF_TERM.pt_code=HLT_PREF_COMP.pt_code"
+        + " INNER JOIN HLT_PREF_TERM ON HLT_PREF_COMP.hlt_code=HLT_PREF_TERM.hlt_code"
+        + " INNER JOIN HLGT_HLT_COMP ON HLGT_HLT_COMP.hlt_code=HLT_PREF_TERM.hlt_code"
+        + " INNER JOIN HLGT_PREF_TERM ON HLGT_PREF_TERM.hlgt_code=HLGT_HLT_COMP.hlgt_code"
+        + " WHERE HLGT_PREF_TERM.hlgt_name='"+ hlgtName +"'";
+    // System.out.println(sqlString);
+
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+
+    while (rset.next()) {
+      String ptName = rset.getString("pt_name");
+      ptNames.add(ptName);
+      
+    }
+    rset.close();
+    stmt.close();
+    
+    
+    return ptNames;
+  }
+  
 }

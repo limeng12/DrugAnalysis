@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import main.ccbb.faers.core.ApiToGui;
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 import main.ccbb.faers.methods.testMethods.PengyueMethod1;
 
@@ -35,23 +34,24 @@ import org.apache.logging.log4j.Logger;
 public class ForPlot3DPengyue1 {
   final static Logger logger = LogManager.getLogger(ForPlot3DPengyue1.class);
 
-  static double[] optimizationValue = { 6.5722, 0.01, 0.6125, 0.254, 0.0200, 0.3880, 8.66957 };
+  static double[] optimizationValue = { 1.93, 0.717, 0.28, 0.012, 0.152, 4.03, 0.348 };
 
   public static void main(String[] args) {
 
-    ForPlot3DPengyue1 t = new ForPlot3DPengyue1();
-
-    // t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
     PropertiesConfiguration config = null;
     try {
       config = new PropertiesConfiguration((ApiToGui.configurePath));
-
+      ApiToGui.config=config;
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
       logger.debug(e.getMessage());
     }
-
+    ForPlot3DPengyue1 t = new ForPlot3DPengyue1();
+    t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    //t.fun.readEBGMFile("/Users/mengli/Documents/workspace/DrugAnalysis/NEratio100000.csv",1);
+    
+    
     String[] pars = config.getStringArray(t.fun.getName());
     for (int i = 0; i < pars.length; ++i) {
       optimizationValue[i] = Double.parseDouble(pars[i]);
@@ -65,10 +65,10 @@ public class ForPlot3DPengyue1 {
 
     t.fun.setParameters(optArray);
 
-    t.changeTwoVariablesToCalculate(0, 2, "pengyue1alpha1alpha2.txt");
-    t.changeTwoVariablesToCalculate(1, 3, "pengyue1beta1alpha3.txt");
-    t.changeTwoVariablesToCalculate(4, 5, "pengyue1beta3p1.txt");
-    t.changeTwoVariablesToCalculate(5, 6, "pengyue1p1p2.txt");
+    t.changeTwoVariablesToCalculate(0, 2, "pengyue1alpha1.alpha2=beta2.txt");
+    t.changeTwoVariablesToCalculate(1, 3, "pengyue1beta1-alpha1.beta3.txt");
+    t.changeTwoVariablesToCalculate(4, 5, "pengyue1alpha3-beta3.p2*10.txt");
+    t.changeTwoVariablesToCalculate(5, 6, "pengyue1p2*10.p3*10.txt");
 
     ParallelMethodInterface.thread.shutdown();
 
@@ -126,7 +126,7 @@ public class ForPlot3DPengyue1 {
 
       for (int i = -halfPoint; i <= halfPoint; i++) {
 
-        System.out.println(i);
+        logger.info(filename+" iter: "+i);
         for (int j = -halfPoint; j <= halfPoint; j++) {
 
           tmpOptimizationValue[t1] = optimizationValue[t1] + i * unit1;

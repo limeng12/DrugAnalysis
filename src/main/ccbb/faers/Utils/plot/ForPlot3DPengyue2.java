@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import main.ccbb.faers.core.ApiToGui;
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 import main.ccbb.faers.methods.testMethods.PengyueMethod2;
 
@@ -35,22 +34,25 @@ import org.apache.logging.log4j.Logger;
 public class ForPlot3DPengyue2 {
   private static final Logger logger = LogManager.getLogger(ForPlot3DPengyue2.class);
 
-  static double[] optimizationValue = { 1.0E-4, 0.6541401, 0.249847513044716, 0.02035, 9.02257 };
+  static double[] optimizationValue = { 0.01, 1.12056, 0.0189, 0.029989, 2.143246 };
 
   public static void main(String[] args) {
-
-    ForPlot3DPengyue2 t = new ForPlot3DPengyue2();
-    t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    
     PropertiesConfiguration config = null;
     try {
       config = new PropertiesConfiguration((ApiToGui.configurePath));
-
+      ApiToGui.config=config;
+      
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
       logger.error(e.getMessage());
     }
 
+    ForPlot3DPengyue2 t = new ForPlot3DPengyue2();
+    t.fun.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    //t.fun.readEBGMFile("/Users/mengli/Documents/workspace/DrugAnalysis/NEratio100000.csv",1);
+    
     String[] pars = config.getStringArray(t.fun.getName());
     for (int i = 0; i < pars.length; ++i) {
       optimizationValue[i] = Double.parseDouble(pars[i]);
@@ -66,10 +68,12 @@ public class ForPlot3DPengyue2 {
     t.fun.setParameters(optArray);
     double v = t.fun.execute(optimizationValue);
     logger.info("optimization value:" + v);
-
-    t.changeTwoVariablesToCalculate(0, 1, "pengyue2p1alpha2.txt");
-    t.changeTwoVariablesToCalculate(2, 3, "pengyue2alpha3beta3.txt");
-    t.changeTwoVariablesToCalculate(3, 4, "pengyue2beta3p2.txt");
+    
+    t.changeP1P2(0,4,"pengyue2p1*10.p2*10.txt");
+    
+    //t.changeTwoVariablesToCalculate(0, 1, "pengyue2p1*10.alpha2=beta2.txt");
+    //t.changeTwoVariablesToCalculate(2, 3, "pengyue2beta3.alpha3-beta3.txt");
+    //t.changeTwoVariablesToCalculate(3, 4, "pengyue2alpha3-beta3.p3*10.txt");
 
     ParallelMethodInterface.thread.shutdown();
 
@@ -158,4 +162,83 @@ public class ForPlot3DPengyue2 {
     }
 
   }
+  
+  void changeP1P2(int t1, int t2, String filename) {
+    double[] tmpOptimizationValue = new double[5];
+    tmpOptimizationValue[0] = optimizationValue[0];
+    tmpOptimizationValue[1] = optimizationValue[1];
+    tmpOptimizationValue[2] = optimizationValue[2];
+    tmpOptimizationValue[3] = optimizationValue[3];
+    tmpOptimizationValue[4] = optimizationValue[4];
+
+    FileOutputStream outputStream;
+    try {
+      outputStream = new FileOutputStream(filename);
+
+      OutputStreamWriter outputWriter;
+      outputWriter = new OutputStreamWriter(outputStream, "utf-8");
+
+      PrintWriter pw = new PrintWriter(outputWriter);
+      ArrayList<Double> x=new ArrayList<Double>();
+      ArrayList<Double> y=new ArrayList<Double>();
+      
+      double unit=0.1;
+      for (double i = 0.01; i < 10; i+=unit ) {
+        x.add(i);
+        pw.print(i);
+        pw.print("\t");
+      }
+      pw.println();
+
+      for (double j = 0.01; j < 10; j+=unit) {
+        y.add(j);
+        pw.print(j);
+        pw.print("\t");
+      }
+
+      pw.println();
+
+      for (int i = 0; i < x.size(); i++) {
+
+        logger.info(filename+" iter: "+i);
+        for (int j = 0; j < y.size(); j++) {
+          tmpOptimizationValue[t1]=x.get(i);
+          tmpOptimizationValue[t2]=10-y.get(j)-x.get(i);
+          if(tmpOptimizationValue[t2]<=0){
+            String value="NaN";
+            pw.print(value);
+            pw.print("\t");
+            continue;
+          }
+            
+          
+          double value = fun.execute(tmpOptimizationValue);
+
+          pw.print(value);
+          pw.print("\t");
+
+          tmpOptimizationValue[t1] = optimizationValue[t1];
+          tmpOptimizationValue[t2] = optimizationValue[t2];
+        }
+        pw.println();
+
+      }
+
+      // fun.shutdown();
+
+      pw.flush();
+      pw.close();
+      outputWriter.close();
+
+    } catch (UnsupportedEncodingException e) {
+      System.out.println(e.getMessage());
+    } catch (FileNotFoundException e) {
+      System.out.println(e.getMessage());
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+    }
+
+  }
+  
+  
 }

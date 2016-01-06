@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.math3.special.Gamma;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,19 @@ public abstract class ParallelMethodInterface extends MethodInterface {
 
   // max cpu-32
   protected ParallelMethodInterface() {
-    thread = Executors.newCachedThreadPool();
+    PropertiesConfiguration config = ApiToGui.config;
+    int numberOfCPU=config.getInt("CPU_number");
+    
+    if(numberOfCPU==-1){
+      thread = Executors.newCachedThreadPool();
+      numberOfCPU=Runtime.getRuntime().availableProcessors();
+    }
+    else{
+      thread = Executors.newFixedThreadPool(numberOfCPU);
+      
+    }
+    logger.info("number of CPU use:"+numberOfCPU);;
+    
     stopCondition = ApiToGui.stopCondition;
     futures = ApiToGui.futures;
 

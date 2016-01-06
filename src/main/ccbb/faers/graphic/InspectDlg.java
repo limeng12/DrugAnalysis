@@ -34,7 +34,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import main.ccbb.faers.Utils.algorithm.Pair;
 import main.ccbb.faers.core.DatabaseConnect;
-import main.ccbb.faers.core.Search;
+import main.ccbb.faers.core.SearchISRIntersectUnion;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,16 +88,17 @@ public class InspectDlg extends JDialog {
 
   Frame parentDlg;
 
-  Search search;
+  SearchISRIntersectUnion search;
 
   public InspectDlg(ArrayList<String> tdrugNames, ArrayList<String> taeNames) throws SQLException {
     super();
-
+    
+    logger.info("create inspect dialog");
     JSplitPane mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     // mainPanel.setDividerLocation(0.8);
     // mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-    search = Search.getInstance(DatabaseConnect.getMysqlConnector());
+    search = SearchISRIntersectUnion.getInstance(DatabaseConnect.getMysqlConnector());
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("ADEs");
 
     for (int n = 0; n < taeNames.size(); ++n) {

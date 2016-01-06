@@ -39,7 +39,8 @@ public class LoadMedDraAction implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     // TODO Auto-generated method stub
-
+    
+    logger.info("begin to load medDRA!");
     JFileChooser fc = new JFileChooser();
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 

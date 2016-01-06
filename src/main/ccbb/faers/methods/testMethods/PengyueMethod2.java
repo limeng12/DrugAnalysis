@@ -23,7 +23,6 @@ import java.util.ListIterator;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.core.ApiToGui;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.Comparable;
 import main.ccbb.faers.methods.PSO;
 import main.ccbb.faers.methods.interfaceToImpl.CalculateOnePartInterface;
@@ -118,11 +117,11 @@ public class PengyueMethod2 extends ParallelMethodInterface {
       minValues = new double[dimensions];
       maxValues = new double[dimensions];
 
-      minValues[0] = 0.01;
-      minValues[1] = 0.01;
-      minValues[2] = 0.01;
-      minValues[3] = 0.01;
-      minValues[4] = 0.01;
+      minValues[0] = 0.01;//p1*10
+      minValues[1] = 0.01;//alpha2=beta2
+      minValues[2] = 0.01;//beta3
+      minValues[3] = 0.01;//alpha3-beta3
+      minValues[4] = 0.01;//p3*10
 
       maxValues[0] = 5;
       maxValues[1] = 10;
@@ -140,7 +139,7 @@ public class PengyueMethod2 extends ParallelMethodInterface {
 
   public static void main(String args[]) throws InterruptedException {
     try {
-      FaersAnalysisGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
+      ApiToGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -149,6 +148,7 @@ public class PengyueMethod2 extends ParallelMethodInterface {
     PengyueMethod2.Test par = new PengyueMethod2.Test();
     double[] d1 = { 0.01, 0.66, 0.252, 0.022, 1.0429 };
     par.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    //par.readEBGMFile("/Users/mengli/Documents/workspace/DrugAnalysis/NEratio100000.csv", 1);
 
     par.caculateObjectFuncParallel();
 

@@ -14,7 +14,7 @@
 package main.ccbb.faers.methods;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.methods.interfaceToImpl.MaxObjectFunction;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 
@@ -47,7 +47,7 @@ public class LinearSearch extends OptimizationInterface {
 
   private void readParameters() {
     // TODO Auto-generated method stub
-    PropertiesConfiguration config = FaersAnalysisGui.config;
+    PropertiesConfiguration config = ApiToGui.config;
     iterationNum = config.getInt("LinearSearchIterationNumber");
     minStep = config.getDouble("minStep");
     alpha = config.getDouble("alpha");
@@ -95,6 +95,7 @@ public class LinearSearch extends OptimizationInterface {
         double talpha = alpha;
 
         double[] tmpVars2 = vars.clone();
+        maxFunc.fitByConstraints(tmpVars2);
         Comparable currentValue = maxFunc.getFitness(tmpVars2);
         logger.trace("current value:" + currentValue.getValue());
 

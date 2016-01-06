@@ -19,8 +19,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import main.ccbb.faers.graphic.FaersAnalysisGui;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
@@ -94,7 +92,7 @@ public class DatabaseConnect {
   public static void setConnectionFromConfig() throws ConfigurationException, SQLException {
     PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
-    FaersAnalysisGui.config = config;
+    ApiToGui.config = config;
     String userName = config.getString("user");
     String password = config.getString("password");
     String host = config.getString("host");

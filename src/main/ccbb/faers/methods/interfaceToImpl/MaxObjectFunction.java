@@ -16,11 +16,7 @@ package main.ccbb.faers.methods.interfaceToImpl;
 
 import main.ccbb.faers.methods.Comparable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public abstract class MaxObjectFunction {
-  private static final Logger logger = LogManager.getLogger(MaxObjectFunction.class);
 
   protected int dimensions;
 

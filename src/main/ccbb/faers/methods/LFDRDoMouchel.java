@@ -17,7 +17,6 @@ package main.ccbb.faers.methods;
 import java.util.ArrayList;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 

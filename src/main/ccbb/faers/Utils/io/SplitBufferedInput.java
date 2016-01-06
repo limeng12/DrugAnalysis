@@ -130,7 +130,6 @@ public class SplitBufferedInput {
       reader = new SplitBufferedInput(new FileReader(file));
       Integer spliterNum = new Integer(0);
 
-      ArrayList<Object> arr = new ArrayList<Object>();
       while (tmp != null) {
 
         System.out.println(tmp);

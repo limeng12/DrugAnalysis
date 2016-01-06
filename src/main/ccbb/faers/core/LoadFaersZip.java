@@ -20,25 +20,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.Utils.database.InsertUtils;
 import main.ccbb.faers.Utils.database.RunStatement;
-import main.ccbb.faers.Utils.database.SqlParseUtil;
 import main.ccbb.faers.Utils.database.TableUtils;
+import main.ccbb.faers.Utils.database.searchUtil.SqlParseUtil;
 import main.ccbb.faers.Utils.io.SplitBufferedInput;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -51,7 +47,6 @@ import org.apache.logging.log4j.Logger;
  * remove them. buffer table is a Global Temporary Table. Col ISR(in all the table),DRUGANME in DURG
  * and PT in REAC are index for effiency
  * 
- * 
  */
 
 public class LoadFaersZip {
@@ -62,7 +57,7 @@ public class LoadFaersZip {
    * INT,PT VARCHAR(100) ISR INT,DRUG_SEQ INT,INDI_PT VARCHAR(100)
    */
 
-  private static final Map<String, Integer> TypeMap = new HashMap<String, Integer>();
+  //private static final Map<String, Integer> TypeMap = new HashMap<String, Integer>();
   private static final HashSet<String> headers = new HashSet<String>();
   private static final HashSet<String> demoFields = new HashSet<String>();
   private static final HashSet<String> drugFields = new HashSet<String>();
@@ -125,7 +120,7 @@ public class LoadFaersZip {
       ApiToGui.pm = new ConsoleMonitor();
 
       PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
-      FaersAnalysisGui.config = config;
+      ApiToGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
       String host = config.getString("host");

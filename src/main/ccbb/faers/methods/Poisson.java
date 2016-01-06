@@ -34,6 +34,8 @@ public class Poisson extends MethodInterface {
   @Override
   public double caculateTheValue(int n, double exp) {
     // TODO Auto-generated method stub
+    logger.trace("the Poisson method");
+    
     double result = 0;
     result += exp / Math.log(10) - n * caculateLog(10, exp);
     for (int i = 1; i <= n; ++i) {

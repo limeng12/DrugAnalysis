@@ -14,11 +14,7 @@
 
 package main.ccbb.faers.Utils.algorithm;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Tris<T1, T2, T3> {
-  private static final Logger logger = LogManager.getLogger(Tris.class);
 
   T1 value1;
   T2 value2;

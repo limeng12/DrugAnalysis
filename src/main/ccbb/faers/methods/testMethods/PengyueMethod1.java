@@ -23,7 +23,6 @@ import java.util.ListIterator;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.core.ApiToGui;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 import main.ccbb.faers.methods.Comparable;
 import main.ccbb.faers.methods.PSO;
 import main.ccbb.faers.methods.interfaceToImpl.CalculateOnePartInterface;
@@ -113,13 +112,13 @@ public class PengyueMethod1 extends ParallelMethodInterface {
       minValues = new double[dimensions];
       maxValues = new double[dimensions];
 
-      minValues[0] = 0.001;
-      minValues[1] = 0.001;
-      minValues[2] = 0.001;
-      minValues[3] = 0.001;
-      minValues[4] = 0.001;
-      minValues[5] = 0.001;
-      minValues[6] = 0.001;
+      minValues[0] = 0.001;//alpha1
+      minValues[1] = 0.001;//beta1-alpha1
+      minValues[2] = 0.001;//alpha2=beta2
+      minValues[3] = 0.001;//beta3
+      minValues[4] = 0.001;//alpha3-beta3
+      minValues[5] = 0.001;//p1*10
+      minValues[6] = 0.001;//p2*10
 
       maxValues[0] = 10;
       maxValues[1] = 10;
@@ -139,7 +138,7 @@ public class PengyueMethod1 extends ParallelMethodInterface {
 
   public static void main(String args[]) {
     try {
-      FaersAnalysisGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
+      ApiToGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
     } catch (ConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -148,7 +147,9 @@ public class PengyueMethod1 extends ParallelMethodInterface {
     PengyueMethod1.Test par = new PengyueMethod1.Test();
 
     double[] d1 = { 2, 2, 2, 2, 2, 2, 2 };
-    // par.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    par.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    //par.readEBGMFile("/Users/mengli/Documents/workspace/DrugAnalysis/NEratio100000.csv", 1);
+    
     par.caculateObjectFuncParallel();
 
     logger.debug("cpu number:" + Runtime.getRuntime().availableProcessors());
@@ -274,9 +275,9 @@ public class PengyueMethod1 extends ParallelMethodInterface {
     alpha2 = beta2 = pars.get(2);
     beta3 = pars.get(3);
     alpha3 = pars.get(4) + beta3;
-    p2 = pars.get(5) / 10;
-    p3 = pars.get(6) / 10;
-    p1 = 1 - (p2 + p3);
+    p1 = pars.get(5) / 10;
+    p2 = pars.get(6) / 10;
+    p3 = 1 - (p1 + p2);
 
     /*
      * alpha1 = var[0]; beta1 = alpha1 + var[1];

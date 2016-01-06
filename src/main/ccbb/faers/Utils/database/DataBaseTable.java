@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import main.ccbb.faers.Utils.ColumnNotFoundException;
 import main.ccbb.faers.Utils.FAERSTest;
 import main.ccbb.faers.Utils.RowNotFoundException;
+import main.ccbb.faers.Utils.database.searchUtil.SqlParseUtil;
 import main.ccbb.faers.Utils.io.Output;
 import main.ccbb.faers.core.DatabaseConnect;
 
@@ -337,7 +338,6 @@ public class DataBaseTable<T> implements JDBCPersistentAPI {
       while (oneDrugIter.hasNext()) {
         Entry<String, T> oneAde = oneDrugIter.next();
 
-        String adeName = oneAde.getKey();
         T count = oneAde.getValue();
 
         line += "," + count.toString();

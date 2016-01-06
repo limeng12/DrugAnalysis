@@ -15,10 +15,8 @@
 package main.ccbb.faers.methods;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
@@ -31,6 +29,8 @@ public class LFDRPengyue extends ParallelMethodInterface {
   public static void main(String[] args) {
     LFDRPengyue a = new LFDRPengyue();
     // 1.602,0.118,0.026,0.236
+    logger.info("use optimized value before to get this");
+    
     ArrayList<Double> parsNew = new ArrayList<Double>();
     parsNew.add(1.602);
     parsNew.add(0.118);

@@ -27,7 +27,6 @@ import main.ccbb.faers.Utils.database.InsertUtils;
 import main.ccbb.faers.Utils.database.RunStatement;
 import main.ccbb.faers.Utils.database.TableUtils;
 import main.ccbb.faers.Utils.io.SplitBufferedInput;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -58,7 +57,7 @@ public class LoadMedDra {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    FaersAnalysisGui.config = config;
+    ApiToGui.config = config;
     String userName = config.getString("user");
     String password = config.getString("password");
     String host = config.getString("host");

@@ -19,20 +19,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
+import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.methods.interfaceToImpl.CalculateOnePartInterface;
 import main.ccbb.faers.methods.interfaceToImpl.MaxObjectFunction;
-import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
 import main.ccbb.faers.methods.interfaceToImpl.OptimizationInterface;
 import main.ccbb.faers.methods.interfaceToImpl.ParallelMethodInterface;
 
-import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -131,16 +128,51 @@ public class DoMouchelMethod extends ParallelMethodInterface {
   static int numberN0 = 0;
 
   public static void main(String args[]) throws InterruptedException {
+    try {
+      ApiToGui.config = new PropertiesConfiguration((ApiToGui.configurePath));
+    } catch (ConfigurationException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
     DoMouchelMethod.Test par = new DoMouchelMethod.Test();
     // par.readEBGMFile(args[0]);
-    // double[] d = { 1.0119,0.1092,1.3289,0.0254,0.858 };
-    logger.debug(par.caculateTheValue(500, 0.3));
-
-    System.out.println(par.caculateEBGM(100, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1));
+    double[] d = { 1.0119,0.1092,1.3289,0.0254,0.8 };
+    
+    System.out.println(par.caculateEBGM(100, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1)  );
     // func(0.3778,)
     // par.setParameter(d);
-    // logger.debug(par.caculateOnce(1000,1).toLog());
+    // logger.debug(par.caculateOnce(1000,1).toLog())
+    
+    par.readEBGMFile(args[0], Integer.parseInt(args[1]));
+    //par.readEBGMFile("/Users/mengli/Documents/workspace/DrugAnalysis/NEratio50000.csv", 1);
+    
+    logger.debug(par.caculateTheValue(500, 0.3));
+    par.caculateObjectFuncParallel();
+    
+    logger.debug("calculate once:"+ par.execute(d) );
+    
 
+    double[] optiVars = null;
+    try {
+      optiVars = par.optimizePSO(new LinearSearch());
+      //optiVars = par.optimizePSO(new PSO());
+      
+    } catch (FAERSInterruptException e1) {
+       //TODO Auto-generated catch block
+      e1.printStackTrace();
+      logger.error(e1.getMessage());
+      System.exit(-1);
+    }
+
+    for (int i = 0; i < optiVars.length; ++i) {
+      System.out.println(optiVars[i]);
+
+    }
+
+    ParallelMethodInterface.thread.shutdown();
+
+    
     /*
      * // par.randomGenerator(); par.readEBGMFile(args[0], 1); //
      * par.readEBGMFile("C:\\JDeveloper\\mywork\\testJD\\JD1\\EBGM.tsv"); // par.buildTaskTable();
@@ -286,7 +318,7 @@ public class DoMouchelMethod extends ParallelMethodInterface {
     alpha2 = pars.get(1);
     beta1 = pars.get(2);
     beta2 = pars.get(3);
-    p = pars.get(4);
+    p = pars.get(4)/10;
 
   }
 
@@ -353,7 +385,7 @@ public class DoMouchelMethod extends ParallelMethodInterface {
 
     }
 
-    private void readEBGMFile(String fileName, int col) {
+    public void readEBGMFile(String fileName, int col) {
       File file = new File(fileName);
       BufferedReader reader = null;
       int line = 0;
@@ -375,7 +407,7 @@ public class DoMouchelMethod extends ParallelMethodInterface {
             logger.debug(numLine);
           }
 
-          String[] lineArray = tempString.split("\t");
+          String[] lineArray = tempString.split(",");
           n = Integer.parseInt(lineArray[0]);
           e = Float.parseFloat(lineArray[col]);
           if (e == 0) {
@@ -410,6 +442,7 @@ public class DoMouchelMethod extends ParallelMethodInterface {
     /*
      * below is for test only
      */
+    @SuppressWarnings("unused")
     private double caculateObjectFunc() {
       double sum = 0.0;
       ListIterator<ArrayList<Integer>> n = observeCountParal.listIterator();

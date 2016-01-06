@@ -68,7 +68,8 @@ import java.util.regex.Pattern;
  * 
  */
 
-import main.ccbb.faers.Utils.database.SqlParseUtil;
+
+import main.ccbb.faers.Utils.database.searchUtil.SqlParseUtil;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -267,7 +268,7 @@ public class Stratify {
   String query;
 
   ResultSet rset;
-  SearchEnssential searchDB;
+  SearchISRByDrugADE searchDB;
 
   String sqlString;
 
@@ -330,7 +331,7 @@ public class Stratify {
       sqlString = "select AGE,AGE_COD,GNDR_COD,FDA_DT from DEMO where ISR in(";
       // ArrayList<String> names =
       // searchDB.medSearchEngine.search(aes.get(i));
-      ArrayList<String> names = MedDraSearchUtils.getInstance(conn).getLowerNames(aes.get(i));
+      ArrayList<String> names = MedDraHierarchicalSearch.getInstance(conn).getLowerNames(aes.get(i));
       for (int j = 0; j < names.size(); ++j) {
         names.set(j, names.get(j).replaceAll("'", "''"));
       }
@@ -496,7 +497,7 @@ public class Stratify {
 
     }
 
-    ArrayList<String> names = MedDraSearchUtils.getInstance(conn).getLowerNames(aeName);
+    ArrayList<String> names = MedDraHierarchicalSearch.getInstance(conn).getLowerNames(aeName);
     for (int i = 0; i < names.size(); ++i) {
       names.set(i, names.get(i).replaceAll("'", "''"));
     }

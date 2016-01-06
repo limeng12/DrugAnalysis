@@ -29,9 +29,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 import main.ccbb.faers.Utils.database.RunStatement;
-import main.ccbb.faers.Utils.database.SqlParseUtil;
 import main.ccbb.faers.Utils.database.TableUtils;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
+import main.ccbb.faers.Utils.database.searchUtil.SqlParseUtil;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -66,7 +65,7 @@ public class LoadDrugbank {
       ApiToGui.pm = new ConsoleMonitor();
 
       PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
-      FaersAnalysisGui.config = config;
+      ApiToGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
       String host = config.getString("host");
@@ -101,7 +100,6 @@ public class LoadDrugbank {
 
   private Connection conn;
   private PreparedStatement ps;
-  private String query;
   private NodeList rootList;
   private ResultSet rset;
   private String sqlString;
@@ -141,7 +139,7 @@ public class LoadDrugbank {
       SAXException, IOException, FAERSInterruptException, ConfigurationException {
     // PropertiesConfiguration config = new
     // PropertiesConfiguration((ApiToGui.configurePath));
-    withDrawnFlag = FaersAnalysisGui.config.getString("withDrawnFlag");
+    withDrawnFlag = ApiToGui.config.getString("withDrawnFlag");
 
     rootDir = trootDir;
     readTheXML(rootDir);
@@ -425,7 +423,7 @@ public class LoadDrugbank {
    * 
    * @return all drug names.
    */
-  public ArrayList<String> getAllDrugNames() {
+  public ArrayList<String> getAllDrugNamesXML() {
     ArrayList<String> synList = new ArrayList<String>();
 
     for (int count = 0; count < rootList.getLength(); count++) {

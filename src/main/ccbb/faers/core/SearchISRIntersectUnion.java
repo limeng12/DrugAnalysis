@@ -23,12 +23,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
+import main.ccbb.faers.Utils.TimeWatch;
 import main.ccbb.faers.Utils.algorithm.AlgorithmUtil;
 import main.ccbb.faers.Utils.algorithm.Pair;
-import main.ccbb.faers.Utils.database.SqlParseUtil;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
+import main.ccbb.faers.Utils.database.searchUtil.SqlParseUtil;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -41,28 +40,41 @@ import org.apache.logging.log4j.Logger;
  * one thing to keep in mind is that ALL THE INPUT NAME MUST BE UPPERCASE.
  *
  */
-public class Search {
+public class SearchISRIntersectUnion {
 
-  final static Logger logger = LogManager.getLogger(Search.class);
+  final static Logger logger = LogManager.getLogger(SearchISRIntersectUnion.class);
 
+  TimeWatch timer=new TimeWatch();
+  
   public static void main(String[] args) {
 
-    Search searchDB;
+    SearchISRIntersectUnion searchDB;
     try {
       //Integer i=null;
       //i.i 
       
       PropertiesConfiguration config = new PropertiesConfiguration((ApiToGui.configurePath));
 
-      FaersAnalysisGui.config = config;
+      ApiToGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
       String host = config.getString("host");
       String database = config.getString("database");
 
       DatabaseConnect.setMysqlConnector(host, userName, password, database);
-
-      searchDB = Search.getInstance(DatabaseConnect.getMysqlConnector());
+      searchDB = SearchISRIntersectUnion.getInstance(DatabaseConnect.getMysqlConnector());
+      
+      HashSet<Integer> isrs=searchDB.getReportsOfSignal("ZANAMIVIR", "DELIRIUM");
+      
+      
+      
+      Iterator<Integer> isrIterator = isrs.iterator();
+      while (isrIterator.hasNext()) {
+        System.out.println(isrIterator.next());
+      
+      }
+      
+      /*
       HashSet<Integer> drugISRs = searchDB.searchEn.getIsrsFromDrugBankDrugNameMiddle("MINAPRINE");
       Iterator<Integer> drugIter = drugISRs.iterator();
       while (drugIter.hasNext()) {
@@ -79,6 +91,9 @@ public class Search {
         System.out.println(adeIter.next());
 
       }
+      */
+
+      
 
     } catch (SQLException e) {
 
@@ -97,28 +112,28 @@ public class Search {
 
   // a hash map is build for storing the first line of the AE in reacGroupPT
   // table.
-  private MedDraSearchUtils medSearchEngine;
+  private MedDraHierarchicalSearch medSearchEngine;
   private ResultSet rset;
   private String sqlString;
-
+  
   private Statement stmt;
 
-  public SearchEnssential searchEn;
+  public SearchISRByDrugADE searchEn;
 
-  private Search(Connection tconn) {
+  private SearchISRIntersectUnion(Connection tconn) {
     super();
     setConn(tconn);
     drugDB = LoadDrugbank.getInstance(tconn);
-    medSearchEngine = MedDraSearchUtils.getInstance(tconn);
-    searchEn = SearchEnssential.getInstance(tconn);
+    medSearchEngine = MedDraHierarchicalSearch.getInstance(tconn);
+    searchEn = SearchISRByDrugADE.getInstance(tconn);
 
   }
 
-  static Search instance;
+  static SearchISRIntersectUnion instance;
 
-  public static Search getInstance(Connection conn) {
+  public static SearchISRIntersectUnion getInstance(Connection conn) {
     if (instance == null) {
-      instance = new Search(conn);
+      instance = new SearchISRIntersectUnion(conn);
 
     }
     
@@ -127,12 +142,12 @@ public class Search {
     
   }
 
-  public static Search getInstance(){
+  public static SearchISRIntersectUnion getInstance(){
     if (instance == null) {
       try {
         //DatabaseConnect.setConnectionFromConfig();
         
-        instance = new Search(DatabaseConnect.getMysqlConnector());
+        instance = new SearchISRIntersectUnion(DatabaseConnect.getMysqlConnector());
       
       } catch (SQLException e) {
         // TODO Auto-generated catch block
@@ -285,7 +300,8 @@ public class Search {
   }
 
   public HashSet<Integer> unionSearchIsrUsingMeddra(List<String> adeNameArr) throws SQLException {
-
+    timer.start("unionSearchIsrUsingMeddra");
+    
     // TODO Auto-generated method stub
     HashSet<Integer> allReports = new HashSet<Integer>();
 
@@ -294,10 +310,26 @@ public class Search {
       allReports.addAll(adeReports);
 
     }
+    
+    logger.trace(timer.durationTimeMinute() );
 
     return allReports;
   }
 
+  public HashSet<Integer> unionSearchIsrUsingMeddrabyTime(List<String> adeNameArr,String startTime,String endTime) throws SQLException {
+
+    // TODO Auto-generated method stub
+    HashSet<Integer> allReports = new HashSet<Integer>();
+
+    for (String ite : adeNameArr) {
+      HashSet<Integer> adeReports = searchEn.getIsrsUsingMeddraByTime(ite.toUpperCase(), startTime, endTime);
+      allReports.addAll(adeReports);
+
+    }
+
+    return allReports;
+  }
+  
   public ArrayList<String> searchISRsDrugbyReportID(HashSet<Integer> reportID) throws SQLException {
     ArrayList<String> drugNames = new ArrayList<String>();
     String sqlString = "select DRUGNAME from DRUG where ISR in(";
@@ -437,7 +469,7 @@ public class Search {
 
     HashSet<Integer> drugISRs = searchEn.getIsrsFromDrugBankDrugName(drugName);
 
-    HashSet<Integer> aeISRs = searchEn.getISRUsingMeddra(aeName);
+    HashSet<Integer> aeISRs = searchEn.getIsrsUsingMeddra(aeName);
 
     Iterator<Integer> ite = drugISRs.iterator();
     while (ite.hasNext()) {
@@ -545,6 +577,16 @@ public class Search {
 
     return result;
 
+  }
+  
+  public HashSet<Integer> getReportsOfSignal(String drugName,String adeName) throws SQLException{
+    HashSet<Integer> drugISRs=searchEn.getIsrsFromDrugBankDrugName(drugName);
+    HashSet<Integer> adeISRs=searchEn.getIsrsUsingMeddraNotConsiderIndi(adeName);
+    
+    drugISRs.retainAll(adeISRs);
+    
+    return drugISRs;
+    
   }
 
 }

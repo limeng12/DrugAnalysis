@@ -28,6 +28,8 @@ public class RR extends MethodInterface {
   @Override
   public double caculateTheValue(int N, double E) {
     // TODO Auto-generated method stub
+    logger.trace("the RR method");
+    
     if (N < 5) {
       return 0.0;
     }

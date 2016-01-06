@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.RandomStringUtils;
 
 import main.ccbb.faers.methods.interfaceToImpl.MethodInterface;
@@ -16,6 +17,7 @@ public class ApiToGui {
 
   public static ProgressMonitor pm = null;
 
+  @SuppressWarnings("rawtypes")
   public static List<Future> futures = new ArrayList<Future>();
 
   // Every long-run thread will check this field frequently.
@@ -33,14 +35,20 @@ public class ApiToGui {
 
   static {
     configurePath = System.getProperty("configurePath");
+    
+    if (configurePath==null) {
+      configurePath = "configure.txt";
+    }
     System.out.println("configure file path:");
     System.out.println(configurePath);
     
-    if (configurePath.equals(null)) {
-      configurePath = "configure.txt";
-    }
+  }
 
-  };
+  boolean useNewE = true;
+
+  ArrayList<OptimizationInterface> optiMethods = new ArrayList<OptimizationInterface>();
+
+  public static PropertiesConfiguration config = null;
 
   public ApiToGui() {
 

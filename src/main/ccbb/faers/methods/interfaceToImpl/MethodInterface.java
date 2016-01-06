@@ -18,12 +18,8 @@ import java.util.ArrayList;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public abstract class MethodInterface {
-
-  private static final Logger logger = LogManager.getLogger(MethodInterface.class);
 
   /**
    * calculate the ratio.

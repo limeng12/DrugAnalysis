@@ -16,11 +16,8 @@ package main.ccbb.faers.methods.interfaceToImpl;
 
 import main.ccbb.faers.Utils.FAERSInterruptException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public abstract class OptimizationInterface {
-  private static final Logger logger = LogManager.getLogger(OptimizationInterface.class);
 
   protected MaxObjectFunction maxFunction;
 

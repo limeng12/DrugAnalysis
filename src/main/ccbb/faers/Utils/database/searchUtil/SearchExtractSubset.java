@@ -12,7 +12,7 @@
  *     You should have received a copy of the GNU General Public License
  *******************************************************************************/
 
-package main.ccbb.faers.Utils.database;
+package main.ccbb.faers.Utils.database.searchUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -29,8 +29,7 @@ import java.util.TreeSet;
 
 import main.ccbb.faers.core.ApiToGui;
 import main.ccbb.faers.core.DatabaseConnect;
-import main.ccbb.faers.core.SearchEnssential;
-import main.ccbb.faers.graphic.FaersAnalysisGui;
+import main.ccbb.faers.core.SearchISRByDrugADE;
 import main.ccbb.faers.methods.PostCalculate;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -38,11 +37,11 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SearchUtilTable {
-  final static Logger logger = LogManager.getLogger(SearchUtilTable.class);
+public class SearchExtractSubset {
+  final static Logger logger = LogManager.getLogger(SearchExtractSubset.class);
 
   /**
-   * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and
+   * Build the table of: rows are drugs, columns are Ades, cells are each observe count and
    * expect count.
    * 
    * @param conn
@@ -168,6 +167,82 @@ public class SearchUtilTable {
     return tableArray;
   }
 
+  /*
+   * 
+   */
+  public static ArrayList<String> buildTheFullTable(Connection conn,ArrayList<String> drugNames,ArrayList<String> adeNames) throws SQLException{
+    
+    ArrayList<String> tableArray=new ArrayList<String>();
+    String drugStr=SqlParseUtil.seperateByCommaDecodeStr(drugNames.iterator(), ",");
+    String adeStr=SqlParseUtil.seperateByCommaDecodeStr(adeNames.iterator(),",");
+    
+    String sqlString = "select DRUGNAME,AENAME,N,LIE,LFDRPENGYUE,PENGYUE from RATIO where DRUGNAME in ("
+        + drugStr + ") AND AENAME IN (" + adeStr + ") ORDER BY LFDRPENGYUE DESC";
+
+    HashMap<String, HashMap<String,String> > table = new HashMap<String, HashMap<String,String> >();
+    
+    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet rset = stmt.executeQuery(sqlString);
+
+    while (rset.next()) {
+      // String line = "";
+      String drugName=rset.getString("DRUGNAME");
+      String aeName = rset.getString("AENAME");
+
+      String content = "(" + rset.getInt("N") + " " + String.format("%.4f", rset.getDouble("LIE") ) + " "
+          + String.format("%.4f", rset.getDouble("LFDRPENGYUE")) + " " + String.format("%.4f", rset.getDouble("PENGYUE") )+ ")";
+      
+      if(!table.containsKey(drugName)){
+        HashMap<String,String> oneDrug=new HashMap<String,String>();
+        oneDrug.put(aeName,content);
+        
+        table.put(drugName, oneDrug);
+      }else{
+        table.get(drugName).put(aeName, content);
+        
+      }
+      
+    }
+
+    rset.close();
+    stmt.close();
+    
+    String line = ",";
+    for (String iteAde : adeNames) {
+      line += "," + iteAde ;
+    }
+
+    tableArray.add(line);
+
+    for (String iteDrug : drugNames) {
+
+      line = "\"" + iteDrug + "\""+","+SearchDrugBank.getDrugbankIdFromGenericName(conn,iteDrug);
+
+      for (String iteADE : adeNames) {
+
+        if (!table.containsKey(iteDrug)) {
+          line += ",(0 0 0 0)";
+          continue;
+        }
+
+        if (!table.get(iteDrug).containsKey(iteADE)) {
+          line += ",(0 0 0 0)";
+
+        } else {
+          line += "," + table.get(iteDrug).get(iteADE);
+
+        }
+
+      }
+      tableArray.add(line);
+
+    }
+
+    return tableArray;
+
+  }
+  
+  
   /**
    * Build the table of: rows are each drug, columns are each Ades, cells are each observe count and
    * expect count. Only keep the ades in the soc term.
@@ -386,7 +461,7 @@ public class SearchUtilTable {
       String[] drugNames) throws SQLException {
     HashMap<String, HashMap<String, String>> table = new HashMap<String, HashMap<String, String>>();
 
-    String sqlString = "select drugname,aename,N,LIE,LFDRPENGYUE,NEWEBGM from RATIO where drugname in("
+    String sqlString = "select drugname,aename,N,LIE,LFDRPENGYUE,PENGYUE from RATIO where drugname in("
         + SqlParseUtil.seperateByCommaDecode(drugNames, ",")
         + " ) AND aename in (select aename from RATIO where LFDRPENGYUE>=1.30103 "
         + " AND drugname in(" + SqlParseUtil.seperateByCommaDecode(drugNames, ",") + ") )";
@@ -399,12 +474,12 @@ public class SearchUtilTable {
     while (rset.next()) {
       String drugName = rset.getString("drugname");
       String adename = rset.getString("aename");
-
+        
       String content = "";
       int n = rset.getInt("N");
       double e = rset.getDouble("LIE");
       double lfdr = rset.getDouble("LFDRPENGYUE");
-      double ebgm = rset.getDouble("NEWEBGM");
+      double ebgm = rset.getDouble("PENGYUE");
 
       if (n != 0) {
         content = "(" + n + " " + e + " " + lfdr + " " + ebgm + ")";
@@ -496,7 +571,7 @@ public class SearchUtilTable {
 
   public static int getDrugCount(Connection conn, String drugName) throws SQLException {
 
-    return SearchEnssential.getInstance(conn).getIsrsFromDrugBankDrugName(drugName).size();
+    return SearchISRByDrugADE.getInstance(conn).getIsrsFromDrugBankDrugName(drugName).size();
   }
 
   public static String getDrugNameFromDrugBankID(Connection conn, String drugBankID)
@@ -517,7 +592,10 @@ public class SearchUtilTable {
       line = rset.getString("DRUGNAME");
 
     }
-
+    rset.close();
+    stmt.close();
+    
+    
     return line;
   }
 
@@ -583,15 +661,14 @@ public class SearchUtilTable {
       PropertiesConfiguration config;
       config = new PropertiesConfiguration((ApiToGui.configurePath));
 
-      FaersAnalysisGui.config = config;
+      ApiToGui.config = config;
       String userName = config.getString("user");
       String password = config.getString("password");
       String host = config.getString("host");
       String database = config.getString("database");
       DatabaseConnect.setMysqlConnector(host, userName, password, database);
 
-      Connection conn = DatabaseConnect.getMysqlConnector();
-
+      //Connection conn = DatabaseConnect.getMysqlConnector();
       // Output.outputArrayList(tableArray, "targets.csv");
 
     } catch (SQLException e) {

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -13,8 +12,7 @@ import java.util.Map.Entry;
 import main.ccbb.faers.Utils.algorithm.AlgorithmUtil;
 import main.ccbb.faers.Utils.algorithm.Pair;
 import main.ccbb.faers.Utils.database.DataBaseTable.DatabaseTableRow;
-import main.ccbb.faers.Utils.io.Output;
-import main.ccbb.faers.core.Search;
+import main.ccbb.faers.core.SearchISRIntersectUnion;
 import main.ccbb.faers.methods.LFDRPengyue;
 import main.ccbb.faers.methods.PengyueMethod;
 
@@ -59,7 +57,7 @@ public class BuildSubset {
       List<Pair<String, List<String>>> drugPairs) throws SQLException {
     List<Pair<String, HashSet<Integer>>> combinations = new ArrayList<Pair<String, HashSet<Integer>>>();
 
-    Search search = Search.getInstance(conn);
+    SearchISRIntersectUnion search = SearchISRIntersectUnion.getInstance(conn);
 
     for (int i = 0; i < drugPairs.size(); ++i) {
       String drugName = drugPairs.get(i).getValue1().toUpperCase();
@@ -83,7 +81,7 @@ public class BuildSubset {
 
     List<Pair<String, HashSet<Integer>>> combinations = new ArrayList<Pair<String, HashSet<Integer>>>();
 
-    Search search = Search.getInstance(conn);
+    SearchISRIntersectUnion search = SearchISRIntersectUnion.getInstance(conn);
 
     for (int i = 0; i < ades.size(); ++i) {
       String adeName = ades.get(i);
