@@ -51,7 +51,7 @@ public class ApiToGui {
   public static PropertiesConfiguration config = null;
 
   public ApiToGui() {
-
+    
   }
 
   public static void main(String[] args) {

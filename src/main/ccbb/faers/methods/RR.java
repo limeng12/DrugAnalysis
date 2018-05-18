@@ -26,15 +26,15 @@ public class RR extends MethodInterface {
   private static final Logger logger = LogManager.getLogger(RR.class);
 
   @Override
-  public double caculateTheValue(int N, double E) {
+  public double caculateTheValue(int N, double exp) {
     // TODO Auto-generated method stub
     logger.trace("the RR method");
     
     if (N < 5) {
       return 0.0;
     }
-
-    return N / E;
+    
+    return N / exp;
   }
 
   @Override

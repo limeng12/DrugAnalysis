@@ -21,7 +21,8 @@ public class CalculateRun implements Runnable {
   
   final static Logger logger = LogManager.getLogger(CalculateRun.class);
   
-  boolean useNewE;
+  boolean useNewE=true;
+  
   ArrayList<MethodInterface> methods;
   
   public CalculateRun(boolean useNewE,ArrayList<MethodInterface> methods ){
@@ -33,7 +34,6 @@ public class CalculateRun implements Runnable {
   public void run() {
     // TODO Auto-generated method stub
     run2();
-
   }
 
   /**
@@ -67,11 +67,12 @@ public class CalculateRun implements Runnable {
       while (rset.next()) {
         numberOfNBigger0 = rset.getInt(1);
       }
+      
       logger.debug("The number of combination >0=" + numberOfNBigger0);
-
+      
       rset.close();
       stmt.close();
-
+      
       if (useNewE) {
         sqlString = "select N,LIE,DRUGNAME,AENAME from RATIO where N>0";
 
@@ -94,7 +95,8 @@ public class CalculateRun implements Runnable {
       }
       updateStr = updateStr.substring(0, updateStr.length() - 1);
 
-      updateStr += " where drugname=? AND aename=? AND N>0";
+      //updateStr += " where drugname=? AND aename=? AND N>0";
+      updateStr += " where drugname=? AND aename=?";
 
       ps = conn.prepareStatement(updateStr);
 
@@ -103,18 +105,19 @@ public class CalculateRun implements Runnable {
 
       rset = stmt.executeQuery(sqlString);
       rset.setFetchSize(1000);
-
+      
       conn.setAutoCommit(false);
       int progressCount = 0;
-
+      
       while (rset.next()) {
-
+        
         obs = rset.getInt(1);
         exp = rset.getDouble(2);
         String drugName = rset.getString("DRUGNAME");
         String aeName = rset.getString("AENAME");
 
         if (obs != 0) {
+          
           if (progressCount++ % 50000 == 0) {
             ApiToGui.pm.setProgress((int) ((1.0 * progressCount / numberOfNBigger0) * 100));
             logger.trace(progressCount);
@@ -124,26 +127,27 @@ public class CalculateRun implements Runnable {
 
           for (MethodInterface ite : methods) {
             name = ite.getName();
-
+            
             value = ite.caculateTheValue(obs, exp);
             // mofify!!!!!!!!!!!!!!!!!!!!
             if (value > 0 && value < Double.MAX_VALUE) {
               ps.setFloat(methodIndex, (float) value);
-
+              
             } else {
               ps.setFloat(methodIndex, 0.0f);
             }
-
+            
             ++methodIndex;
             // rset.updateDouble(name, value);
-
           }
-
+          
           ps.setString(methodIndex++, drugName);
           ps.setString(methodIndex++, aeName);
-
+          
+          //logger.trace( ps.toString()+"\t"+obs+"\t"+exp );
+          
           ps.addBatch();
-
+          
         }
         // logger.debug(value);
         // rset.updateDouble("RR", valuePRR);
@@ -152,13 +156,15 @@ public class CalculateRun implements Runnable {
         // RR denote the pengyueMethod value
         // rset.updateRow();
         if (progressCount % 100000 == 0) {
+        //if (progressCount % 100000 == 0) {
+
           ps.executeBatch();
           ps.clearBatch();
         }
 
         // i++;
       }
-
+      
       ps.executeBatch();
       ps.close();
       conn.commit();
@@ -173,9 +179,9 @@ public class CalculateRun implements Runnable {
         logger.info("indexing:" + name);
         TableUtils.addIndex(conn, "RATIO", name);
       }
-
+      
       TableUtils.addIndex(conn, "RATIO", "AENAME");
-
+      
       ApiToGui.pm.close();
     } catch (SQLException e) {
       // TODO Auto-generated catch block
@@ -187,5 +193,6 @@ public class CalculateRun implements Runnable {
     }
 
   }
+  
 
 }

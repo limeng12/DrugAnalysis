@@ -121,7 +121,7 @@ public class CalculateEbgmLfdrAction implements ActionListener {
 
   ArrayList<MethodInterface> methods;
 
-  private boolean useNewE = false;
+  private boolean useNewE = true;
 
   public CalculateEbgmLfdrAction(InitDatabaseDlg tInitDialog) {
     initDialog = tInitDialog;

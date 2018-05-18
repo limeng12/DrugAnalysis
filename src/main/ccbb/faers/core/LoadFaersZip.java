@@ -56,7 +56,7 @@ public class LoadFaersZip {
    * VARCHAR(3),GNDR_COD VARCHAR(3); ISR INT,DRUG_SEQ INT,DRUGNAME VARCHAR(100),FOREIGN KEY(ISR) ISR
    * INT,PT VARCHAR(100) ISR INT,DRUG_SEQ INT,INDI_PT VARCHAR(100)
    */
-
+  
   //private static final Map<String, Integer> TypeMap = new HashMap<String, Integer>();
   private static final HashSet<String> headers = new HashSet<String>();
   private static final HashSet<String> demoFields = new HashSet<String>();

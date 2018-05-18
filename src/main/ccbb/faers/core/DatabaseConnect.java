@@ -24,6 +24,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import main.ccbb.faers.Utils.database.TableUtils;
+
 public class DatabaseConnect {
   static Connection conn = null;
 
@@ -57,21 +59,31 @@ public class DatabaseConnect {
       String databaseName) throws SQLException {
     conn = DriverManager.getConnection("jdbc:mysql://" + localhost + "/" + databaseName + "?user="
         + user + "&password=" + password + "&rewriteBatchedStatements=true" + "&autoReconnect=true"
-        + "&failOverReadOnly=false" + "&useCompression=true");
-
+        + "&failOverReadOnly=false" + "&useCompression=true"+
+        "&useSSL=false");
+    
+    
+    /*
+    conn = DriverManager.getConnection("jdbc:mysql://" + localhost + "/" + databaseName + "?user="
+        + user + "&password=" + password +"&autoReconnect=true&useSSL=false");
+    */
     conn.setAutoCommit(true);
     Statement stmt = conn.createStatement();
     /*
      * TODO! edit here, user may not have en
      */
-    stmt.execute("set interactive_timeout = 10*60*60*60");
-    stmt.execute("set wait_timeout=10*60*60*60");
+    stmt.execute("set interactive_timeout = 10*60*60*60*60");
+    stmt.execute("set wait_timeout=10*60*60*60*60");
     // TableUtils.setSQLBigSelect(conn);
-
+    
+    
+    TableUtils.setMemTableSize(conn);
+    
+    
     stmt.close();
     logger.info("connected!");
     return conn;
-
+    
   }
 
   /**

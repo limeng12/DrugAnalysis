@@ -65,18 +65,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * The main graphic interface of the software.
+ * The main graphic interface of the software. 
  */
 public class FaersAnalysisGui extends JFrame {
-
+  
   class CloseWinListener implements WindowListener {
-
+    
     @Override
     public void windowActivated(WindowEvent e) {
       // TODO Auto-generated method stub
-
     }
-
+    
     @Override
     public void windowClosed(WindowEvent e) {
       // TODO Auto-generated method stub
@@ -137,12 +136,12 @@ public class FaersAnalysisGui extends JFrame {
 
         String name = ((JCheckBoxMenuItem) (e.getSource())).getName();
         columnNames.remove(name);
-
+        
         // clearTable();
         // sortByName="NEWEBGM";
         // String drugADEs=drugADEContent.getText();
         // table.getTableOfDrugADE(myTableMode,"NEWEBGM",currentPage,drugADEs,columnNames);
-
+        
       } else {
         String name = ((JCheckBoxMenuItem) (e.getSource())).getName();
 
@@ -167,15 +166,14 @@ public class FaersAnalysisGui extends JFrame {
         // clearTable();
         // sortByName="NEWEBGM";
         // String drugADEs=drugADEContent.getText();
-
         // table.getTableOfDrugADE(myTableMode,"NEWEBGM",currentPage,drugADEs,columnNames);
-
+        
       } else {
         String name = ((JCheckBoxMenuItem) (e.getSource())).getText();
 
         if (!columnNames.contains(name)) {
           columnNames.add(name);
-
+          
           // clearTable();
           // sortByName="NEWEBGM";
           // String drugADEs=drugADEContent.getText();
@@ -198,12 +196,12 @@ public class FaersAnalysisGui extends JFrame {
         String name = item.getText();
         columnNames.remove(name);
         logger.info("remove " + name);
-
+        
         // clearTable();
         // sortByName="NEWEBGM";
         // String drugADEs=drugADEContent.getText();
         // table.getTableOfDrugADE(myTableMode,"NEWEBGM",currentPage,drugADEs,columnNames);
-
+        
       } else {
         item.setSelected(!item.isSelected());
         String name = item.getText();
@@ -287,6 +285,8 @@ public class FaersAnalysisGui extends JFrame {
     methodNameClassNameMap.put("LFDRPengyue", "main.ccbb.faers.methods.LFDRPengyue");
     methodNameClassNameMap.put("LinearSearch", "main.ccbb.faers.methods.LinearSearch");
     methodNameClassNameMap.put("PSO", "main.ccbb.faers.methods.PSO");
+    methodNameClassNameMap.put("PvaluePengyue", "main.ccbb.faers.methods.PvaluePengyue");
+
 
   }
 
@@ -306,14 +306,14 @@ public class FaersAnalysisGui extends JFrame {
   static private void initMethods() throws InstantiationException, IllegalAccessException,
       ClassNotFoundException {
     String[] methodClassNames = ApiToGui.config.getStringArray("methods");
+    
     for (int i = 0; i < methodClassNames.length; ++i) {
       String className = methodClassNames[i];
       className = methodNameClassNameMap.get(className);
       Object method = Class.forName(className).newInstance();
       getMethods().add((MethodInterface) method);
-
     }
-
+    
     String optiMethodClassName = ApiToGui.config.getString("optimization");
     optiMethodClassName = methodNameClassNameMap.get(optiMethodClassName);
 

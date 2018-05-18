@@ -159,7 +159,7 @@ public abstract class ParallelMethodInterface extends MethodInterface {
     for (int i = 0; i < N; ++i) {
       lnAlpha += Math.log(alpha + i);
     }
-
+    
     for (int i = 1; i <= N; ++i) {
       lnN += Math.log(i);
     }

@@ -287,11 +287,11 @@ public class MyJTable extends JTable {
     tableColNames.clear();
     content.clear();
     this.setAutoCreateColumnsFromModel(false);
-
+    
+    
     future = ApiToGui.thread.submit(new TableProcessingDrugAde(sortBy, content, currentPage,
         drugADE, colNames, tableColNames,countInPage));
 
-    MyJTable.resultSize=TableProcessingDrugAde.resultSize;
     
     final MyJTable t = this;
     // SwingUtilities.invokeLater(new Runnable(){
@@ -314,6 +314,8 @@ public class MyJTable extends JTable {
           JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getStackTrace() + "\n" + e);
 
         }
+        
+        MyJTable.resultSize=TableProcessingDrugAde.resultSize;
 
         for (int i = 0; i < tableColNames.size(); ++i) {
           table.addColumn(tableColNames.get(i));
@@ -323,7 +325,8 @@ public class MyJTable extends JTable {
           table.addRow(content.get(i));
         }
 
-        logger.info(resultSize);
+        logger.info(MyJTable.resultSize);
+        
         if (MyJTable.resultSize <= 0) {
           FaersAnalysisGui.currentPageView.setText("" + --FaersAnalysisGui.currentPage);
           new TimerDlg("there are no more pages to display");

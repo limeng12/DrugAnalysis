@@ -94,10 +94,28 @@ public class TableUtils {
     logger.info("alter table" + tableName);
   }
 
+  public static void setTableRemoveDup(Connection conn, String tableName, String keyColumns)
+      throws SQLException {
+
+    executeSQL(conn, "ALTER IGNORE TABLE " + tableName + " `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY");
+
+    executeSQL(conn,"" + 
+        "DELETE t1 FROM RATIO t1 INNER JOIN  RATIO t2" + 
+        " WHERE" + 
+        " t1.id < t2.id AND t1.DRUGNAME = t2.DRUGNAME AND t1.AENAME=t2.AENAME;");
+    
+    logger.info("alter table" + tableName);
+  }
+  
   public static void setMemTableSize(Connection conn) throws SQLException {
     // TODO Auto-generated method stub
-    String sqlString = "SET SESSION max_heap_table_size=256*1024*1024";
+    String sqlString = "SET SESSION max_heap_table_size=256*1024*1024*1024";
     executeSQL(conn, sqlString);
+    
+    sqlString = "SET SESSION tmp_table_size=256*1024*1024*1024";
+
+    executeSQL(conn, sqlString);
+
     logger.info("set heap table maximum size.");
   }
 

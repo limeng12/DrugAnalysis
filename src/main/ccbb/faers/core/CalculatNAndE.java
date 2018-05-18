@@ -177,8 +177,20 @@ public class CalculatNAndE {
     // this.setInnodbACIDFalse();
     // this.initTableRatioNewE();
     this.initTableRatioNewEFast();
+    
     // this.updateWrapper();
+    /*
+     * this statement will remove duplicated rows.I don't understand why..
+     */
+    //TableUtils.setTableRemoveDup(conn, "RATIO", "DRUGNAME,AENAME");
+
+    /*
+     * this statement will NOT remove duplicated rows.
+     */
     TableUtils.setTablePrimaryKey(conn, "RATIO", "DRUGNAME,AENAME");
+    
+    ApiToGui.pm.setProgress(0);
+
     ApiToGui.pm.setProgress(0);
     ApiToGui.pm.setNote("optimization the table");
 
@@ -473,18 +485,29 @@ public class CalculatNAndE {
       System.exit(0);
     } else {
       logger.info("filter by INDI!!");
-      adeFrequency = searchEn.getAdeDisFriendly();
+      /*
+       * mysql version higher than 5.6
+       */
+      adeFrequency = searchEn.getAdeDisLeftJoin();
+      
+      /*
+       * mysql version lower than 5.6
+       */
+      //adeFrequency = searchEn.getAdeDisFriendly();
     }
     logger.info("finished ade ISR fetching");
-
+    logger.info("ADE size:"+adeFrequency.size() );
+    
     List<Pair<Integer, HashSet<Integer>>> drugFrequency = searchEn.getDrugReportDis();
 
     logger.debug("finished drug and ADE ISR fetching");
+    logger.info("drug size:"+drugFrequency.size() );
+    
 
     HashMap<Integer, String> adeCodeToName = searchEn.getPtNameUsingPtCode();
     HashMap<Integer, String> drugCodeToName = searchEn.getDrugBankNameUsingId();
-    logger.info("finished drug drugID,ADE and pt_code fetching");
-
+    logger.info("finished drug drugID, ADE and pt_code fetching");
+    
     HashSet<Integer> adeIsrs = new HashSet<Integer>();
     HashSet<Integer> drugIsrs = new HashSet<Integer>();
 
@@ -504,14 +527,14 @@ public class CalculatNAndE {
         ApiToGui.pm.setNote("calculating");
         ApiToGui.pm.setProgress((int) ((j + 1) / (1.0 * adeFrequency.size()) * 100));
         logger.debug("ADE index=" + (j + 1));
-
       }
+      
       Pair<Integer, HashSet<Integer>> adePair = iteAdeIsr.next();
       adeIsrs = adePair.getValue2();
       int ptCode = adePair.getValue1();
 
       double adeCount = adeIsrs.size();
-      Iterator<Pair<Integer, HashSet<Integer>>> iteDrugIsr = drugFrequency.iterator();
+      Iterator<Pair<Integer, HashSet<Integer>> > iteDrugIsr = drugFrequency.iterator();
 
       for (int i = 0; i < drugFrequency.size(); i++) {
 
@@ -526,7 +549,7 @@ public class CalculatNAndE {
         if (oldE <= 0) {
           continue;
         }
-
+        
         // if(drugID==1589&&ptCode==10015037)
         // oldE=0;
 
@@ -572,11 +595,13 @@ public class CalculatNAndE {
       }
 
     }
-
+    conn.setAutoCommit(false);
     ps = conn.prepareStatement("insert into RATIO(drugName,aeName,N,E,LIE) values(?,?,?,?,?)");
 
     iteAdeIsr = adeFrequency.iterator();
-
+    
+    //HashSet<String> drug_ade_pair=new  HashSet<String>();
+    
     for (int j = 0; j < adeFrequency.size(); j++) {
       if (j % 100 == 0) {
         ApiToGui.pm.setNote("inserting to the table");
@@ -630,15 +655,15 @@ public class CalculatNAndE {
 
         }
 
-        if (countObs < 0) {
+        if (countObs <= 0) {
           continue;
         }
-
+        
         int drugId = drugPair.getValue1();
-
+        
         double liE = 0;
         if (drugExp.containsKey(drugId) && adeExp.containsKey(ptCode)) {
-          // make sure double precison is enough for calculating
+          // make sure double precision is enough for calculating
           liE = Math.exp(Math.log(drugExp.get(drugId)) + Math.log(adeExp.get(ptCode))
               - Math.log(sumN11));
           if (liE == 0) {
@@ -657,28 +682,52 @@ public class CalculatNAndE {
           logger.debug("can't find drugID or pt_code in DRUGBANK or drugID=" + drugId + " ptCode="
               + ptCode);
           continue;
-
         }
-
+        
         String drugName = drugCodeToName.get(drugId);
         String adeName = adeCodeToName.get(ptCode);
-
+        
+        
+        /*
+         * seems medDRA database has some error
+         * check this adverse event in LLT and PT
+         * 
+         * INTERCEPTED DRUG PRESCRIBING ERROR
+         * 
+         */
+        /*
+        String t_pair=drugName+adeName;
+        
+        if(drug_ade_pair.contains(t_pair)) {
+          continue;
+        }else {
+          drug_ade_pair.add(t_pair);
+        }
+        */
+        
         ps.setString(1, drugName);
         ps.setString(2, adeName);
         ps.setInt(3, countObs);
         ps.setDouble(4, oldE);
         ps.setDouble(5, liE);
+        
         ps.addBatch();
+        //logger.debug(ps.toString());
 
       }
-
+      
+      
       if (j % 10 == 0) {
         ps.executeBatch();
+        ps.clearBatch();
       }
-
+      
     }
+    
+    //logger.debug(ps.toString());
 
     ps.executeBatch();
+    ps.clearBatch();
     ps.close();
     
     fillDrugFre(drugFreLog);

@@ -126,7 +126,7 @@ public class SearchISRByDrugADE {
       }
 
     }
-    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, t));
+    //adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, t));
 
     rset.close();
     stmt.close();
@@ -254,16 +254,16 @@ public class SearchISRByDrugADE {
    * derived table index.
    * 
    * EXPLAIN select DISTINCT RESULT1.ISR,RESULT1.pt_code FROM (SELECT DISTINCT REAC.ISR
-   * ISR,ADE.pt_code pt_code FROM REAC INNER JOIN ADE ON REAC.PT = ADE.name ORDER BY ISR,pt_code )
-   * AS RESULT1
-   * 
-   * LEFT JOIN
-   * 
-   * (SELECT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name
-   * ORDER BY ISR,pt_code ) AS RESULT2 ON RESULT1.ISR=RESULT2.ISR AND
-   * RESULT1.pt_code=RESULT2.pt_code
-   * 
-   * where RESULT2.ISR IS NULL ORDER BY RESULT1.pt_code;
+    ISR,ADE.pt_code pt_code FROM REAC INNER JOIN ADE ON REAC.PT = ADE.name ORDER BY ISR,pt_code )
+    AS RESULT1
+    
+    LEFT JOIN
+    
+    (SELECT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI INNER JOIN ADE ON INDI.INDI_PT=ADE.name
+    ORDER BY ISR,pt_code ) AS RESULT2 ON RESULT1.ISR=RESULT2.ISR AND
+    RESULT1.pt_code=RESULT2.pt_code
+   
+    where RESULT2.ISR IS NULL ORDER BY RESULT1.pt_code;
    * 
    *
    * @return a map of ADE name and ISRs.
@@ -279,12 +279,12 @@ public class SearchISRByDrugADE {
         + " LEFT JOIN "
 
         + " (SELECT  INDI.ISR ISR,ADE.pt_code pt_code" + " FROM INDI"
-        + " INNER JOIN ADE ON INDI.INDIPT=ADE.name" + " ORDER BY ISR,pt_code  ) AS RESULT2 "
+        + " INNER JOIN ADE ON INDI.INDI_PT=ADE.name" + " ORDER BY ISR,pt_code  ) AS RESULT2 "
 
         + " ON RESULT1.ISR=RESULT2.ISR AND RESULT1.pt_code=RESULT2.pt_code"
 
         + " where RESULT2.ISR IS NULL ORDER BY RESULT1.pt_code";
-
+    
     // below two statement make the query
     Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     stmt.setFetchSize(Integer.MIN_VALUE);
@@ -309,7 +309,7 @@ public class SearchISRByDrugADE {
       }
 
     }
-    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+    //adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -362,7 +362,7 @@ public class SearchISRByDrugADE {
     ResultSet rset = stmt.executeQuery(sqlString);
     // rset.setFetchSize(100000);
     logger.info("fetching ADEs and ISRs from database finished!");
-
+    
     int currentCode = -1;
     HashSet<Integer> tmpIsrList = null;
     //dangerous here, change it, new pair will new tmpIsrList???
@@ -381,7 +381,7 @@ public class SearchISRByDrugADE {
       }
 
     }
-    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+    //adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -430,7 +430,7 @@ public class SearchISRByDrugADE {
       }
 
     }
-    adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+    //adeDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -493,7 +493,7 @@ public class SearchISRByDrugADE {
       }
 
     }
-    adeDis.put(ptName, new HashSet<Integer>(tmpIsrList));
+    //adeDis.put(ptName, new HashSet<Integer>(tmpIsrList));
     //logger.error("isr number : "+isrn.size());
     rset.close();
     stmt.close();
@@ -568,7 +568,7 @@ public class SearchISRByDrugADE {
       }
 
     }
-    adeDis.add(new Pair<String, HashSet<Integer>>(currentName, tmpIsrList));
+    //adeDis.add(new Pair<String, HashSet<Integer>>(currentName, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -602,7 +602,7 @@ public class SearchISRByDrugADE {
 
     stmt2.execute("CREATE TEMPORARY TABLE RESULT2 (INDEX(ISR),INDEX(PT_CODE)) "
         + "SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code FROM INDI "
-        + "INNER JOIN ADE ON INDI.INDIPT=ADE.name");
+        + "INNER JOIN ADE ON INDI.INDI_PT=ADE.name");
 
     sqlString = "select DISTINCT RESULT1.ISR,RESULT1.pt_code FROM RESULT1 "
         + "LEFT JOIN RESULT2 ON RESULT1.ISR=RESULT2.ISR AND RESULT1.PT_CODE=RESULT2.PT_CODE "
@@ -669,7 +669,7 @@ public class SearchISRByDrugADE {
      * +" LEFT JOIN "
      * 
      * +" (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code" +" FROM INDI"
-     * +" INNER JOIN ADE ON INDI.INDIPT=ADE.name" +" ) AS RESULT2 "
+     * +" INNER JOIN ADE ON INDI.INDI_PT=ADE.name" +" ) AS RESULT2 "
      * 
      * +" ON RESULT1.ISR=RESULT2.ISR AND RESULT1.pt_code=RESULT2.pt_code"
      * 
@@ -719,12 +719,11 @@ public class SearchISRByDrugADE {
       int ptCode = rset.getInt("pt_code");
       String ptName = rset.getString("pt_name");
       adeCodeToName.put(ptCode, ptName);
-
     }
-
+    
     rset.close();
     stmt.close();
-
+    
     return adeCodeToName;
   }
 
@@ -769,12 +768,12 @@ public class SearchISRByDrugADE {
 
     int currentCode = -1;
     HashSet<Integer> tmpIsrList = null;
-
+    
     //change here, new Pair will new the tmpIsrList???
     while (rset.next()) {
       int drugId = rset.getInt("ID");
       int isr = rset.getInt("ISR");
-
+      
       if (drugId != currentCode) {
         tmpIsrList = new HashSet<Integer>();
         tmpIsrList.add(isr);
@@ -786,7 +785,7 @@ public class SearchISRByDrugADE {
 
       }
     }
-    drugDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+    //drugDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -832,7 +831,7 @@ public class SearchISRByDrugADE {
 
       }
     }
-    drugDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
+    //drugDis.add(new Pair<Integer, HashSet<Integer>>(currentCode, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -882,7 +881,7 @@ public class SearchISRByDrugADE {
 
       }
     }
-    drugDis.put(drugName, new HashSet<Integer>( tmpIsrList) );
+    //drugDis.put(drugName, new HashSet<Integer>( tmpIsrList) );
 
     rset.close();
     stmt.close();
@@ -934,7 +933,7 @@ public class SearchISRByDrugADE {
       }
     }
 
-    drugDis.add(new Pair<String, HashSet<Integer>>(currentName, tmpIsrList));
+    //drugDis.add(new Pair<String, HashSet<Integer>>(currentName, tmpIsrList));
 
     rset.close();
     stmt.close();
@@ -1024,7 +1023,7 @@ public class SearchISRByDrugADE {
         + " LEFT JOIN "
 
         + " (SELECT DISTINCT INDI.ISR ISR,ADE.pt_code pt_code" + " FROM INDI"
-        + " INNER JOIN ADE ON INDI.INDIPT=ADE.name" + " ) AS RESULT2 "
+        + " INNER JOIN ADE ON INDI.INDI_PT=ADE.name" + " ) AS RESULT2 "
 
         + " ON RESULT1.ISR=RESULT2.ISR AND RESULT1.pt_code=RESULT2.pt_code"
 

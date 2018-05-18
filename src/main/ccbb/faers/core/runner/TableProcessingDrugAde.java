@@ -42,7 +42,6 @@ public class TableProcessingDrugAde implements Runnable {
     currentPage = tcurrentPage;
     drugADEName = tdrugADEName;
     tableColNames = ttableColNames;
-
   }
 
   void getColumnNamesAndData() {
@@ -69,6 +68,7 @@ public class TableProcessingDrugAde implements Runnable {
     String sqlStr = "";
     if (drugADEName.length() != 0) {
       if (drugADEName.contains(",")) {
+        
         arrNames = drugADEName.split(",", 100);
         for (int i = 0; i < arrNames.length; ++i) {
           searchStr += "'" + arrNames[i] + "'";
@@ -87,6 +87,7 @@ public class TableProcessingDrugAde implements Runnable {
 
       sqlStr += "order by " + sortBy + " desc limit " + (currentPage - 1) * countInPage + ","
           + countInPage + "";
+      
     } else {
       sqlStr = "select " + name + " from RATIO order by " + sortBy + " desc limit "
           + (currentPage - 1) * countInPage + "," + countInPage + "";
@@ -107,9 +108,8 @@ public class TableProcessingDrugAde implements Runnable {
 
       for (int i = 1; i < numberOfColumns + 1; ++i) {
         tableColNames.add(rsMetaData.getColumnName(i));
-
       }
-
+      
       int rowSizeIndex = 0;
 
       while (rset.next()) {
@@ -117,15 +117,25 @@ public class TableProcessingDrugAde implements Runnable {
         oneRow.add("" + ((currentPage - 1) * countInPage + (rowSizeIndex + 1)));
 
         for (int i = 1; i < numberOfColumns + 1; ++i) {
-          oneRow.add("" + (rset.getObject(i) == null ? " " : rset.getObject(i)));
-
+          
+          if(tableColNames.get(i).contains("Name") ) {
+            oneRow.add("" + (rset.getObject(i) == null ? " " : rset.getObject(i) ));
+          }else if(tableColNames.get(i).contains("ORDER")){
+            //oneRow.add("" + (rset.getFloat(i) == null ? " " : rset.getInt(i) ) );
+            oneRow.add("" + (rset.getInt(i) ) );
+          }else {
+            oneRow.add("" + String.format ("%.2e",rset.getFloat(i) ) );
+            
+          }
+          
         }
-
+        
         tableContent.add(oneRow);
         rowSizeIndex++;
-
+        
       }
-      resultSize = rowSizeIndex;
+      
+      TableProcessingDrugAde.resultSize = rowSizeIndex;
 
       rset.close();
       stmt.close();
