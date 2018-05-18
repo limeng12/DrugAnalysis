@@ -9,6 +9,7 @@ database=
 #host=
 #database=
 
+CPU_number=4
 
 #parameters for PSO
 variance=0.01
