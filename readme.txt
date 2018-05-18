@@ -14,7 +14,8 @@
 
 FAERS analysis tookit.
 
-1. Compile the code using oracle's JDK.
-2. Download FAERS from FDA's FAERS.
-3. (optional) Download drugBank.xml and MedDRA files.
-4. Run FAERSSystem
+1. Compile the code using oracle's JDK or using the binary file.
+2. Download Mysql and create a database for storing FAERS dataset, and input the parameters in the configure file. 
+3. Download FAERS from FDA's FAERS.
+4. Download drugBank.xml and MedDRA files.
+5. Run FAERSSystem
