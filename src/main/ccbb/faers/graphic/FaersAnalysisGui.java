@@ -478,7 +478,7 @@ public class FaersAnalysisGui extends JFrame {
 
     }
 
-    initDatabase();
+    //initDatabase();
     initTasks();
     initGraphic();
 
