@@ -13,3 +13,6 @@
 
 # How to cite:
 Zhang P, Li M, Chiang CW, et al. Three-Component Mixture Model-Based Adverse Drug Event Signal Detection for the Adverse Event Reporting System. CPT Pharmacometrics Syst Pharmacol. 2018;7(8):499-506. doi:10.1002/psp4.12294
+
+# contact
+limeng49631@aliyun.com
