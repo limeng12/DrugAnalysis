@@ -8,7 +8,7 @@ FAERS analysis tookit.
 
 4. Download drugBank.xml and MedDRA files.
 
-5. Run FAERSSystem using Java 
+5. Run FAERSSystem.  FAERSSystem.sh in Linux and FAERSSystem.bat in Windows.
 
 
 Where to cite:
